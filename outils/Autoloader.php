@@ -3,9 +3,9 @@
 class Autoloader {
 
 	public static function enregistrer() {
-		spl_autoload_register(array(__CLASS__, 'chargerControleurs'));
-		spl_autoload_register(array(__CLASS__, 'chargerModeles'));
-		spl_autoload_register(array(__CLASS__, 'chargerOutils'));
+		spl_autoload_register([__CLASS__, 'chargerControleurs']);
+		spl_autoload_register([__CLASS__, 'chargerModeles']);
+		spl_autoload_register([__CLASS__, 'chargerOutils']);
 	}
 
 	// Charger les classes du dossier controleurs
