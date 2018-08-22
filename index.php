@@ -5,3 +5,4 @@ Autoloader::enregistrer();
 
 $util = new UtilisateurManager();
 
+var_dump($util->afficherListe());
