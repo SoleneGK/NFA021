@@ -54,6 +54,7 @@ class UtilisateurManager {
 		else {
 			// Génération d'un mot de passe aléatoire
 			$mot_de_passe = uniqid();
+			var_dump($mot_de_passe);
 			$mot_de_passe_crypté = password_hash($mot_de_passe, PASSWORD_DEFAULT);
 
 			//Création du compte en bdd
@@ -116,9 +117,6 @@ class UtilisateurManager {
 	}
 
 	// Obtenir la liste complète des utilisateurs
-	// TODO mettre valeur min et valeur max
-	// TODO choisir critère de tri
-	// TODO faire une recherche sur le pseudo
 	function afficherListe () {
 		$requete = 'SELECT id, pseudo, mail FROM utilisateurs';
 		$requete = $this->bdd->prepare($requete);
@@ -136,5 +134,70 @@ class UtilisateurManager {
 		}
 
 		return $utilisateurs;
+	}
+
+	// Connexion d'un utilisateur qui fournit son pseudo et son mot de passe
+	function connexion ($pseudo, $mot_de_passe) {
+		// Récupérer les informations correspondant au pseudo entré
+		$requete = 'SELECT id, mot_de_passe, mail FROM utilisateurs WHERE pseudo = :pseudo';
+		$requete = $this->bdd->prepare($requete);
+		$requete->bindValue('pseudo', $pseudo);
+		$requete->execute();
+		$requete = $requete->fetch(PDO::FETCH_ASSOC);
+
+		// Vérifier qu'un utilisateur a été trouvé dans la bdd
+		if (!$requete)
+			$reponse = false;
+		// Comparer les mots de passe
+		else if (!password_verify($mot_de_passe, $requete['mot_de_passe']))
+			$reponse = false;
+		else {
+			// Créer un objet utilisateur et le stocker en variable de session
+			$utilisateur = new Utilisateur();
+			$utilisateur->pseudo = $pseudo;
+			$utilisateur->id = $requete['id'];
+			$utilisateur->mail = $requete['mail'];
+			
+			$_SESSION['utilisateur'] = $utilisateur;
+
+			$reponse = true;
+		}
+
+		return $reponse;
+	}
+
+	// Modifier mot de passe
+	function modifier_mot_de_passe ($ancien_mot_de_passe, $nouveau_mot_de_passe_1, $nouveau_mot_de_passe_2) {
+		// Vérifier qu'un utilisateur est connecté
+		if (!isset($_SESSION['utilisateur']))
+			$reponse = 'UTILISATEUR_NON_CONNECTE';
+		else {
+			// Vérifier que le mot de passe est correct
+			$requete = 'SELECT mot_de_passe FROM utilisateurs WHERE id = :id';
+			$requete = $this->bdd->prepare($requete);
+			$requete->bindValue('id', $_SESSION['utilisateur']->id);
+			$requete->execute();
+			$requete = $requete->fetch(PDO::FETCH_ASSOC);
+
+			if (!password_verify($ancien_mot_de_passe, $requete['mot_de_passe']))
+				$reponse = 'ANCIEN_MPD_INCORRECT';
+			elseif ($nouveau_mot_de_passe_1 != $nouveau_mot_de_passe_2)
+				$reponse = 'MDP_DIFFERENTS';
+			else {
+				// Modifier le mot de passe en base de données
+				$requete = 'UPDATE utilisateurs SET mot_de_passe = :mot_de_passe WHERE id = :id';
+				$requete = $this->bdd->prepare($requete);
+				$requete->bindValue('mot_de_passe', password_hash($nouveau_mot_de_passe_1, PASSWORD_DEFAULT));
+				$requete->bindValue('id', $_SESSION['utilisateur']->id);
+				$reponse = $requete->execute();
+
+				if ($reponse)
+					$reponse = 'OK';
+				else
+					$reponse = 'ERREUR_MODIFICATION';
+			}
+		}
+
+		return $reponse;
 	}
 }
