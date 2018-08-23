@@ -7,5 +7,5 @@ session_start();
 $util = new UtilisateurManager();
 
 
-$util->modifier_droit(6, 2, 20);
+$util->ajouter('cancerso', 'cancerso@hotmail.fr', 'cancerso@hotmail.fr');
 

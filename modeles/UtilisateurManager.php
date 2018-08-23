@@ -1,5 +1,8 @@
 <?php
 
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
 class UtilisateurManager {
 	// Codes numériques associés aux différentes sections du site en bdd
 	const TOUT = 0;
@@ -33,6 +36,41 @@ class UtilisateurManager {
 			$resultat = false;
 
 		return $resultat;
+	}
+
+	// Envoyer un mail à un utilisateur
+	private function envoyer_mail($adresse_mail, $objet, $contenu, $contenu_sans_html) {
+		require 'outils/PHPMailer/Exception.php';
+		require 'outils/PHPMailer/PHPMailer.php';
+		require 'outils/PHPMailer/SMTP.php';
+
+		require 'outils/mail_data.php';
+
+		$mail = new PHPMailer(true); 
+
+		//Server settings
+		//$mail->SMTPDebug = 2;
+		$mail->isSMTP();
+		$mail->Host = 'ssl0.ovh.net';
+		$mail->SMTPAuth = true;
+		$mail->Username = MAIL_USERNAME;
+		$mail->Password = MAIL_PASSWORD;
+		$mail->SMTPSecure = 'tls';
+		$mail->Port = 587;
+
+		//Recipients
+		$mail->setFrom(MAIL_USERNAME, 'Projet NFA021');
+		$mail->addAddress($adresse_mail);
+		$mail->addReplyTo(MAIL_USERNAME, 'Projet NFA021');
+
+		//Content
+		$mail->isHTML(true);
+		$mail->Subject = utf8_decode($objet);
+
+		$mail->Body = utf8_decode($contenu);
+		$mail->AltBody = utf8_decode($contenu_sans_html);
+
+		$mail->send();
 	}
 
 	/* Ajouter un utilisateur
@@ -76,7 +114,14 @@ class UtilisateurManager {
 				$reponse = $this->bdd->lastInsertId();
 
 				// Envoyer un mail contenant le mot de passe
-				// TODO
+				$mail_objet = 'Création de compte sur le site projet NFA021';
+				$contenu_mail = '<p>Votre compte sur le site projet NFA021 vient d\'être créé.</p>
+					<p>Voici le mot de passe pour vous connecter : '.$mot_de_passe.'<br />
+					Il est fortement conseillé d\'en changer dès votre première connexion.</p>';
+				$contenu_mail_sans_html = 'Votre compte sur le site projet NFA021 vient d\'être créé.
+					Voici le mot de passe pour vous connecter : '.$mot_de_passe.'
+					Il est fortement conseillé d\'en changer dès votre première connexion.';
+				$this->envoyer_mail($mail_1, $mail_objet, $contenu_mail, $contenu_mail_sans_html);
 
 				// Ajout des droits par défaut : aucun droit sur toutes les sessions
 				$requete = 'INSERT INTO liste_droits (id_utilisateur, id_section, type_droit) VALUES (:id, :section, '.self::SANS_DROIT.')';
