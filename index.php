@@ -7,5 +7,5 @@ session_start();
 $util = new UtilisateurManager();
 
 
-var_dump($util->afficherListe());
+$util->modifier_droit(6, 2, 20);
 

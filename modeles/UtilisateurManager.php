@@ -38,18 +38,20 @@ class UtilisateurManager {
 	/* Ajouter un utilisateur
 	 * Renvoie un message d'erreur ou l'id de l'utilisateur créé
 	*/
-	function ajouter ($pseudo, $mail) {
+	function ajouter ($pseudo, $mail_1, $mail_2) {
 		// Vérifications préalables : champs non vides, pseudo et mail non utilisés
 		if (empty($pseudo)) {
 			$reponse = 'PSEUDO_VIDE';
 		}
-		else if (empty($mail)) {
+		else if (empty($mail_1)) {
 			$reponse = 'MAIL_VIDE';
 		}
+		else if ($mail_1 != $mail_2)
+			$reponse = 'MAILS_DIFFERENTS';
 		else if (!$this->verifier_libre('pseudo', $pseudo)) {
 			$reponse = 'PSEUDO_UTILISE';
 		}
-		else if (!$this->verifier_libre('mail', $mail)) {
+		else if (!$this->verifier_libre('mail', $mail_1)) {
 			$reponse = 'MAIL_UTILISE';
 		}
 		else {
@@ -63,21 +65,28 @@ class UtilisateurManager {
 			$requete = $this->bdd->prepare($requete);
 			$requete->bindValue('pseudo', $pseudo);
 			$requete->bindValue('mot_de_passe', $mot_de_passe_crypté);
-			$requete->bindValue('mail', $mail);
+			$requete->bindValue('mail', $mail_1);
 			$requete->execute();
 
 			// S'il y a eu une erreur à l'ajout en base de données
 			if (!$requete)
 				$reponse = 'ERREUR_CREATION';
 			else {
+				// Récupérer l'id de la ligne ajoutée
+				$reponse = $this->bdd->lastInsertId();
+
 				// Envoyer un mail contenant le mot de passe
 				// TODO
 
-				// Ajout des droits par défaut
-				
+				// Ajout des droits par défaut : aucun droit sur toutes les sessions
+				$requete = 'INSERT INTO liste_droits (id_utilisateur, id_section, type_droit) VALUES (:id, :section, '.self::SANS_DROIT.')';
+				$requete = $this->bdd->prepare($requete);
+				$requete->bindValue('id', $reponse, PDO::PARAM_INT);
 
-				// Récupérer l'id de la ligne ajoutée
-				$reponse = $this->bdd->lastInsertId();
+				for ($i = 0 ; $i < 4 ; $i++) {
+					$requete->bindValue('section', $i, PDO::PARAM_INT);
+					$requete->execute();
+				}
 			}
 		}
 
@@ -170,6 +179,11 @@ class UtilisateurManager {
 		return $reponse;
 	}
 
+	// Déconnexion de l'utilisateur
+	function deconnexion () {
+		unset($_SESSION['utilisateur']);
+	}
+
 	// Modifier mot de passe
 	function modifier_mot_de_passe ($ancien_mot_de_passe, $nouveau_mot_de_passe_1, $nouveau_mot_de_passe_2) {
 		// Vérifier qu'un utilisateur est connecté
@@ -203,5 +217,16 @@ class UtilisateurManager {
 		}
 
 		return $reponse;
+	}
+
+	// Modifie un droit d'un utilisateur, renvoie la réussite ou l'échec de la modification de la base de données
+	function modifier_droit ($utilisateur, $section, $droit) {
+		$requete = 'UPDATE liste_droits SET type_droit = :droit WHERE id_utilisateur = :utilisateur AND id_section = :section';
+		$requete = $this->bdd->prepare($requete);
+		$requete->bindValue('droit', $droit, PDO::PARAM_INT);
+		$requete->bindValue('utilisateur', $utilisateur, PDO::PARAM_INT);
+		$requete->bindValue('section', $section, PDO::PARAM_INT);
+		$status = $requete->execute();
+		return $status;
 	}
 }
