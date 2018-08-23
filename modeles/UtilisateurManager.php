@@ -9,8 +9,9 @@ class UtilisateurManager {
 
 	// Codes numériques associés aux différents types de droits en bdd
 	const ADMIN = 0;
-	const MODERATEUR = 1;
-	const CONTRIBUTEUR = 2;
+	const MODERATEUR = 10;
+	const CONTRIBUTEUR = 20;
+	const SANS_DROIT = 30;
 
 	public $bdd;
 
@@ -71,6 +72,9 @@ class UtilisateurManager {
 			else {
 				// Envoyer un mail contenant le mot de passe
 				// TODO
+
+				// Ajout des droits par défaut
+				
 
 				// Récupérer l'id de la ligne ajoutée
 				$reponse = $this->bdd->lastInsertId();
