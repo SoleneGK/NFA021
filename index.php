@@ -4,8 +4,8 @@ Autoloader::enregistrer();
 
 session_start();
 
-$util = new UtilisateurManager();
+$cat = new CategoriePhotoManager();
 
+var_dump($cat->supprimer(1));
 
-$util->ajouter('cancerso', 'cancerso@hotmail.fr', 'cancerso@hotmail.fr');
 
