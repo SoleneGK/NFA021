@@ -1,37 +1,51 @@
 <?php
 
-class CategoriePhotoManager {
+class PaysManager {
 	public $bdd;
 
 	function __construct() {
 		$this->bdd = Bdd::Connexion();
 	}
 
-	// Obtenir les informations sur une catégorie à partir de son id
+	// Obtenir les informations sur un pays à partir de son id
 	function afficher($id) {
-		$req = 'SELECT nom, description FROM categories_photos WHERE id = :id';
+		$req = 'SELECT nom FROM pays WHERE id = :id';
 		$req = $this->bdd->prepare($req);
 		$req->bindValue('id', $id, PDO::PARAM_INT);
 		$req->execute();
 		$req = $req->fetch(PDO::FETCH_ASSOC);
 
 		if(!$req)
-			$categorie = false;
+			$pays = false;
 		else
-			$categorie = new CategoriePhoto($id, $req['nom'], $req['description']);
+			$pays = new Pays($id, $req['nom']);
 
-		return $categorie;
+		return $pays;
 	}
 
-	// Ajouter une catégorie
-	function ajouter($nom, $description) {
+	// Afficher la liste de tous les pays
+	function afficher_tout() {
+		$req = 'SELECT id, nom FROM pays';
+		$req = $this->bdd->prepare($req);
+		$req->execute();
+
+		$pays = [];
+		foreach ($req->fetchAll(PDO::FETCH_ASSOC) as $ligne) {
+			$p = new Pays($ligne['id'], $ligne['nom']);
+			$pays[] = $p;
+		}
+
+		return $pays;
+	}
+
+	// Ajouter un pays
+	function ajouter($nom) {
 		if (empty($nom))
 			$reponse = 'NOM_VIDE';
 		else {
-			$req = 'INSERT INTO categories_photos(nom, description) VALUES (:nom, :description)';
+			$req = 'INSERT INTO pays(nom) VALUES (:nom)';
 			$req = $this->bdd->prepare($req);
 			$req->bindValue('nom', $nom);
-			$req->bindValue('description', $description);
 			$req->execute();
 
 			if (!$req)
@@ -43,15 +57,14 @@ class CategoriePhotoManager {
 		return $reponse;
 	}
 
-	// Modifier une catégorie
-	function modifier($id, $nom, $description) {
+	// Modifier un pays
+	function modifier($id, $nom) {
 		if (empty($nom))
 			$reponse = 'NOM_VIDE';
 		else {
-			$req = 'UPDATE categories_photos SET nom = :nom, description = :description WHERE id = :id';
+			$req = 'UPDATE pays SET nom = :nom WHERE id = :id';
 			$req = $this->bdd->prepare($req);
 			$req->bindValue('nom', $nom);
-			$req->bindValue('description', $description);
 			$req->bindValue('id', $id, PDO::PARAM_INT);
 			$reponse = $req->execute();
 
@@ -64,24 +77,24 @@ class CategoriePhotoManager {
 		return $reponse;
 	}
 
-	// Supprimer une catégorie, supprimer les photos appartenant à cette catégorie
+	// Supprimer un pays, mettre l'id_pays des articles de ce pays à null
 	function supprimer($id) {
-		// Supprimer les photos
-		$req = 'DELETE FROM photos WHERE id_categorie = :id';
+		// Modifier les articles
+		$req = 'UPDATE articles SET id_pays = NULL WHERE id_pays = :id';
 		$req = $this->bdd->prepare($req);
 		$req->bindValue('id', $id, PDO::PARAM_INT);
 		$req->execute();
 
 		if (!$req)
-			$reponse = 'ERREUR_SUPPRESSION_PHOTOS';
+			$reponse = 'ERREUR_MODIFICATION_ARTICLES';
 		else {
-			$req = 'DELETE FROM categories_photos WHERE id = :id';
+			$req = 'DELETE FROM pays WHERE id = :id';
 			$req = $this->bdd->prepare($req);
 			$req->bindValue('id', $id, PDO::PARAM_INT);
 			$req->execute();
 
 			if (!$req)
-				$reponse = 'ERREUR_SUPPRESSION_CATEGORIE';
+				$reponse = 'ERREUR_SUPPRESSION';
 			else
 				$reponse = 'OK';
 		}

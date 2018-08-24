@@ -163,13 +163,8 @@ class UtilisateurManager {
 		// Vérifier qu'il y a bien un utilisateur avec cette id, si oui créer un objet
 		if (!$req)
 			$utilisateur = false;
-		else {
-			$utilisateur = new Utilisateur();
-			$utilisateur->id = $id;
-			$utilisateur->pseudo = $req['pseudo'];
-			$utilisateur->mail = $req['mail'];
-			$utilisateur->droits = $this->obtenir_droits($id);
-		}
+		else
+			$utilisateur = new Utilisateur($id, $req['pseudo'], $req['mail'], $this->obtenir_droits($id));
 
 		return $utilisateur;
 	}
@@ -182,12 +177,7 @@ class UtilisateurManager {
 
 		$utilisateurs = [];
 		foreach ($req->fetchAll(PDO::FETCH_ASSOC) as $ligne) {
-			$u = new Utilisateur();
-			$u->id = $ligne['id'];
-			$u->pseudo = $ligne['pseudo'];
-			$u->mail = $ligne['mail'];
-			$u->droits = $this->obtenir_droits($ligne['id']);
-
+			$u = new Utilisateur($ligne['id'], $ligne['pseudo'], $ligne['mail'], $this->obtenir_droits($ligne['id']));
 			$utilisateurs[] = $u;
 		}
 
@@ -211,10 +201,7 @@ class UtilisateurManager {
 			$reponse = false;
 		else {
 			// Créer un objet utilisateur et le stocker en variable de session
-			$utilisateur = new Utilisateur();
-			$utilisateur->pseudo = $pseudo;
-			$utilisateur->id = $req['id'];
-			$utilisateur->mail = $req['mail'];
+			$utilisateur = new Utilisateur($req['id'], $pseudo, $req['mail']);
 			
 			$_SESSION['utilisateur'] = $utilisateur;
 
