@@ -4,7 +4,7 @@ Autoloader::enregistrer();
 
 session_start();
 
-$p = new PaysManager();
-var_dump($p->supprimer(4));
+$p = new CategoriePhotoManager();
+var_dump($p->afficher_tout());
 
 

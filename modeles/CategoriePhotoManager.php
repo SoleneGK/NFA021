@@ -23,6 +23,20 @@ class CategoriePhotoManager {
 		return $categorie;
 	}
 
+	function afficher_tout() {
+		$req = 'SELECT id, nom, description FROM categories_photos';
+		$req = $this->bdd->prepare($req);
+		$req->execute();
+
+		$categories = [];
+		foreach ($req->fetchAll(PDO::FETCH_ASSOC) as $categorie) {
+			$c = new CategoriePhoto($categorie['id'], $categorie['nom'], $categorie['description']);
+			$categories[] = $c;
+		}
+
+		return $categories;
+	}
+
 	// Ajouter une catégorie
 	function ajouter($nom, $description) {
 		if (empty($nom))
