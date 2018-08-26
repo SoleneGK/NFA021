@@ -10,7 +10,7 @@ class CommentaireManager {
 	/* Ajouter un commentaire
 	 * Soit un utilisateur est connecté, auquel cas son id est utilisée, soit un pseudo doit être fourni par l'internaute
 	 */
-	function ajouter($id_utilisateur = null, $pseudo = null, $mail = null, $id_article, $contenu) {
+	function ajouter($id_utilisateur, $pseudo, $mail, $id_article, $contenu) {
 		// Vérifier que le contenu du commentaire n'est pas vide
 		if (empty($contenu))
 			$reponse = 'CONTENU_VIDE';
@@ -73,6 +73,99 @@ class CommentaireManager {
 
 	// Afficher un commentaire en fonction de son id
 	function afficher($id) {
+		$req = 'SELECT c.id_utilisateur AS id_utilisateur,
+					c.pseudo AS pseudo,
+					c.mail AS mail,
+					c.contenu AS contenu,
+					c.date_ajout AS date_ajout,
+					a.id AS id_article,
+					a.titre AS titre_article,
+					s.id AS id_section,
+					s.nom AS nom_section
+				FROM commentaires AS c
+				JOIN articles AS a ON c.id_article = a.id
+				JOIN sections_site AS s ON a.id_section = s.id
+				WHERE c.id = :id';
+		$req = $this->bdd->prepare($req);
+		$req->bindValue('id', $id, PDO::PARAM_INT);
+		$req->execute();
+		$req = $req->fetch(PDO::FETCH_ASSOC);
 
-	}	
+		// Vérifier qu'un commentaire correspond à cette id
+		if (!$req)
+			$commentaire = false;
+		else {
+			$u = new Utilisateur($req['id_utilisateur'], $req['pseudo'], $req['mail']);
+			$s = new Section($req['id_section'], $req['nom_section']);
+			$a = new Article($req['id_article'], $req['titre_article'], $s);
+			$commentaire = new Commentaire($id, $u, $a, $req['contenu'], $req['date_ajout']);
+		}
+
+		return $commentaire;
+	}
+
+	// Afficher tous les commentaires
+	function afficher_tout() {
+		$req = 'SELECT c.id AS id,
+					c.id_utilisateur AS id_utilisateur,
+					c.pseudo AS pseudo,
+					c.mail AS mail,
+					c.contenu AS contenu,
+					c.date_ajout AS date_ajout,
+					a.id AS id_article,
+					a.titre AS titre_article,
+					s.id AS id_section,
+					s.nom AS nom_section
+				FROM commentaires AS c
+				JOIN articles AS a ON c.id_article = a.id
+				JOIN sections_site AS s ON a.id_section = s.id';
+		$req = $this->bdd->prepare($req);
+		$req->execute();
+		
+		$commentaires = [];
+		foreach($req->fetchAll(PDO::FETCH_ASSOC) as $c) {
+			$u = new Utilisateur($c['id_utilisateur'], $c['pseudo'], $c['mail']);
+			$s = new Section($c['id_section'], $c['nom_section']);
+			$a = new Article($c['id_article'], $c['titre_article'], $s);
+			$commentaire = new Commentaire($c['id'], $u, $a, $c['contenu'], $c['date_ajout']);
+
+			$commentaires[] = $commentaire;
+		}
+
+		return $commentaires;
+	}
+
+	// Modifier un commentaire
+	function modifier($id, $pseudo, $mail, $contenu) {
+		// Vérifier que le pseudo n'est pas vide
+		if (empty($pseudo))
+			$reponse = 'PSEUDO_VIDE';
+		// Vérifier que le contenu n'est pas vide
+		elseif (empty($contenu))
+			$reponse = 'CONTENU_VIDE';
+		else {
+			$req = 'UPDATE commentaires SET pseudo = :pseudo, mail = :mail, contenu = :contenu WHERE id = :id';
+			$req = $this->bdd->prepare($req);
+			$req->bindValue('pseudo', $pseudo);
+			$req->bindValue('mail', $mail);
+			$req->bindValue('contenu', $contenu);
+			$req->bindValue('id', $id, PDO::PARAM_INT);
+			$req = $req->execute();
+
+			if ($req)
+				$reponse = 'OK';
+			else
+				$reponse = 'ERREUR_MODIFICATION';
+		}
+
+		return $reponse;
+	}
+
+	// Supprimer un commentaire
+	function supprimer($id) {
+		$req = 'DELETE FROM commentaires WHERE id = :id';
+		$req = $this->bdd->prepare($req);
+		$req->bindValue('id', $id, PDO::PARAM_INT);
+		return $req->execute();
+	}
 }

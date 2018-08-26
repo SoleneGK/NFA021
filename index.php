@@ -5,7 +5,7 @@ Autoloader::enregistrer();
 session_start();
 
 $c = new CommentaireManager();
-var_dump($c->ajouter(1, '', '', 1 ,'Cesse tes âneries'));
+var_dump($c->supprimer(1));
 
 
 //function ajouter($id_utilisateur = null, $pseudo = null, $mail = null, $id_article, $contenu)
