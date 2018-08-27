@@ -185,10 +185,14 @@ class PhotoManager {
 				$req->bindValue('id_utilisateur', $id_utilisateur, PDO::PARAM_INT);
 				$req->bindValue('description', $description);
 				$req->bindValue('id', $id, PDO::PARAM_INT);
-				$req = $req->execute();
+				$resultat = $req->execute();
 
-				if ($req)
-					$reponse = 'OK';
+				if ($resultat) {
+					if ($req->rowCount() == 1)
+						$reponse = 'OK';
+					else
+						$reponse = 'AUCUNE_LIGNE_MODIFIEE';
+				}
 				else
 					$reponse = 'ERREUR_MODIFICATION';
 			}
@@ -215,12 +219,16 @@ class PhotoManager {
 			$req = 'DELETE FROM photos WHERE id = :id';
 			$req = $this->bdd->prepare($req);
 			$req->bindValue('id', $id, PDO::PARAM_INT);
-			$req = $req->execute();
+			$resultat = $req->execute();
 
-			if ($req)
-				$reponse = 'OK';
+			if ($resultat) {
+				if ($req->rowCount() == 1)
+					$reponse = 'OK';
+				else
+					$reponse = 'AUCUNE_LIGNE_SUPPRIMEE';
+			}
 			else
-				$reponse = 'ERREUR_SUPPRESSION_BDD';
+				$reponse = 'ERREUR_SUPPRESSION';
 		}
 
 		return $reponse;

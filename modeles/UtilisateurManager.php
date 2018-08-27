@@ -95,7 +95,6 @@ class UtilisateurManager {
 		else {
 			// Génération d'un mot de passe aléatoire
 			$mot_de_passe = uniqid();
-			var_dump($mot_de_passe);
 			$mot_de_passe_crypté = password_hash($mot_de_passe, PASSWORD_DEFAULT);
 
 			//Création du compte en bdd
@@ -239,10 +238,14 @@ class UtilisateurManager {
 				$req = $this->bdd->prepare($req);
 				$req->bindValue('mot_de_passe', password_hash($nouveau_mot_de_passe_1, PASSWORD_DEFAULT));
 				$req->bindValue('id', $_SESSION['utilisateur']->id);
-				$reponse = $req->execute();
+				$resultat = $req->execute();
 
-				if ($reponse)
-					$reponse = 'OK';
+				if ($resultat) {
+					if ($req->rowCount() == 1)
+						$reponse = 'OK';
+					else
+						$reponse = 'AUCUNE_LIGNE_MODIFIEE';
+				}
 				else
 					$reponse = 'ERREUR_MODIFICATION';
 			}
@@ -251,14 +254,34 @@ class UtilisateurManager {
 		return $reponse;
 	}
 
-	// Modifie un droit d'un utilisateur, renvoie la réussite ou l'échec de la modification de la base de données
+	// Demande de changement de mot de passe : génération d'un mail contenant un code pour autoriser la modification
+	function demander_mot_de_passe_perdu($mail) {
+		// Générer un code 
+	}
+
+	// Changer le mot de passe perdu
+	function modifier_mot_de_passe_perdu($code, $mot_de_passe_1, $mot_de_passe_2) {
+
+	}
+
+	// Modifie un droit d'un utilisateur
 	function modifier_droit ($utilisateur, $section, $droit) {
 		$req = 'UPDATE liste_droits SET type_droit = :droit WHERE id_utilisateur = :utilisateur AND id_section = :section';
 		$req = $this->bdd->prepare($req);
 		$req->bindValue('droit', $droit, PDO::PARAM_INT);
 		$req->bindValue('utilisateur', $utilisateur, PDO::PARAM_INT);
 		$req->bindValue('section', $section, PDO::PARAM_INT);
-		$status = $req->execute();
-		return $status;
+		$resultat = $req->execute();
+
+		if ($resultat) {
+			if ($req->rowCount() == 1)
+				$reponse = 'OK';
+			else
+				$reponse = 'AUCUNE_LIGNE_MODIFIEE';
+		}
+		else
+			$reponse = 'ERREUR_MODIFICATION';
+
+		return $reponse;	
 	}
 }

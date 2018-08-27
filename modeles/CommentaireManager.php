@@ -150,10 +150,14 @@ class CommentaireManager {
 			$req->bindValue('mail', $mail);
 			$req->bindValue('contenu', $contenu);
 			$req->bindValue('id', $id, PDO::PARAM_INT);
-			$req = $req->execute();
+			$resultat = $req->execute();
 
-			if ($req)
-				$reponse = 'OK';
+			if ($resultat) {
+				if ($req->rowCount() == 1)
+					$reponse = 'OK';
+				else
+					$reponse = 'AUCUNE_LIGNE_MODIFIEE';
+			}
 			else
 				$reponse = 'ERREUR_MODIFICATION';
 		}
@@ -166,6 +170,17 @@ class CommentaireManager {
 		$req = 'DELETE FROM commentaires WHERE id = :id';
 		$req = $this->bdd->prepare($req);
 		$req->bindValue('id', $id, PDO::PARAM_INT);
-		return $req->execute();
+		$resultat = $req->execute();
+
+		if ($resultat) {
+			if ($req->rowCount() == 1)
+				$reponse = 'OK';
+			else
+				$reponse = 'AUCUNE_LIGNE_SUPPRIMEE';
+		}
+		else
+			$reponse = 'ERREUR_SUPPRESSION';
+
+		return $reponse;
 	}
 }

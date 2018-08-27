@@ -66,10 +66,14 @@ class PaysManager {
 			$req = $this->bdd->prepare($req);
 			$req->bindValue('nom', $nom);
 			$req->bindValue('id', $id, PDO::PARAM_INT);
-			$reponse = $req->execute();
+			$resultat = $req->execute();
 
-			if ($reponse)
-				$reponse = 'OK';
+			if ($resultat) {
+				if ($req->rowCount() == 1)
+					$reponse = 'OK';
+				else
+					$reponse = 'AUCUNE_LIGNE_MODIFIEE';
+			}
 			else
 				$reponse = 'ERREUR_MODIFICATION';
 		}
@@ -91,12 +95,16 @@ class PaysManager {
 			$req = 'DELETE FROM pays WHERE id = :id';
 			$req = $this->bdd->prepare($req);
 			$req->bindValue('id', $id, PDO::PARAM_INT);
-			$req->execute();
+			$resultat = $req->execute();
 
-			if (!$req)
-				$reponse = 'ERREUR_SUPPRESSION';
+			if ($resultat) {
+				if ($req->rowCount() == 1)
+					$reponse = 'OK';
+				else
+					$reponse = 'AUCUNE_LIGNE_SUPPRIMEE';
+			}
 			else
-				$reponse = 'OK';
+				$reponse = 'ERREUR_SUPPRESSION';
 		}
 
 		return $reponse;

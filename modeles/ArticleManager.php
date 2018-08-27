@@ -228,11 +228,81 @@ class ArticleManager {
 		return $articles;
 	}
 
+	// Modifier le titre ou le contenu d'un article
+	function modifier_titre_ou_contenu ($id, $titre, $contenu) {
+		// Vérifier que le titre et le contenu de l'article ne sont pas vides
+		if (empty($titre))
+			$reponse = 'TITRE_VIDE';
+		elseif (empty($contenu))
+			$reponse = 'CONTENU_VIDE';
+		else {
+			$req = 'UPDATE articles SET titre = :titre, contenu = :contenu WHERE id = :id';
+			$req = $this->bdd->prepare($req);
+			$req->bindValue('titre', $titre);
+			$req->bindValue('contenu', $contenu);
+			$req->bindValue('id', $id, PDO::PARAM_INT);
+			$resultat = $req->execute();
+
+			if ($resultat) {
+				if ($req->rowCount() == 1)
+					$reponse = 'OK';
+				else
+					$reponse = 'AUCUNE_LIGNE_MODIFIEE';
+			}
+			else
+				$reponse = 'ERREUR_MODIFICATION';
+		}
+
+		return $reponse;
+	}
+
+	function modifier_pays ($id, $id_pays) {
+		// Vérifier que le pays existe
+		$req = 'SELECT COUNT(id) FROM pays WHERE id = :id';
+		$req = $this->bdd->prepare($req);
+		$req->bindValue('id', $id_pays, PDO::PARAM_INT);
+		$req->execute();
+		$req = $req->fetch(PDO::FETCH_NUM);
+
+		if ($req[0] == 0)
+			$reponse = 'PAYS_INCONNU';
+		else {
+			// Modifier l'article, en vérifiant qu'il appartient bien à la catégorie Voyages (id_section = 3)
+			$req = 'UPDATE articles SET id_pays = :id_pays WHERE id = :id AND id_section = 3';
+			$req = $this->bdd->prepare($req);
+			$req->bindValue('id_pays', $id_pays, PDO::PARAM_INT);
+			$req->bindValue('id', $id, PDO::PARAM_INT);
+			$resultat = $req->execute();
+
+			if ($resultat) {
+				if ($req->rowCount() == 1)
+					$reponse = 'OK';
+				else
+					$reponse = 'AUCUNE_LIGNE_MODIFIEE';
+			}
+			else
+				$reponse = 'ERREUR_MODIFICATION';
+		}
+
+		return $reponse;
+	}
+
 	// Supprimer un article
 	function supprimer ($id) {
 		$req = 'DELETE FROM articles WHERE id = :id';
 		$req = $this->bdd->prepare($req);
 		$req->bindValue('id', $id, PDO::PARAM_INT);
-		return $req->execute();
+		$resultat = $req->execute();
+
+		if ($resultat) {
+			if ($req->rowCount() == 1)
+				$reponse = 'OK';
+			else
+				$reponse = 'AUCUNE_LIGNE_SUPPRIMEE';
+		}
+		else
+			$reponse = 'ERREUR_SUPPRESSION';
+
+		return $reponse;
 	}
 }
