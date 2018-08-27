@@ -51,7 +51,7 @@ class PhotoManager {
 						$req = $req->execute();
 
 						if ($req)
-							$reponse = 'OK';
+							$reponse = $this->bdd->lastInsertId();
 						else
 							$reponse = 'ERREUR_AJOUT_BDD';
 					}
@@ -76,7 +76,7 @@ class PhotoManager {
 					u.mail AS mail_utilisateur
 				FROM photos AS p
 				JOIN utilisateurs AS u ON p.id_utilisateur = u.id
-				JOIN categories_photos AS c ON p.id_categorie = c.id
+				LEFT JOIN categories_photos AS c ON p.id_categorie = c.id
 				WHERE p.id = :id';
 		$req = $this->bdd->prepare($req);
 		$req->bindValue('id', $id, PDO::PARAM_INT);
@@ -141,7 +141,7 @@ class PhotoManager {
 					u.mail AS mail_utilisateur
 				FROM photos AS p
 				JOIN utilisateurs AS u ON p.id_utilisateur = u.id
-				JOIN categories_photos AS c ON p.id_categorie = c.id';
+				LEFT JOIN categories_photos AS c ON p.id_categorie = c.id';
 		$req = $this->bdd->prepare($req);
 		$req->execute();
 

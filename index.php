@@ -4,8 +4,7 @@ Autoloader::enregistrer();
 
 session_start();
 
-$c = new CommentaireManager();
-var_dump($c->supprimer(1));
+$a = new ArticleManager();
+var_dump($a->afficher_liste_pays(0, 2, 1));
 
-
-//function ajouter($id_utilisateur = null, $pseudo = null, $mail = null, $id_article, $contenu)
+//$titre, $id_section, $contenu, $id_utilisateur, $id_pays = null

@@ -23,7 +23,7 @@ class CommentaireManager {
 			}
 			// Si un utilisateur est connecté, vérifier qu'il existe
 			else {
-				$req = 'SELECT pseudo, mail FROM utilisateurs WHERE id = :id';
+				$req = 'SELECT pseudo FROM utilisateurs WHERE id = :id';
 				$req = $this->bdd->prepare($req);
 				$req->bindValue('id', $id_utilisateur, PDO::PARAM_INT);
 				$req->execute();
@@ -33,7 +33,7 @@ class CommentaireManager {
 					$reponse = 'UTILISATEUR_INCONNU';
 				else {
 					$pseudo = $req['pseudo'];
-					$mail = $req['mail'];
+					$mail = '';
 				}
 			}
 
@@ -61,7 +61,7 @@ class CommentaireManager {
 					$req = $req->execute();
 
 					if ($req)
-						$reponse = 'OK';
+						$reponse = $this->bdd->lastInsertId();
 					else
 						$reponse = 'ERREUR_CREATION';
 				}
