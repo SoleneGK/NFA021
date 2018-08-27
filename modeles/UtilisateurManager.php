@@ -39,16 +39,16 @@ class UtilisateurManager {
 	}
 
 	// Envoyer un mail à un utilisateur
-	private function envoyer_mail($adresse_mail, $objet, $contenu, $contenu_sans_html) {
-		require 'outils/PHPMailer/Exception.php';
-		require 'outils/PHPMailer/PHPMailer.php';
-		require 'outils/PHPMailer/SMTP.php';
+	private function envoyer_mail($adresse_mail, $objet, $contenu) {
+		require_once 'outils/PHPMailer/Exception.php';
+		require_once 'outils/PHPMailer/PHPMailer.php';
+		require_once 'outils/PHPMailer/SMTP.php';
 
-		require 'outils/mail_data.php';
+		require_once 'outils/mail_data.php';
 
 		$mail = new PHPMailer(true); 
 
-		//Server settings
+		// Paramètres du serveur
 		//$mail->SMTPDebug = 2;
 		$mail->isSMTP();
 		$mail->Host = 'ssl0.ovh.net';
@@ -58,17 +58,16 @@ class UtilisateurManager {
 		$mail->SMTPSecure = 'tls';
 		$mail->Port = 587;
 
-		//Recipients
+		// En-tête
 		$mail->setFrom(MAIL_USERNAME, 'Projet NFA021');
 		$mail->addAddress($adresse_mail);
 		$mail->addReplyTo(MAIL_USERNAME, 'Projet NFA021');
 
-		//Content
+		// Contenu
 		$mail->isHTML(true);
 		$mail->Subject = utf8_decode($objet);
 
 		$mail->Body = utf8_decode($contenu);
-		$mail->AltBody = utf8_decode($contenu_sans_html);
 
 		$mail->send();
 	}
@@ -256,12 +255,68 @@ class UtilisateurManager {
 
 	// Demande de changement de mot de passe : génération d'un mail contenant un code pour autoriser la modification
 	function demander_mot_de_passe_perdu($mail) {
-		// Générer un code 
+		// Générer un code, et lui mettre 24h de validité
+		$code = md5(uniqid());
+		$date_expiration = time() + 60 * 60 * 24;
+
+		// Enregistrer le code en bdd
+		$req = 'UPDATE utilisateurs SET code_recuperation = :code, date_expiration_code = :date_expiration WHERE mail = :mail';
+		$req = $this->bdd->prepare($req);
+		$req->bindValue('code', $code);
+		$req->bindValue('date_expiration', $date_expiration, PDO::PARAM_INT);
+		$req->bindValue('mail', $mail);
+		$resultat = $req->execute();
+
+		if (!$resultat)
+			$reponse = 'ERREUR_MODIFICATION';
+		// Si aucune ligne n'a été modifiée, il n'existe pas de compte avec ce mail
+		elseif ($req->rowCount() == 0)
+			$reponse = 'UTILISATEUR_INCONNU';
+		// L'adresse existe bien, envoi d'un mail de récupération
+		else {
+			$contenu = '<p>Code à fournir pour modifier le mot de passe : '.$code.'<br />Il est valable 24h.</p>';
+			$this->envoyer_mail($mail, 'Mot de passe perdu', $contenu);
+			$reponse = 'MAIL_ENVOYE';
+		}
+
+		return $reponse;
 	}
 
 	// Changer le mot de passe perdu
-	function modifier_mot_de_passe_perdu($code, $mot_de_passe_1, $mot_de_passe_2) {
+	function modifier_mot_de_passe_perdu($mail, $code, $mot_de_passe_1, $mot_de_passe_2) {
+		// Récupérer les informations correspondant au mail
+		$req = 'SELECT code_recuperation, date_expiration_code FROM utilisateurs WHERE mail = :mail';
+		$req = $this->bdd->prepare($req);
+		$req->bindValue('mail', $mail);
+		$req->execute();
+		$req = $req->fetch(PDO::FETCH_ASSOC);
 
+		// Vérifier qu'un enregistrement a été trouvé
+		if (!$req)
+			$reponse = 'UTILISATEUR_INCONNU';
+		// Vérifier que le code n'a pas expiré
+		elseif (time() > $req['date_expiration_code'])
+			$reponse = 'CODE_EXPIRE';
+		// Vérifier que le code est le bon
+		elseif ($code != $req['code_recuperation'])
+			$reponse = 'CODE_INCORRECT';
+		// Vérifier que les mots de passe sont identiques
+		elseif ($mot_de_passe_1 != $mot_de_passe_2)
+			$reponse = 'MDP_DIFFERENTS';
+		else {
+			$req = 'UPDATE utilisateurs SET mot_de_passe = :mot_de_passe, code_recuperation = null, date_expiration_code = null WHERE mail = :mail';
+			$req = $this->bdd->prepare($req);
+			$req->bindValue('mot_de_passe', $mot_de_passe_1);
+			$req->bindValue('mail', $mail);
+			$req = $req->execute();
+
+			if ($req)
+				$reponse = 'OK';
+			else
+				$reponse = 'ERREUR_MODIFICATION';
+		}
+
+		return $reponse;
 	}
 
 	// Modifie un droit d'un utilisateur
