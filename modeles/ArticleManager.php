@@ -187,6 +187,49 @@ class ArticleManager {
 		return $articles;
 	}
 
+	// Afficher les articles écrits par un utilisateur à partir de [position] de la section [id_section]
+	function afficher_liste_utilisateur($position, $nombre, $id_utilisateur) {
+		// Convertir les paramètres en nombre et vérifier qu'ils sont positifs
+		$position = (int)$position;
+		$nombre = (int)$nombre;
+		if ($position < 0 || $nombre < 1)
+			$articles = 'BORNES_INCORRECTES';
+		else {
+			$req = 'SELECT a.id AS id,
+						a.titre AS titre,
+						a.contenu AS contenu,
+						a.date_publication AS date_publication,
+						u.pseudo AS pseudo_utilisateur,
+						s.id AS id_section,
+						s.nom AS nom_section,
+						p.id AS id_pays,
+						p.nom AS nom_pays
+					FROM articles AS a
+					JOIN utilisateurs AS u ON a.id_utilisateur = u.id
+					JOIN sections_site AS s ON a.id_section = s.id
+					LEFT JOIN pays AS p ON a.id_pays = p.id
+					WHERE u.id = :id_utilisateur
+					LIMIT :position, :nombre';
+			$req = $this->bdd->prepare($req);
+			$req->bindValue('id_utilisateur', $id_utilisateur, PDO::PARAM_INT);
+			$req->bindValue('position', $position, PDO::PARAM_INT);
+			$req->bindValue('nombre', $nombre, PDO::PARAM_INT);
+			$req->execute();
+
+			$articles = [];
+			foreach ($req->fetchAll(PDO::FETCH_ASSOC) as $a) {
+				$u = new Utilisateur($id_utilisateur, $a['pseudo_utilisateur'], null);
+				$s = new Section($a['id_section'], $a['nom_section']);
+				$p = new Pays($a['id_pays'], $a['nom_pays']);
+				$article = new Article($a['id'], $a['titre'], $s, $a['contenu'], $a['date_publication'], $u, $p);
+
+				$articles[] = $article;
+			}
+		}
+
+		return $articles;
+	}
+
 	// Afficher [nombre] articles à partir de [position] du pays [id_pays]
 	function afficher_liste_pays($position, $nombre, $id_pays) {
 		// Convertir les paramètres en nombre et vérifier qu'ils sont positifs

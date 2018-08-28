@@ -182,12 +182,12 @@ class UtilisateurManager {
 		return $utilisateurs;
 	}
 
-	// Connexion d'un utilisateur qui fournit son pseudo et son mot de passe
-	function connexion ($pseudo, $mot_de_passe) {
+	// Connexion d'un utilisateur qui fournit son mail et son mot de passe
+	function connecter ($mail, $mot_de_passe) {
 		// Récupérer les informations correspondant au pseudo entré
-		$req = 'SELECT id, mot_de_passe, mail FROM utilisateurs WHERE pseudo = :pseudo';
+		$req = 'SELECT id, mot_de_passe, pseudo FROM utilisateurs WHERE mail = :mail';
 		$req = $this->bdd->prepare($req);
-		$req->bindValue('pseudo', $pseudo);
+		$req->bindValue('mail', $mail);
 		$req->execute();
 		$req = $req->fetch(PDO::FETCH_ASSOC);
 
@@ -199,7 +199,7 @@ class UtilisateurManager {
 			$reponse = false;
 		else {
 			// Créer un objet utilisateur et le stocker en variable de session
-			$utilisateur = new Utilisateur($req['id'], $pseudo, $req['mail']);
+			$utilisateur = new Utilisateur($req['id'], $req['pseudo'], $mail);
 			
 			$_SESSION['utilisateur'] = $utilisateur;
 
@@ -210,7 +210,7 @@ class UtilisateurManager {
 	}
 
 	// Déconnexion de l'utilisateur
-	function deconnexion () {
+	function deconnecter () {
 		unset($_SESSION['utilisateur']);
 	}
 
