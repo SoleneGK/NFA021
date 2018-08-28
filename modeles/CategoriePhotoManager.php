@@ -3,8 +3,8 @@
 class CategoriePhotoManager {
 	public $bdd;
 
-	function __construct() {
-		$this->bdd = Bdd::Connexion();
+	function __construct($bdd) {
+		$this->bdd = $bdd;
 	}
 
 	// Obtenir les informations sur une catégorie à partir de son id

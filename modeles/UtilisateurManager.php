@@ -18,8 +18,8 @@ class UtilisateurManager {
 
 	public $bdd;
 
-	function __construct() {
-		$this->bdd = Bdd::Connexion();
+	function __construct($bdd) {
+		$this->bdd = $bdd;
 	}
 
 	// Vérifier qu'il n'existe pas d'enregisterement de la table utilisateurs ayant la valeur $valeur dans le champ $champ
@@ -306,7 +306,7 @@ class UtilisateurManager {
 		else {
 			$req = 'UPDATE utilisateurs SET mot_de_passe = :mot_de_passe, code_recuperation = null, date_expiration_code = null WHERE mail = :mail';
 			$req = $this->bdd->prepare($req);
-			$req->bindValue('mot_de_passe', $mot_de_passe_1);
+			$req->bindValue('mot_de_passe', password_hash($mot_de_passe_1, PASSWORD_DEFAULT));
 			$req->bindValue('mail', $mail);
 			$req = $req->execute();
 

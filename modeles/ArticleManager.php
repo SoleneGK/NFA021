@@ -3,8 +3,8 @@
 class ArticleManager {
 	public $bdd;
 
-	function __construct() {
-		$this->bdd = Bdd::Connexion();
+	function __construct($bdd) {
+		$this->bdd = $bdd;
 	}
 
 	// Ajouter un article (politique ou voyage)

@@ -3,8 +3,8 @@
 class PaysManager {
 	public $bdd;
 
-	function __construct() {
-		$this->bdd = Bdd::Connexion();
+	function __construct($bdd) {
+		$this->bdd = $bdd;
 	}
 
 	// Obtenir les informations sur un pays à partir de son id

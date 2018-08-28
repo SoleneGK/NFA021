@@ -3,8 +3,8 @@
 class PhotoManager {
 	public $bdd;
 
-	function __construct() {
-		$this->bdd = Bdd::Connexion();
+	function __construct($bdd) {
+		$this->bdd = $bdd;
 	}
 
 	// Ajouter une photo
