@@ -9,7 +9,7 @@ class ArticleManager {
 
 	/* Obtenir la liste des articles d'un utilisateur
 	 * Afficher NOMBRE_ARTICLES_PAR_PAGE à partir du n° $position
-	*/
+	 */
 	function afficher_articles_utilisateur(Utilisateur $utilisateur, $position) {
 		$req = 'SELECT a.id AS id,
 						a.titre AS titre,

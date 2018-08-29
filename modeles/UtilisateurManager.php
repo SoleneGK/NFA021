@@ -15,7 +15,7 @@ class UtilisateurManager {
 	/* Récupérer le pseudo et le mail d'un utilisateur identifié par son id
 	 * Renvoie un objet Utilisateur s'il existe
 	 * Renvoie false sinon
-	*/
+	 */
 	function obtenir_utilisateur ($id) {
 		$req = 'SELECT pseudo, mail FROM utilisateurs WHERE id = :id';
 		$req = $this->bdd->prepare($req);
