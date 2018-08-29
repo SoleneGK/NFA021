@@ -6,7 +6,7 @@ session_start();
 
 $bdd = new Bdd();
 
-define('NOMBRE_ARTICLES_PAR_PAGE', 5);
+define('NOMBRE_ARTICLES_PAR_PAGE', 2);
 
 if (!isset($_GET['section'])) {
 	$controleur = new AccueilControleur();
@@ -33,14 +33,52 @@ else {
 			$controleur->afficher_liste();
 		}
 	}
+
 	elseif ($_GET['section'] == 'politique') {
-		echo $_GET['section'];
+		/* Formes de l'URL :
+		 * index.php?section=politique
+		 * index.php?section=politique&page=[numero]
+		 * index.php?section=politique&id=[id]
+		 */
+
+		$controleur = new ArticleControleur($bdd->bdd);
+
+		if (isset($_GET['page']))
+			$controleur->afficher_liste_articles_section(Article::POLITIQUE, $_GET['page']);
+		elseif (isset($_GET['id']))
+			$controleur->afficher_article($_GET['id'], Article::POLITIQUE);
+		else
+			$controleur->afficher_liste_articles_section(Article::POLITIQUE);
+
 	}
-	elseif ($_GET['section'] == 'voyages') {
-		echo $_GET['section'];
+
+	elseif ($_GET['section'] == 'voyage') {
+		/* Formes de l'URL :
+		 * index.php?section=voyage
+		 * index.php?section=voyage&page=[numero]
+		 * index.php?section=voyage&id=[id]
+		 * index.php?section=voyage&pays=[id]
+		 * index.php?section=voyage&pays=[id]&page=[numero]
+		 */
+
+		$controleur = new ArticleControleur($bdd->bdd);
+
+		if (isset($_GET['id']))
+			$controleur->afficher_article($_GET['id'], Article::VOYAGE);
+		elseif (isset($_GET['pays'])) {
+			if (isset($_GET['page']))
+				$controleur->afficher_liste_articles_pays($_GET['pays'], $_GET['page']);
+			else
+				$controleur->afficher_liste_articles_pays($_GET['pays']);
+		}
+		elseif (isset($_GET['page']))
+			$controleur->afficher_liste_articles_section(Article::VOYAGE, $_GET['page']);
+		else
+			$controleur->afficher_liste_articles_section(Article::VOYAGE);
 	}
+
 	elseif ($_GET['section'] == 'utilisateur') {
-		/* Forme de l'URL :
+		/* Formes de l'URL :
 		 * index.php?section=utilisateur&id=[id]
 		 * index.php?section=utilisateur&id=[id]&page=[numero]
 		 */
@@ -59,6 +97,7 @@ else {
 		}
 
 	}
+
 	else {
 		$accueil = new AccueilControleur();
 		$accueil->index();

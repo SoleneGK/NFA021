@@ -11,7 +11,7 @@ class CategoriePhotoManager {
 	 * Renvoie un array d'objets CategoriePhoto
 	 */
 	function obtenir_liste() {
-		$req = 'SELECT id, nom, description FROM categories_photos';
+		$req = 'SELECT id, nom, description FROM categories_photos ORDER BY id';
 		$req = $this->bdd->prepare($req);
 		$req->execute();
 

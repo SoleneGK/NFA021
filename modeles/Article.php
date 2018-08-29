@@ -1,6 +1,9 @@
 <?php
 
 class Article {
+	const POLITIQUE = 2;
+	const VOYAGE = 3;
+	
 	public $id;
 	public $titre;
 	public $section;

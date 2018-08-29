@@ -11,7 +11,7 @@ class PhotoManager {
 	 * Renvoie un objet Photo si elle existe
 	 * Renvoie false sinon
 	 */
-	function obtenir_photo ($id) {
+	function obtenir_photo($id) {
 		$req = 'SELECT p.titre AS titre,
 					p.nom_fichier AS nom_fichier,
 					p.description AS description,
@@ -57,6 +57,7 @@ class PhotoManager {
 				FROM photos AS p
 				JOIN utilisateurs AS u ON p.id_utilisateur = u.id
 				JOIN categories_photos AS c ON p.id_categorie = c.id
+				ORDER BY p.id
 				WHERE c.id = :id';
 		$req = $this->bdd->prepare($req);
 		$req->bindValue('id', $categorie->id, PDO::PARAM_INT);
