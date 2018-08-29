@@ -6,9 +6,29 @@ session_start();
 
 $bdd = new Bdd();
 
-$a = new ArticleManager($bdd->bdd);
-$b = new CategoriePhotoManager($bdd->bdd);
+define('NOMBRE_ARTICLES_PAR_PAGE', 5);
 
-var_dump($b->afficher_tout());
+if (!isset($_GET['section'])) {
+	$accueil = new AccueilControleur();
+	$accueil->index();
+}
+else {
+	if ($_GET['section'] == 'photos') {
+		echo $_GET['section'];
+	}
+	elseif ($_GET['section'] == 'politique') {
+		echo $_GET['section'];
+	}
+	elseif ($_GET['section'] == 'voyages') {
+		echo $_GET['section'];
+	}
+	elseif ($_GET['section'] == 'utilisateur') {
+		echo $_GET['section'];
+	}
+	else {
+		$accueil = new AccueilControleur();
+		$accueil->index();
+	}
+}
 
 
