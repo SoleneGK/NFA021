@@ -13,7 +13,9 @@ if (!isset($_GET['section'])) {
 	$controleur->index();
 }
 else {
-	if ($_GET['section'] == 'photos') {
+	$section = strtolower($_GET['section']);
+
+	if ($section == 'photos') {
 		/* Forme de l'URL :
 		 * index.php?section=photos
 		 * index.php?section=photos&categorie=[id]
@@ -34,7 +36,7 @@ else {
 		}
 	}
 
-	elseif ($_GET['section'] == 'politique') {
+	elseif ($section == 'politique') {
 		/* Formes de l'URL :
 		 * index.php?section=politique
 		 * index.php?section=politique&page=[numero]
@@ -52,7 +54,7 @@ else {
 
 	}
 
-	elseif ($_GET['section'] == 'voyage') {
+	elseif ($section == 'voyage') {
 		/* Formes de l'URL :
 		 * index.php?section=voyage
 		 * index.php?section=voyage&page=[numero]
@@ -77,19 +79,19 @@ else {
 			$controleur->afficher_liste_articles_section(Article::VOYAGE);
 	}
 
-	elseif ($_GET['section'] == 'utilisateur') {
+	elseif ($section == 'utilisateur') {
 		/* Formes de l'URL :
 		 * index.php?section=utilisateur&id=[id]
 		 * index.php?section=utilisateur&id=[id]&page=[numero]
 		 */
 
 		if (isset($_GET['id'])) {
-			$controleur = new UtilisateurControleur($bdd->$bdd);
+			$controleur = new ArticleControleur($bdd->bdd);
 
 			if (isset($_GET['page']))
-				$controleur->afficher_articles($_GET['id'], $_GET['page']);
+				$controleur->afficher_liste_articles_utilisateur($_GET['id'], $_GET['page']);
 			else
-				$controleur->afficher_articles($_GET['id']);
+				$controleur->afficher_liste_articles_utilisateur($_GET['id']);
 		}
 		else {
 			$controleur = new AccueilControleur();

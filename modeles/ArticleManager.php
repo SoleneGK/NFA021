@@ -54,6 +54,46 @@ class ArticleManager {
 		return $article;
 	}
 
+	/* Obtenir les informations sur l'article suivant celui identifié par l'id, et qui appartient à la même section
+	 * Renvoie un objet Article s'il existe
+	 * Renvoie false sinon
+	 */
+	function obtenir_article_suivant($id, $id_section) {
+		$req = 'SELECT id, titre FROM articles WHERE id > :id AND id_section = :id_section ORDER BY id LIMIT 1';
+		$req = $this->bdd->prepare($req);
+		$req->bindValue('id', $id, PDO::PARAM_INT);
+		$req->bindValue('id_section', $id_section, PDO::PARAM_INT);
+		$req->execute();
+		$req = $req->fetch(PDO::FETCH_ASSOC);
+
+		if (!$req)
+			$article = false;
+		else
+			$article = new Article($req['id'], $req['titre'], $id_section);
+
+		return $article;
+	}
+
+	/* Obtenir les informations sur l'article précédent celui identifié par l'id, et qui appartient à la même section
+	 * Renvoie un objet Article s'il existe
+	 * Renvoie false sinon
+	 */
+	function obtenir_article_precedent($id, $id_section) {
+		$req = 'SELECT id, titre FROM articles WHERE id < :id AND id_section = :id_section ORDER BY id DESC LIMIT 1';
+		$req = $this->bdd->prepare($req);
+		$req->bindValue('id', $id, PDO::PARAM_INT);
+		$req->bindValue('id_section', $id_section, PDO::PARAM_INT);
+		$req->execute();
+		$req = $req->fetch(PDO::FETCH_ASSOC);
+
+		if (!$req)
+			$article = false;
+		else
+			$article = new Article($req['id'], $req['titre'], $id_section);
+
+		return $article;
+	}
+
 	/* Obtenir la liste des articles d'un utilisateur
 	 * Affiche NOMBRE_ARTICLES_PAR_PAGE à partir du n° $position
 	 * Renvoie un array de Article
@@ -90,6 +130,18 @@ class ArticleManager {
 			}
 
 		return $articles;
+	}
+
+	/* Obtenir le nombre d'articles d'un utilisateur
+	 * Renvoie un entier
+	 */
+	function nombre_articles_utilisateur(Utilisateur $utilisateur) {
+		$req = 'SELECT COUNT(id) FROM articles WHERE id_utilisateur = :id_utilisateur';
+		$req = $this->bdd->prepare($req);
+		$req->bindValue('id_utilisateur', $utilisateur->id, PDO::PARAM_INT);
+		$req->execute();
+		$req = $req->fetch(PDO::FETCH_NUM);
+		return $req[0];
 	}
 
 	/* Obtenir la liste des articles d'une section
@@ -132,6 +184,18 @@ class ArticleManager {
 		return $articles;
 	}
 
+	/* Obtenir le nonbre d'articles d'une section
+	 * Renvoie un entier
+	 */
+	function nombre_articles_section($id_section) {
+		$req = 'SELECT COUNT(id) FROM articles WHERE id_section = :id_section';
+		$req = $this->bdd->prepare($req);
+		$req->bindValue('id_section', $id_section, PDO::PARAM_INT);
+		$req->execute();
+		$req = $req->fetch(PDO::FETCH_NUM);
+		return $req[0];
+	}
+
 	/* Obtenir la liste des articles d'un pays
 	 * Affiche NOMBRE_ARTICLES_PAR_PAGE à partir du n° $position
 	 * Renvoie un array de Article
@@ -143,7 +207,7 @@ class ArticleManager {
 					a.contenu AS contenu,
 					a.date_publication AS date_publication,
 					u.id AS id_utilisateur,
-					u.pseudo AS pseudo_utilisateur
+					u.pseudo AS pseudo_utilisateur 
 				FROM articles AS a
 				JOIN utilisateurs AS u ON a.id_utilisateur = u.id
 				JOIN pays AS p ON a.id_pays = p.id
@@ -167,4 +231,17 @@ class ArticleManager {
 
 		return $articles;
 	}
+
+	/* Obtenir le nonbre d'articles d'un pays
+	 * Renvoie un entier
+	 */
+	function nombre_articles_pays($id_pays) {
+		$req = 'SELECT COUNT(id) FROM articles WHERE id_pays = :id_pays';
+		$req = $this->bdd->prepare($req);
+		$req->bindValue('id_pays', $id_pays, PDO::PARAM_INT);
+		$req->execute();
+		$req = $req->fetch(PDO::FETCH_NUM);
+		return $req[0];
+	}
+
 }
