@@ -9,7 +9,7 @@ class ArticleControleur {
 
 	function afficher_article($id_article, $id_section) {
 		$article_manager = new ArticleManager($this->bdd);
-		$article = $article_manager->obtenir_article((int)$id_article);
+		$article = $article_manager->obtenir_article((int)$id_article, (int)$id_section);
 
 		include 'vues/entete.php';
 
@@ -53,17 +53,25 @@ class ArticleControleur {
 	function afficher_liste_articles_pays($id_pays, $page = 1) {
 		include 'vues/entete.php';
 
-		$page = (int)$page;
-		if ($page <= 0)
-			$articles = [];
-		else {
-			// Obtenir la liste des articles
-			$article_manager = new ArticleManager($this->bdd);
-			// Position du 1er article = (n° page - 1) × nombre d'articles par page
-			$articles = $article_manager->obtenir_articles_pays($id_pays, ($page - 1) * NOMBRE_ARTICLES_PAR_PAGE);
-		}
+		// Vérifier que le pays existe
+		$pays_manager = new PaysManager($this->bdd);
+		$pays = $pays_manager->obtenir_pays((int)$id_pays);
 
-		include 'vues/article/afficher_liste_articles_pays.php';
+		if ($pays) {
+			$page = (int)$page;
+			if ($page <= 0)
+				$articles = [];
+			else {
+				// Obtenir la liste des articles
+				$article_manager = new ArticleManager($this->bdd);
+				// Position du 1er article = (n° page - 1) × nombre d'articles par page
+				$articles = $article_manager->obtenir_articles_pays($pays, ($page - 1) * NOMBRE_ARTICLES_PAR_PAGE);
+			}
+
+			include 'vues/article/afficher_liste_articles_pays.php';
+		}
+		else
+			include 'vues/pays/aucun_pays.php';
 
 		include 'vues/pieddepage.php';
 	}

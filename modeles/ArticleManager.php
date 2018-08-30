@@ -25,9 +25,14 @@ class ArticleManager {
 				JOIN utilisateurs AS u ON a.id_utilisateur = u.id
 				JOIN sections_site AS s ON a.id_section = s.id
 				LEFT JOIN pays AS p ON a.id_pays = p.id
-				WHERE a.id = :id';		
+				WHERE a.id = :id';
+		if ($id_section == Article::POLITIQUE || $id_section == Article::VOYAGE)
+			$req .= ' AND s.id = :id_section';
+
 		$req = $this->bdd->prepare($req);
 		$req->bindValue('id', $id, PDO::PARAM_INT);
+		if ($id_section == Article::POLITIQUE || $id_section == Article::VOYAGE)
+			$req->bindValue('id_section', $id_section, PDO::PARAM_INT);
 		$req->execute();
 		$req = $req->fetch(PDO::FETCH_ASSOC);
 
@@ -131,15 +136,14 @@ class ArticleManager {
 	 * Affiche NOMBRE_ARTICLES_PAR_PAGE à partir du n° $position
 	 * Renvoie un array de Article
 	 */
-	function obtenir_articles_pays($id_pays, $position) {
+	function obtenir_articles_pays(Pays $pays, $position) {
+		var_dump($pays->id);
 		$req = 'SELECT a.id AS id,
 					a.titre AS titre,
 					a.contenu AS contenu,
 					a.date_publication AS date_publication,
 					u.id AS id_utilisateur,
-					u.pseudo AS pseudo_utilisateur,
-					p.id AS id_pays,
-					p.nom AS nom_pays
+					u.pseudo AS pseudo_utilisateur
 				FROM articles AS a
 				JOIN utilisateurs AS u ON a.id_utilisateur = u.id
 				JOIN pays AS p ON a.id_pays = p.id
@@ -147,7 +151,7 @@ class ArticleManager {
 				ORDER BY a.id
 				LIMIT :position, :nombre';
 		$req = $this->bdd->prepare($req);
-		$req->bindValue('id_pays', $id_pays, PDO::PARAM_INT);
+		$req->bindValue('id_pays', $pays->id, PDO::PARAM_INT);
 		$req->bindValue('position', $position, PDO::PARAM_INT);
 		$req->bindValue('nombre', NOMBRE_ARTICLES_PAR_PAGE, PDO::PARAM_INT);
 		$req->execute();
@@ -156,8 +160,7 @@ class ArticleManager {
 		foreach ($req->fetchAll(PDO::FETCH_ASSOC) as $a) {
 			$u = new Utilisateur($a['id_utilisateur'], $a['pseudo_utilisateur'], null);
 			$s = new Section(Article::VOYAGE, 'Voyage');
-			$p = new Pays($id_pays, $a['nom_pays']);
-			$article = new Article($a['id'], $a['titre'], $s, $a['contenu'], $a['date_publication'], $u, $p);
+			$article = new Article($a['id'], $a['titre'], $s, $a['contenu'], $a['date_publication'], $u, $pays);
 
 			$articles[] = $article;
 		}
