@@ -46,4 +46,18 @@ class UtilisateurManager {
 
 		return $utilisateur;
 	}
+
+	/* Modifier le code de récupération de mot de passe et la date limite d'un utilisateur identifié par son mail
+	 * Renvoie le nombre de lignes modifiées
+	 */
+	function modifier_code_recuperation($mail, $code, $date_expiration) {
+		$req = 'UPDATE utilisateurs SET code_recuperation = :code, date_expiration_code = :date_expiration WHERE mail = :mail';
+		$req = $this->bdd->prepare($req);
+		$req->bindValue('code', $code);
+		$req->bindValue('date_expiration', $date_expiration, PDO::PARAM_INT);
+		$req->bindValue('mail', $mail);
+		$req->execute();
+
+		return $req->rowCount();
+	}
 }
