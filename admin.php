@@ -44,32 +44,42 @@ else {
 	else {
 		$section = strtolower($_GET['section']);
 
-		if ($section = 'politique') {
+		if ($section == 'politique') {
 			$controleur = new ArticleControleur($bdd->bdd);
 		}
 
-		elseif ($section = 'voyage') {
+		elseif ($section == 'voyage') {
 			$controleur = new ArticleControleur($bdd->bdd);
 		}
 
-		elseif ($section = 'pays') {
+		elseif ($section == 'pays') {
 			$controleur = new PaysControleur($bdd->bdd);
 		}
 
-		elseif ($section = 'photos') {
+		elseif ($section == 'photos') {
 			$controleur = new PhotoControleur($bdd->bdd);
 		}
 
-		elseif ($section = 'categories') {
+		elseif ($section == 'categories') {
 			$controleur = new CategoriePhotoControleur($bdd->bdd);
 		}
 
-		elseif ($section = 'utilisateur') {
+		elseif ($section == 'utilisateur') {
 			$controleur = new UtilisateurControleur($bdd->bdd);
 		}
 
-		elseif ($section = 'profil') {
+		// Forme de l'URL : index.php?section=profil
+		elseif ($section == 'profil') {
 			$controleur = new UtilisateurControleur($bdd->bdd);
+
+			// Forme de l'URL : index.php?section=profil&modifier
+			if (isset($_GET['modifier']))
+				$controleur->modifier_profil();
+			// Forme de l'URL : index.php?section=profil&modifier_mdp
+			elseif (isset($_GET['modifier_mdp']))
+				$controleur->modifier_mot_de_passe();
+			else
+				$controleur->afficher_profil();
 		}
 
 		else {

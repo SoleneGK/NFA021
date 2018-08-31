@@ -84,4 +84,42 @@ class UtilisateurManager {
 		$req->bindValue('id', $id, PDO::PARAM_INT);
 		return $req->execute();
 	}
+
+	/* Modifier le pseudo et le mail d'un utilisateur identifié par son id
+	 * Renvoie un booléen
+	 */
+	function changer_pseudo_mail($id, $pseudo, $mail) {
+		$req = 'UPDATE utilisateurs SET pseudo = :pseudo, mail = :mail WHERE id = :id';
+		$req = $this->bdd->prepare($req);
+		$req->bindValue('pseudo', $pseudo);
+		$req->bindValue('mail', $mail);
+		$req->bindValue('id', $id, PDO::PARAM_INT);
+		return $req->execute();
+	}
+
+	/* Vérifier qu'un pseudo et un mot de passe sont disponibles
+	 * Renvoie un array associatif de booleens
+	 * Clés : pseudo_dispo, mail_dispo
+	 */
+	function verifier_dispo_pseudo_mail($pseudo, $mail) {
+		$req = 'SELECT
+					!(SELECT COUNT(id) FROM utilisateurs WHERE pseudo = :pseudo) AS pseudo_dispo,
+					!(SELECT COUNT(id) FROM utilisateurs WHERE mail = :mail) AS mail_dispo';
+		$req = $this->bdd->prepare($req);
+		$req->bindValue('pseudo', $pseudo);
+		$req->bindValue('mail', $mail);
+		$req->execute();
+		return $req->fetch(PDO::FETCH_ASSOC);
+	}
+
+	/* Obtenir le mot de passe d'un utilisateur identifié par son id
+	 * Renvoie un string
+	 */
+	function obtenir_mot_de_passe($id) {
+		$req = 'SELECT mot_de_passe FROM utilisateurs WHERE id = :id';
+		$req = $this->bdd->prepare($req);
+		$req->bindValue('id', $id, PDO::PARAM_INT);
+		$req->execute();
+		return $req->fetch(PDO::FETCH_ASSOC)['mot_de_passe'];
+	}
 }
