@@ -10,11 +10,13 @@ class Utilisateur {
 	public $pseudo;
 	public $mail;
 	public $droits;
+	public $mot_de_passe;
 
-	function __construct($id, $pseudo, $mail, $droits = null) {
+	function __construct($id, $pseudo, $mail, $droits = null, $mot_de_passe = null) {
 		$this->id = $id;
 		$this->pseudo = $pseudo;
 		$this->mail = $mail;
 		$this->droits = $droits;
+		$this->mot_de_passe = $mot_de_passe;
 	}
 }

@@ -8,7 +8,12 @@ class AccueilControleur {
 	}
 
 	function afficher_menu_connexion() {
-		var_dump(__FUNCTION__);
+		include 'vues/entete.php';
+		// Afficher un message d'erreur en cas de tentative de connexion échouée
+		if (isset($_POST['mail_connexion']) && isset($_POST['connexion_mot_de_passe']))
+			include 'vues/accueil/echec_connexion.php';
+		include 'vues/accueil/menu_connexion.php';
+		include 'vues/pieddepage.php';
 	}
 
 	function afficher_menu_mot_de_passe_oublie() {
@@ -20,6 +25,8 @@ class AccueilControleur {
 	}
 
 	function afficher_accueil_admin() {
-		var_dump(__FUNCTION__);
+		include 'vues/entete.php';
+		include 'vues/accueil/index_admin.php';
+		include 'vues/pieddepage.php';
 	}
 }

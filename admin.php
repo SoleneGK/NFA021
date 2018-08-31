@@ -8,6 +8,18 @@ $bdd = new Bdd();
 
 define('NOMBRE_ARTICLES_PAR_PAGE', 2);
 
+// Traitement des demandes de connexion
+if (!isset($_SESSION['utilisateur']) && isset($_POST['mail_connexion']) && isset($_POST['mot_de_passe_connexion'])) {
+	$connexion = new UtilisateurControleur($bdd->bdd);
+	$connexion->connecter($_POST['mail_connexion'], $_POST['mot_de_passe_connexion']);
+}
+
+// Traitement des demandes de déconnexion
+if (isset($_POST['deconnexion'])) {
+	$connexion = new UtilisateurControleur($bdd->bdd);
+	$connexion->deconnecter();
+}
+
 // S'il n'y a pas d'utilisateur connecté, l'accès est autorisé uniquement à la page de connexion et à celle de récupération du mot de passe
 if (!isset($_SESSION['utilisateur'])) {
 	$controleur = new AccueilControleur($bdd->bdd);
