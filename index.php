@@ -9,7 +9,7 @@ $bdd = new Bdd();
 define('NOMBRE_ARTICLES_PAR_PAGE', 2);
 
 if (!isset($_GET['section'])) {
-	$controleur = new AccueilControleur();
+	$controleur = new AccueilControleur($bdd->bdd);
 	$controleur->index();
 }
 else {

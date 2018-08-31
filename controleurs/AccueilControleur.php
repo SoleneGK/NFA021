@@ -24,7 +24,6 @@ class AccueilControleur {
 
 	function afficher_demander_mot_de_passe_perdu() {
 		include 'vues/entete.php';
-		var_dump($_GET);
 
 		if (isset($_POST['mail_mdp_perdu'])) {
 			include 'vues/accueil/mdp_perdu_envoi_mail.php';
@@ -52,7 +51,34 @@ class AccueilControleur {
 	}
 
 	function afficher_modifier_mot_de_passe_perdu() {
-		var_dump(__FUNCTION__);
+		// Récupérer les informations correspondants à l'email fourni
+		$utilisateurManager = new UtilisateurManager($this->bdd);
+		$infos = $utilisateurManager->obtenir_code_recuperation($_GET['mail']);
+
+		include 'vues/entete.php';
+
+		// S'il n'y a pas d'utilisateur avec ce mail ou que le code n'est pas bon
+		if (!$infos || $infos['code_recuperation'] != $_GET['code'])
+			include 'vues/accueil/infos_recuperation_incorrectes.php';
+		elseif ($infos['date_expiration_code'] < time())
+			include 'vues/accueil/infos_recuperation_expirees.php';
+		// Si un mot de passe a été saisi avec le formulaire
+		elseif (isset($_POST['mot_de_passe_1']) && isset($_POST['mot_de_passe_2'])) {
+			if ($_POST['mot_de_passe_1'] == $_POST['mot_de_passe_2']) {
+				$utilisateurManager->changer_mot_de_passe($infos['id'], password_hash($_POST['mot_de_passe_1'], PASSWORD_DEFAULT));
+				$utilisateurManager->modifier_code_recuperation($_GET['mail'], null, null);
+				include 'vues/accueil/mdp_perdu_change.php';
+				include 'vues/accueil/menu_connexion.php';
+			}
+			else {
+				include 'vues/accueil/mpd_perdu_differents.php';
+				include 'vues/accueil/mdp_perdu_saisir_mdp.php';
+			}
+		}
+		else
+			include 'vues/accueil/mdp_perdu_saisir_mdp.php';
+
+		include 'vues/pieddepage.php';
 	}
 
 	function afficher_accueil_admin() {

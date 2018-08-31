@@ -60,4 +60,28 @@ class UtilisateurManager {
 
 		return $req->rowCount();
 	}
+
+	/* Récupérer l'id, le code de récupération de mot de passe et la date limite d'un utilisateur identifié par son mail
+	 * Renvoie un array associatif avec les clés id, code_recuperation et date_expiration_code s'il existe
+	 * Renvoie null sinon
+	 */
+	function obtenir_code_recuperation($mail) {
+		$req = 'SELECT id, code_recuperation, date_expiration_code FROM utilisateurs WHERE mail = :mail';
+		$req = $this->bdd->prepare($req);
+		$req->bindValue('mail', $mail);
+		$req->execute();
+		return $req->fetch(PDO::FETCH_ASSOC);
+	}
+
+	/* Modifier le mot de passe d'un utilisateur identifié par son id
+	 * Le mot de passe en paramètre doit être crypté
+	 * Renvoie un booléen
+	 */
+	function changer_mot_de_passe($id, $mot_de_passe) {
+		$req = 'UPDATE utilisateurs SET mot_de_passe = :mot_de_passe WHERE id = :id';
+		$req = $this->bdd->prepare($req);
+		$req->bindValue('mot_de_passe', $mot_de_passe);
+		$req->bindValue('id', $id, PDO::PARAM_INT);
+		return $req->execute();
+	}
 }
