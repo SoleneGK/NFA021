@@ -165,4 +165,34 @@ class UtilisateurManager {
 			$req->execute();
 		}
 	}
+
+	/* Obtenir la liste des utilisateurs
+	 * Affiche NOMBRE_UTILISATEURS_PAR_PAGE à partir du n° $position
+	 * Renvoie un array de Utilisateurs
+	 */
+	function obtenir_liste_utilisateurs($position) {
+		$req = 'SELECT id, pseudo, mail FROM utilisateurs ORDER BY id LIMIT :position, :nombre';
+		$req = $this->bdd->prepare($req);
+		$req->bindValue('position', $position, PDO::PARAM_INT);
+		$req->bindValue('nombre', NOMBRE_UTILISATEURS_PAR_PAGE, PDO::PARAM_INT);
+		$req->execute();
+
+		$utilisateurs = [];
+		foreach ($req->fetchAll(PDO::FETCH_ASSOC) as $ligne) {
+			$u = new Utilisateur($ligne['id'], $ligne['pseudo'], $ligne['mail'], $this->obtenir_droits($ligne['id']));
+			$utilisateurs[] = $u;
+		}
+
+		return $utilisateurs;
+	}
+
+	/* Renvoie le nombre d'utilisateurs
+	 */
+	function nombre_utilisateurs() {
+		$req = 'SELECT COUNT(id) FROM utilisateurs';
+		$req = $this->bdd->prepare($req);
+		$req->execute();
+		$req = $req->fetch(PDO::FETCH_NUM);
+		return $req[0];
+	}
 }

@@ -14,7 +14,7 @@ class ArticleControleur {
 	 * page_suivante => null si la page actuelle est la dernière, ou le numéro de la page
 	 * derniere_page => le numéro de la page
 	 */
-	function obtenir_numeros_pages($numero_page_actuelle, $nombre_articles) {
+	static function obtenir_numeros_pages($numero_page_actuelle, $nombre_articles) {
 		$numeros['premiere_page'] = 1;
 		
 		if ($numero_page_actuelle == 1)
@@ -73,7 +73,7 @@ class ArticleControleur {
 			$articles = $article_manager->obtenir_articles_section($id_section, ($page - 1) * NOMBRE_ARTICLES_PAR_PAGE);
 
 			// Obtenir les numéros de page pour la navigation
-			$numeros_pages = $this->obtenir_numeros_pages($page, $article_manager->nombre_articles_section($id_section));
+			$numeros_pages = self::obtenir_numeros_pages($page, $article_manager->nombre_articles_section($id_section));
 		}
 
 		if ($id_section == Article::POLITIQUE)
@@ -102,7 +102,7 @@ class ArticleControleur {
 				$articles = $article_manager->obtenir_articles_pays($pays, ($page - 1) * NOMBRE_ARTICLES_PAR_PAGE);
 
 				// Obtenir les numéros de page pour la navigation
-				$numeros_pages = $this->obtenir_numeros_pages($page, $article_manager->nombre_articles_pays($id_pays));
+				$numeros_pages = self::obtenir_numeros_pages($page, $article_manager->nombre_articles_pays($id_pays));
 			}
 
 			include 'vues/article/afficher_liste_articles_pays.php';
@@ -135,7 +135,7 @@ class ArticleControleur {
 				$articles = $article_manager->obtenir_articles_utilisateur($utilisateur, ($page - 1) * NOMBRE_ARTICLES_PAR_PAGE);
 
 				// Obtenir les numéros de page pour la navigation
-				$numeros_pages = $this->obtenir_numeros_pages($page, $article_manager->nombre_articles_utilisateur($utilisateur));
+				$numeros_pages = self::obtenir_numeros_pages($page, $article_manager->nombre_articles_utilisateur($utilisateur));
 			}
 
 			include 'vues/article/afficher_liste_articles_utilisateur.php';

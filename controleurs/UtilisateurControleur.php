@@ -139,4 +139,23 @@ class UtilisateurControleur {
 		include 'vues/utilisateur/ajouter_utilisateur.php';
 		include 'vues/pieddepage.php';
 	}
+
+	function afficher_liste_utilisateurs($page = 1) {
+		include 'vues/entete.php';
+
+		$page = (int)$page;
+		if ($page <= 0)
+			$utilisateurs = [];
+		else {
+			$utilisateur_manager = new UtilisateurManager($this->bdd);
+			// Position du 1er utilisateur = (n° page - 1) × nombre d'articles par page
+			$utilisateurs = $utilisateur_manager->obtenir_liste_utilisateurs(($page - 1) * NOMBRE_UTILISATEURS_PAR_PAGE);
+
+			// Obtenir les numéros de page pour la navigation
+			$numeros_pages = ArticleControleur::obtenir_numeros_pages($page, $utilisateur_manager->nombre_utilisateurs());
+		}
+
+		include 'vues/utilisateur/affcher_liste.php';
+		include 'vues/pieddepage.php';
+	}
 }

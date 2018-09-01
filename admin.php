@@ -7,6 +7,7 @@ session_start();
 $bdd = new Bdd();
 
 define('NOMBRE_ARTICLES_PAR_PAGE', 2);
+define('NOMBRE_UTILISATEURS_PAR_PAGE', 2);
 
 // Traitement des demandes de connexion
 if (!isset($_SESSION['utilisateur']) && isset($_POST['mail_connexion']) && isset($_POST['mot_de_passe_connexion'])) {
@@ -82,10 +83,10 @@ else {
 				}
 				// Forme de l'URL : index.php?section=utilisateur&page=[numero]
 				elseif (isset($_GET['page'])) {
-
+					$controleur->afficher_liste_utilisateurs((int)$_GET['page']);
 				}
 				else {
-
+					$controleur->afficher_liste_utilisateurs();
 				}
 			}
 			else {
