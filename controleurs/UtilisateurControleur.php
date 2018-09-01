@@ -41,26 +41,26 @@ class UtilisateurControleur {
 		if (isset($_POST['pseudo']) && isset($_POST['mail'])) {
 			$message = '';
 			$effectuer_requete = false;
-			$pseudo = $_SESSION['utilisateur']->pseudo;
-			$mail = $_SESSION['utilisateur']->mail;
+			$nouveau_pseudo = $_SESSION['utilisateur']->pseudo;
+			$nouveau_mail = $_SESSION['utilisateur']->mail;
 
 			$utilisateur_manager = new UtilisateurManager($this->bdd);
 			$dispo = $utilisateur_manager->verifier_dispo_pseudo_mail($_POST['pseudo'], $_POST['mail']);
 
-			if ($_POST['pseudo'] != $pseudo) {
+			if ($_POST['pseudo'] != $nouveau_pseudo) {
 				if ($dispo['pseudo_dispo']) {
 					$message .= '<p>Le pseudo a été modifié</p>';
-					$pseudo = $_POST['pseudo'];
+					$nouveau_pseudo = $_POST['pseudo'];
 					$effectuer_requete = true;
 				}
 				else
 					$message .= '<p>Pseudo non disponible</p>';
 			}
 
-			if ($_POST['mail'] != $mail) {
+			if ($_POST['mail'] != $nouveau_mail) {
 				if ($dispo['mail_dispo']) {
 					$message .= '<p>Le mail a été modifié</p>';
-					$mail = $_POST['mail'];
+					$nouveau_mail = $_POST['mail'];
 					$effectuer_requete = true;
 				}
 				else
@@ -68,7 +68,7 @@ class UtilisateurControleur {
 			}
 
 			if ($effectuer_requete) {
-				$utilisateur_manager->changer_pseudo_mail($_SESSION['utilisateur']->id, $pseudo, $mail);
+				$utilisateur_manager->changer_pseudo_mail($_SESSION['utilisateur']->id, $nouveau_pseudo, $nouveau_mail);
 				$_SESSION['utilisateur'] = $utilisateur_manager->obtenir_utilisateur($_SESSION['utilisateur']->id);
 			}
 		}
@@ -156,6 +156,97 @@ class UtilisateurControleur {
 		}
 
 		include 'vues/utilisateur/affcher_liste.php';
+		include 'vues/pieddepage.php';
+	}
+
+	function afficher_utilisateur($id) {
+		// Récupérer les informations de l'utilisateur
+		$utilisateur_manager = new UtilisateurManager($this->bdd);
+		$utilisateur = $utilisateur_manager->obtenir_utilisateur($id);
+
+		include 'vues/entete.php';
+
+		if (!$utilisateur)
+			include 'vues/utilisateur/aucun_utilisateur_admin.php';
+		else {
+			$droits = $utilisateur_manager->obtenir_droits($id);
+			$message = '';
+
+			// Modification du pseudo et du mot de passe si demandé
+			if (isset($_POST['pseudo']) && isset($_POST['mail'])) {
+				$nouveau_pseudo = $utilisateur->pseudo;
+				$nouveau_mail = $utilisateur->mail;
+				$effectuer_requete = false;
+
+				$dispo = $utilisateur_manager->verifier_dispo_pseudo_mail($_POST['pseudo'], $_POST['mail']);
+
+				if ($_POST['pseudo'] != $nouveau_pseudo) {
+					if ($dispo['pseudo_dispo']) {
+						$message .= '<p>Le pseudo a été modifié</p>';
+						$nouveau_pseudo = $_POST['pseudo'];
+						$effectuer_requete = true;
+					}
+					else
+						$message .= '<p>Pseudo non disponible</p>';
+				}
+
+				if ($_POST['mail'] != $nouveau_mail) {
+					if ($dispo['mail_dispo']) {
+						$message .= '<p>Le mail a été modifié</p>';
+						$nouveau_mail = $_POST['mail'];
+						$effectuer_requete = true;
+					}
+					else
+						$message .= '<p>Mail non disponible</p>';
+				}
+
+				if ($effectuer_requete) {
+					$utilisateur_manager->changer_pseudo_mail($utilisateur->id, $nouveau_pseudo, $nouveau_mail);
+					$utilisateur->pseudo = $nouveau_pseudo;
+					$utilisateur->mail = $nouveau_mail;
+				}
+			}
+
+			// Modification des droits si demandé
+			elseif (isset($_POST[0]) && isset($_POST[1]) && isset($_POST[2]) && isset($_POST[3])) {
+				$types_droits = [Utilisateur::MODERATEUR, Utilisateur::CONTRIBUTEUR, Utilisateur::SANS_DROIT];
+				$effectuer_requete = false;
+
+				$nouveaux_droits[0] = $droits[0];
+				if ($_POST[0] != $droits[0]) {
+					if ($_POST[0] == Utilisateur::ADMIN || $_POST[0] == Utilisateur::SANS_DROIT) {
+						$nouveaux_droits[0] = $_POST[0];
+						$effectuer_requete = true;
+					}
+					else {
+						$message .= '<p>Valeur non trouvée, arrêtez de faire joujou avec ce formulaire</p>';
+					}
+				}
+
+				for ($i = 1 ; $i < 4 ; $i++) {
+					$nouveaux_droits[$i] = $droits[$i];
+
+					if ($_POST[$i] != $droits[$i]) {
+						if (in_array($_POST[$i], $types_droits)) {
+							$nouveaux_droits[$i] = $_POST[$i];
+							$effectuer_requete = true;
+						}
+						else
+							$message .= '<p>Valeur non trouvée, arrêtez de faire joujou avec ce formulaire</p>';
+					}
+				}
+
+				if ($effectuer_requete) {
+					$utilisateur_manager->modifier_droits($utilisateur->id, $nouveaux_droits);
+					$droits = $nouveaux_droits;
+					$message .= '<p>Droits mis à jour</p>';
+				}
+			}
+
+			include 'vues/utilisateur/afficher_utilisateur.php';
+		}
+
+
 		include 'vues/pieddepage.php';
 	}
 }

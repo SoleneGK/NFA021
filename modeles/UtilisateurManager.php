@@ -195,4 +195,20 @@ class UtilisateurManager {
 		$req = $req->fetch(PDO::FETCH_NUM);
 		return $req[0];
 	}
+
+	/* Mettre à jour la liste des droits d'un utilisateur identifié par son id
+	 * $droits doit être un tableau associatif
+	 * Ne renvoie rien
+	 */
+	function modifier_droits($id_utilisateur, $droits) {
+		$req = 'UPDATE liste_droits SET type_droit = :type_droit WHERE id_utilisateur = :id_utilisateur AND id_section = :id_section';
+		$req = $this->bdd->prepare($req);
+		$req->bindValue('id_utilisateur', $id_utilisateur, PDO::PARAM_INT);
+
+		for ($i = 0 ; $i < 4 ; $i++) {
+			$req->bindValue('type_droit', $droits[$i], PDO::PARAM_INT);
+			$req->bindValue('id_section', $i, PDO::PARAM_INT);
+			$req->execute();
+		}
+	}
 }

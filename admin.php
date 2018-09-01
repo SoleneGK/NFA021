@@ -79,11 +79,11 @@ else {
 				}
 				// Forme de l'URL : index.php?section=utilisateur&id=[id]
 				elseif (isset($_GET['id'])) {
-
+					$controleur->afficher_utilisateur($_GET['id']);
 				}
 				// Forme de l'URL : index.php?section=utilisateur&page=[numero]
 				elseif (isset($_GET['page'])) {
-					$controleur->afficher_liste_utilisateurs((int)$_GET['page']);
+					$controleur->afficher_liste_utilisateurs($_GET['page']);
 				}
 				else {
 					$controleur->afficher_liste_utilisateurs();
