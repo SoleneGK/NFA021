@@ -122,4 +122,47 @@ class UtilisateurManager {
 		$req->execute();
 		return $req->fetch(PDO::FETCH_ASSOC)['mot_de_passe'];
 	}
+
+	/* Obtenir les droits d'un utilisateur identifié par son id
+	 * Renvoie un tableau associatif
+	 */
+	function obtenir_droits($id) {
+		$req = 'SELECT id_section, type_droit FROM liste_droits WHERE id_utilisateur = :id';
+		$req = $this->bdd->prepare($req);
+		$req->bindValue('id', $id, PDO::PARAM_INT);
+		$req->execute();
+
+		$droits = [];
+		foreach($req->fetchAll(PDO::FETCH_ASSOC) as $droit)
+			$droits[$droit['id_section']] = $droit['type_droit'];
+
+		return $droits;
+	}
+
+	/* Ajouter un utilisateur
+	 * Renvoie l'id de l'utilisateur créé en cas de réussite
+	 * Renvoie null sinon
+	 */
+	function ajouter_utilisateur($pseudo, $mail, $mot_de_passe) {
+		$req = 'INSERT INTO utilisateurs (pseudo, mot_de_passe, mail) VALUES (:pseudo, :mot_de_passe, :mail)';
+		$req = $this->bdd->prepare($req);
+		$req->bindValue('pseudo', $pseudo);
+		$req->bindValue('mot_de_passe', $mot_de_passe);
+		$req->bindValue('mail', $mail);
+		$req->execute();
+		return $this->bdd->lastInsertId();
+	}
+
+	/* Initialise les droits d'un utilisateur à 0 pour toutes les sections
+	 */
+	function ajouter_droits($id) {
+		$req = 'INSERT INTO liste_droits(id_utilisateur, id_section, type_droit) VALUES (:id, :section, '.Utilisateur::SANS_DROIT.')';
+		$req = $this->bdd->prepare($req);
+		$req->bindValue('id', $id, PDO::PARAM_INT);
+
+		for ($i = 0 ; $i < 4 ; $i++) {
+			$req->bindValue('section', $i, PDO::PARAM_INT);
+			$req->execute();
+		}
+	}
 }

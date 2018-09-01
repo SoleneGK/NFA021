@@ -44,6 +44,9 @@ else {
 	else {
 		$section = strtolower($_GET['section']);
 
+		$utilisateur_manager = new UtilisateurManager($bdd->bdd);
+		$droits_utilisateur = $utilisateur_manager->obtenir_droits($_SESSION['utilisateur']->id);
+
 		if ($section == 'politique') {
 			$controleur = new ArticleControleur($bdd->bdd);
 		}
@@ -64,8 +67,31 @@ else {
 			$controleur = new CategoriePhotoControleur($bdd->bdd);
 		}
 
+		// Forme de l'URL : index.php?section=utilisateur
 		elseif ($section == 'utilisateur') {
-			$controleur = new UtilisateurControleur($bdd->bdd);
+			if ($droits_utilisateur[Section::TOUT] == Utilisateur::ADMIN) {
+				$controleur = new UtilisateurControleur($bdd->bdd);
+
+				// Forme de l'URL : index.php?section=utilisateur&ajouter
+				if (isset($_GET['ajouter'])) {
+					$controleur->ajouter_utilisateur();
+				}
+				// Forme de l'URL : index.php?section=utilisateur&id=[id]
+				elseif (isset($_GET['id'])) {
+
+				}
+				// Forme de l'URL : index.php?section=utilisateur&page=[numero]
+				elseif (isset($_GET['page'])) {
+
+				}
+				else {
+
+				}
+			}
+			else {
+				$controleur = new AccueilControleur($bdd->bdd);
+				$controleur->afficher_accueil_admin();
+			}
 		}
 
 		// Forme de l'URL : index.php?section=profil

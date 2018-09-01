@@ -98,4 +98,45 @@ class UtilisateurControleur {
 		include 'vues/utilisateur/modifier_mot_de_passe.php';
 		include 'vues/pieddepage.php';
 	}
+
+	function ajouter_utilisateur() {
+		include 'vues/entete.php';
+
+		if (isset($_POST['pseudo']) && isset($_POST['mail_1']) && isset($_POST['mail_2'])) {
+
+			if ($_POST['mail_1'] != $_POST['mail_2'])
+				$message = '<p>Les mails sont différents</p>';
+			else {
+				$utilisateur_manager = new UtilisateurManager($this->bdd);
+				$dispo = $utilisateur_manager->verifier_dispo_pseudo_mail($_POST['pseudo'], $_POST['mail_1']);
+
+				if (!$dispo['pseudo_dispo'])
+					$message = '<p>Pseudo non disponible</p>';
+				elseif (!$dispo['mail_dispo'])
+					$message = '<p>Mail non disponible</p>';
+				else {
+					$message = '<p>Compte créé</p>';
+
+					$mot_de_passe = uniqid();
+					$mot_de_passe_crypte = password_hash($mot_de_passe, PASSWORD_DEFAULT);
+
+					$id_utilisateur_cree = $utilisateur_manager->ajouter_utilisateur($_POST['pseudo'], $_POST['mail_1'], $mot_de_passe_crypte);
+
+					if ($id_utilisateur_cree) {
+						$objet = 'Création de compte sur le site projet NFA021';
+						$contenu = '<p>Votre compte sur le site projet NFA021 vient d\'être créé.</p>
+							<p>Voici le mot de passe pour vous connecter : '.$mot_de_passe.'<br />
+							Il est fortement conseillé d\'en changer dès votre première connexion.</p>
+							<p><a href="http://localhost/nfa021/admin.php">Accès au site</a></p>';
+						Mail::envoyer_mail($_POST['mail_1'], $objet, $contenu);
+
+						$utilisateur_manager->ajouter_droits($id_utilisateur_cree);				
+					}
+				}
+			}
+		}
+
+		include 'vues/utilisateur/ajouter_utilisateur.php';
+		include 'vues/pieddepage.php';
+	}
 }
