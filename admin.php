@@ -58,6 +58,7 @@ else {
 
 		elseif ($section == 'pays') {
 			$controleur = new PaysControleur($bdd->bdd);
+			$controleur->afficher_pays();
 		}
 
 		elseif ($section == 'photos') {
