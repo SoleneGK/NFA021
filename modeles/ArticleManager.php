@@ -244,4 +244,13 @@ class ArticleManager {
 		return $req[0];
 	}
 
+	/* Mettre à null le champ pays des articles dont le champ id_pays vaut $id_pays
+	 * Renvoie un booléen
+	 */
+	function supprimer_champ_pays($id_pays) {
+		$req = 'UPDATE articles SET id_pays = NULL WHERE id_pays = :id_pays';
+		$req = $this->bdd->prepare($req);
+		$req->bindValue('id_pays', $id_pays, PDO::PARAM_INT);
+		$req->execute();
+	}
 }

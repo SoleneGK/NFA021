@@ -21,6 +21,9 @@ class PaysControleur {
 			$message = '<p>Pays modifié</p>';
 		}
 		elseif (isset($_POST['supprimer']) && isset($_POST['id_pays'])) {
+			// Modifier les articles associés à ce pays
+			$article_manager = new ArticleManager($this->bdd);
+			$article_manager->supprimer_champ_pays($_POST['id_pays']);
 			$pays_manager->supprimer_pays((int)$_POST['id_pays']);
 			$message = '<p>Pays supprimé</p>';
 		}
