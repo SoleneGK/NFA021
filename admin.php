@@ -56,27 +56,45 @@ else {
 			$controleur = new ArticleControleur($bdd->bdd);
 		}
 
+		// Forme de l'URL : index.php?section=pays
 		elseif ($section == 'pays') {
-			$controleur = new PaysControleur($bdd->bdd);
-			$controleur->afficher_pays();
+			if ($droits_utilisateur[Section::TOUT] == Utilisateur::ADMIN) {
+				$controleur = new PaysControleur($bdd->bdd);
+				$controleur->afficher_pays();
+			}
+			else {
+				$controleur = new AccueilControleur($bdd->bdd);
+				$controleur->afficher_accueil_admin();
+			}
 		}
 
+		// Forme de l'URL : index.php?section=photos
 		elseif ($section == 'photos') {
 			$controleur = new PhotoControleur($bdd->bdd);
+
+			if (isset($_GET['ajouter']))
+				$controleur->ajouter_photo();
 		}
 
 		// Forme de l'URL : index.php?section=categories
 		elseif ($section == 'categories') {
-			$controleur = new CategoriePhotoControleur($bdd->bdd);
+			if ($droits_utilisateur[Section::TOUT] == Utilisateur::ADMIN) {
+				$controleur = new CategoriePhotoControleur($bdd->bdd);
 
-			// Forme de l'URL : index.php?section=categories&ajouter
-			if (isset($_GET['ajouter']))
-				$controleur->ajouter_categorie_photos();
-			// Forme de l'URL : index.php?section=categories&id=[id]
-			elseif (isset($_GET['id']) && !isset($_POST['supprimer']))
-				$controleur->afficher_categorie_photos($_GET['id']);
-			else
-				$controleur->afficher_liste_categories_photos();
+				// Forme de l'URL : index.php?section=categories&ajouter
+				if (isset($_GET['ajouter']))
+					$controleur->ajouter_categorie_photos();
+				// Forme de l'URL : index.php?section=categories&id=[id]
+				elseif (isset($_GET['id']) && !isset($_POST['supprimer']))
+					$controleur->afficher_categorie_photos($_GET['id']);
+				else
+					$controleur->afficher_liste_categories_photos();
+			}
+			else {
+				$controleur = new AccueilControleur($bdd->bdd);
+				$controleur->afficher_accueil_admin();
+			}
+
 		}
 
 		// Forme de l'URL : index.php?section=utilisateur
