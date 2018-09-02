@@ -1,12 +1,12 @@
 <?= isset($message) ? $message : '' ?>
 
 <p>
-	Pseudo : <?= $utilisateur->pseudo; ?><br />
-	Mail : <?= $utilisateur->mail; ?>
+	Pseudo : <?= $utilisateur->pseudo ?><br />
+	Mail : <?= $utilisateur->mail ?>
 
 <form method="post">
-	Changer le pseudo : <input type="text" name="pseudo" value="<?= $utilisateur->pseudo; ?>" required /><br />
-	Changer le mail : <input type="text" name="mail" value="<?= $utilisateur->mail; ?>" required /><br />
+	Changer le pseudo : <input type="text" name="pseudo" value="<?= $utilisateur->pseudo ?>" required /><br />
+	Changer le mail : <input type="text" name="mail" value="<?= $utilisateur->mail ?>" required /><br />
 	<input type="submit" value="Modifier" />
 </form>
 

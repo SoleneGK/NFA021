@@ -42,4 +42,37 @@ class CategoriePhotoManager {
 
 		return $categorie;
 	}
+
+	/* Supprimer une catégorie
+	 * Renvoie un booléen
+	 */
+	function supprimer_categorie($id) {
+		$req = 'DELETE FROM categories_photos WHERE id = :id';
+		$req = $this->bdd->prepare($req);
+		$req->bindValue('id', $id, PDO::PARAM_INT);
+		return $req->execute();
+	}
+
+	/* Ajouter une catégorie
+	 * Renvoie un booléen
+	 */
+	function ajouter_categorie($nom, $description) {
+		$req = 'INSERT INTO categories_photos(nom, description) VALUES (:nom, :description)';
+		$req = $this->bdd->prepare($req);
+		$req->bindValue('nom', $nom);
+		$req->bindValue('description', $description);
+		return $req->execute();
+	}
+
+	/* Modifier une catégorie
+	 * Renvoie un booléen
+	 */
+	function modifier_categorie($id, $nom, $description) {
+		$req = 'UPDATE categories_photos SET nom = :nom, description = :description WHERE id = :id';
+		$req = $this->bdd->prepare($req);
+		$req->bindValue('nom', $nom);
+		$req->bindValue('description', $description);
+		$req->bindValue('id', $id, PDO::PARAM_INT);
+		return $req->execute();
+	}
 }

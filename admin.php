@@ -65,8 +65,18 @@ else {
 			$controleur = new PhotoControleur($bdd->bdd);
 		}
 
+		// Forme de l'URL : index.php?section=categories
 		elseif ($section == 'categories') {
 			$controleur = new CategoriePhotoControleur($bdd->bdd);
+
+			// Forme de l'URL : index.php?section=categories&ajouter
+			if (isset($_GET['ajouter']))
+				$controleur->ajouter_categorie_photos();
+			// Forme de l'URL : index.php?section=categories&id=[id]
+			elseif (isset($_GET['id']) && !isset($_POST['supprimer']))
+				$controleur->afficher_categorie_photos($_GET['id']);
+			else
+				$controleur->afficher_liste_categories_photos();
 		}
 
 		// Forme de l'URL : index.php?section=utilisateur

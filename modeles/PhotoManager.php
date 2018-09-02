@@ -43,7 +43,7 @@ class PhotoManager {
 	}
 
 	/* Obtenir les informations des photos appartenant à une catégorie
-	 * Renvoie un array
+	 * Renvoie un array d'objets Photos
 	 */
 	function obtenir_photos_categorie(CategoriePhoto $categorie) {
 		$req = 'SELECT p.id AS id,
@@ -72,5 +72,26 @@ class PhotoManager {
 		}
 
 		return $photos;
+	}
+
+	/* Renvoie les noms des fichiers des photos appartenant à une catégorie
+	 * Renvoie un array
+	 */
+	function obtenir_fichiers_photos_categorie($id_categorie) {
+		$req = 'SELECT nom_fichier FROM photos WHERE id_categorie = :id_categorie';
+		$req = $this->bdd->prepare($req);
+		$req->bindValue('id_categorie', $id_categorie, PDO::PARAM_INT);
+		$req->execute();
+		return $req->fetchAll(PDO::FETCH_ASSOC);
+	}
+
+	/* Supprimer les photos appartenant à une catégorie
+	 * Renvoie un booléen
+	 */
+	function supprimer_photos_categorie($id_categorie) {
+		$req = 'DELETE FROM photos WHERE id_categorie = :id_categorie';
+		$req = $this->bdd->prepare($req);
+		$req->bindValue('id_categorie', $id_categorie, PDO::PARAM_INT);
+		return $req->execute();
 	}
 }
