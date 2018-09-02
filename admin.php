@@ -72,8 +72,33 @@ else {
 		elseif ($section == 'photos') {
 			$controleur = new PhotoControleur($bdd->bdd);
 
-			if (isset($_GET['ajouter']))
-				$controleur->ajouter_photo();
+			// Forme de l'URL : index.php?section=photos&ajouter
+			if (isset($_GET['ajouter'])) {
+				if ($droits_utilisateur[Section::TOUT] == Utilisateur::ADMIN || $droits_utilisateur[Section::PHOTOS] < 30)
+					$controleur->ajouter_photo_page();
+				else
+					$controleur->afficher_liste_categories_photos();
+			}
+			elseif (isset($_POST['supprimer'])) {
+				if ($droits_utilisateur[Section::TOUT] == Utilisateur::ADMIN || $droits_utilisateur[Section::PHOTOS] < 20) {
+					if(isset($_GET['categorie']))
+						$controleur->afficher_photos_categorie($_GET['categorie']);
+					else
+						$controleur->afficher_liste_categories_photos();
+				}
+				else {
+					unset($_POST['supprimer']);
+					$controleur->afficher_liste_categories_photos();
+				}
+			}
+			// Forme de l'URL : index.php?section=photos&id=[id]
+			elseif (isset($_GET['id']))
+				$controleur->afficher_photo($_GET['id']);
+			// Forme de l'URL : index.php?section=photos&categorie=[categorie]
+			elseif (isset($_GET['categorie']))
+				$controleur->afficher_photos_categorie($_GET['categorie']);
+			else
+				$controleur->afficher_liste_categories_photos($_GET['categorie']);
 		}
 
 		// Forme de l'URL : index.php?section=categories

@@ -8,7 +8,7 @@ class PhotoControleur {
 	}
 
 	// Afficher les informations d'une photo
-	function afficher_photo($id) {
+	function afficher_photo($id, $admin = false) {
 		$photo_manager = new PhotoManager($this->bdd);
 		$photo = $photo_manager->obtenir_photo((int)$id);
 
@@ -16,8 +16,12 @@ class PhotoControleur {
 
 		if (!$photo)
 			include 'vues/photo/aucune_photo.php';
-		else
-			include 'vues/photo/afficher_photo.php';
+		else {
+			if ($admin) {}
+
+			else
+				include 'vues/photo/afficher_photo.php';
+		}
 
 		include 'vues/pieddepage.php';
 	}
@@ -74,5 +78,27 @@ class PhotoControleur {
 		}
 
 		return '<p>'.$message.'</p>';
+	}
+
+	function ajouter_photo_page() {
+		// Ajouter la photo
+		if (isset($_POST['titre_photo']) && isset($_FILES['image']) && isset($_POST['id_categorie']) && isset($_POST['description_photo']))
+			$message = self::ajouter_photo($this->bdd, $_POST['titre_photo'], $_SESSION['utilisateur']->id, 'image', (int)$_POST['id_categorie'], $_POST['description_photo'], true);
+
+		// Obtenir les catégories
+		$categorie_manager = new CategoriePhotoManager($this->bdd);
+		$categories = $categorie_manager->obtenir_liste();
+
+		include 'vues/entete.php';
+		include 'vues/photo/ajouter_photo.php';
+		include 'vues/pieddepage.php';
+	}
+
+	function afficher_photos_categorie($id_categorie) {
+
+	}
+
+	function afficher_liste_categories_photos() {
+
 	}
 }
