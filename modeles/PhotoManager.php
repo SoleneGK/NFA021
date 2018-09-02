@@ -57,8 +57,8 @@ class PhotoManager {
 				FROM photos AS p
 				JOIN utilisateurs AS u ON p.id_utilisateur = u.id
 				JOIN categories_photos AS c ON p.id_categorie = c.id
-				ORDER BY p.id
-				WHERE c.id = :id';
+				WHERE c.id = :id
+				ORDER BY p.id';
 		$req = $this->bdd->prepare($req);
 		$req->bindValue('id', $categorie->id, PDO::PARAM_INT);
 		$req->execute();
@@ -92,6 +92,21 @@ class PhotoManager {
 		$req = 'DELETE FROM photos WHERE id_categorie = :id_categorie';
 		$req = $this->bdd->prepare($req);
 		$req->bindValue('id_categorie', $id_categorie, PDO::PARAM_INT);
+		return $req->execute();
+	}
+
+	/* Ajouter une photo en base de données
+	 * Renvoie un booléen
+	 */
+	function ajouter_photo($titre, $id_utilisateur, $nom_image, $id_categorie, $description) {
+		$req = 'INSERT INTO photos(titre, id_utilisateur, nom_fichier, id_categorie, description, date_ajout) VALUES (:titre, :id_utilisateur, :nom_fichier, :id_categorie, :description, :date_ajout)';
+		$req = $this->bdd->prepare($req);
+		$req->bindValue('titre', $titre);
+		$req->bindValue('id_utilisateur', $id_utilisateur, PDO::PARAM_INT);
+		$req->bindValue('nom_fichier', $nom_image);
+		$req->bindValue('id_categorie', $id_categorie, PDO::PARAM_INT);
+		$req->bindValue('description', $description);
+		$req->bindValue('date_ajout', time(), PDO::PARAM_INT);
 		return $req->execute();
 	}
 }
