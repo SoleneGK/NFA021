@@ -70,35 +70,48 @@ else {
 
 		// Forme de l'URL : index.php?section=photos
 		elseif ($section == 'photos') {
-			$controleur = new PhotoControleur($bdd->bdd);
-
 			// Forme de l'URL : index.php?section=photos&ajouter
-			if (isset($_GET['ajouter'])) {
-				if ($droits_utilisateur[Section::TOUT] == Utilisateur::ADMIN || $droits_utilisateur[Section::PHOTOS] <= Utilisateur::CONTRIBUTEUR)
+			if (isset($_GET['ajouter']) && !isset($_POST['supprimer'])) {
+				if ($droits_utilisateur[Section::TOUT] == Utilisateur::ADMIN || $droits_utilisateur[Section::PHOTOS] <= Utilisateur::CONTRIBUTEUR) {
+					$controleur = new PhotoControleur($bdd->bdd);
 					$controleur->ajouter_photo_page();
-				else
-					$controleur->afficher_liste_categories_photos();
-			}
-			elseif (isset($_POST['supprimer'])) {
-				if ($droits_utilisateur[Section::TOUT] == Utilisateur::ADMIN || $droits_utilisateur[Section::PHOTOS] <= Utilisateur::MODERATEUR) {
-					if(isset($_GET['categorie']))
-						$controleur->afficher_photos_categorie($_GET['categorie']);
-					else
-						$controleur->afficher_liste_categories_photos();
 				}
 				else {
-					unset($_POST['supprimer']);
-					$controleur->afficher_liste_categories_photos();
+					$controleur = new CategoriePhotoControleur($bdd->bdd);
+					$controleur->afficher_liste_categories($droits_utilisateur);
+				}
+			}
+			elseif (isset($_POST['supprimer_photo'])) {
+				if ($droits_utilisateur[Section::TOUT] == Utilisateur::ADMIN || $droits_utilisateur[Section::PHOTOS] <= Utilisateur::MODERATEUR) {
+					if(isset($_GET['categorie'])) {
+						$controleur = new CategoriePhotoControleur($bdd->bdd);
+						$controleur->afficher_categorie($_GET['categorie'], $droits_utilisateur);
+					}
+					else {
+						$controleur = new CategoriePhotoControleur($bdd->bdd);
+						$controleur->afficher_liste_categories($droits_utilisateur);
+					}
+				}
+				else {
+					unset($_POST['supprimer_photo']);
+					$controleur = new CategoriePhotoControleur($bdd->bdd);
+					$controleur->afficher_liste_categories($droits_utilisateur);
 				}
 			}
 			// Forme de l'URL : index.php?section=photos&id=[id]
-			elseif (isset($_GET['id']))
+			elseif (isset($_GET['id'])) {
+				$controleur = new PhotoControleur($bdd->bdd);
 				$controleur->afficher_photo($_GET['id'], true, $droits_utilisateur);
+			}
 			// Forme de l'URL : index.php?section=photos&categorie=[categorie]
-			elseif (isset($_GET['categorie']))
-				$controleur->afficher_photos_categorie($_GET['categorie']);
-			else
-				$controleur->afficher_liste_categories_photos($_GET['categorie']);
+			elseif (isset($_GET['categorie'])) {
+				$controleur = new CategoriePhotoControleur($bdd->bdd);
+				$controleur->afficher_categorie($_GET['categorie'], $droits_utilisateur);
+			}
+			else {
+				$controleur = new CategoriePhotoControleur($bdd->bdd);
+				$controleur->afficher_liste_categories($droits_utilisateur);
+			}
 		}
 
 		// Forme de l'URL : index.php?section=categories
@@ -110,10 +123,10 @@ else {
 				if (isset($_GET['ajouter']))
 					$controleur->ajouter_categorie_photos();
 				// Forme de l'URL : index.php?section=categories&id=[id]
-				elseif (isset($_GET['id']) && !isset($_POST['supprimer']))
-					$controleur->afficher_categorie_photos($_GET['id']);
+				elseif (isset($_GET['id']) && !isset($_POST['supprimer_categorie']))
+					$controleur->afficher_categorie($_GET['id'], $droits_utilisateur);
 				else
-					$controleur->afficher_liste_categories_photos();
+					$controleur->afficher_liste_categories($droits_utilisateur);
 			}
 			else {
 				$controleur = new AccueilControleur($bdd->bdd);

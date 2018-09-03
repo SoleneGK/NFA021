@@ -9,9 +9,9 @@ foreach ($categories as $categorie):
 ?>
 
 <form method="post">
-	<a href="admin.php?section=categories&id=<?= $categorie->id ?>"><?= $categorie->nom ?></a>
-	<input type="hidden" name="id" value="<?= $categorie->id ?>" />
-	<input type="submit" name="supprimer" value="Supprimer" />
+	<a href="<?= $lien.$categorie->id ?>"><?= $categorie->nom ?></a>
+	<input type="hidden" name="id_categorie" value="<?= $categorie->id ?>" />
+	<input type="submit" name="supprimer_categorie" value="Supprimer" />
 </form>
 
 <?php

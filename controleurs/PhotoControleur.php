@@ -132,15 +132,8 @@ class PhotoControleur {
 		$categories = $categorie_manager->obtenir_liste();
 
 		include 'vues/entete.php';
-		include 'vues/photo/ajouter_photo.php';
+		include 'vues/photo/ajouter_photo_titre.php';
+		include 'vues/photo/ajouter_photo_formulaire.php';
 		include 'vues/pieddepage.php';
-	}
-
-	function afficher_photos_categorie($id_categorie) {
-
-	}
-
-	function afficher_liste_categories_photos() {
-
 	}
 }

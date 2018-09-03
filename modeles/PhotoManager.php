@@ -123,4 +123,14 @@ class PhotoManager {
 		$req->bindValue('id', $id, PDO::PARAM_INT);
 		return $req->execute();
 	}
+
+	/* Supprimer une photo
+	 * Renvoie un booléen
+	 */
+	function supprimer_photo($id) {
+		$req = 'DELETE FROM photos WHERE id = :id';
+		$req = $this->bdd->prepare($req);
+		$req->bindValue('id', $id, PDO::PARAM_INT);
+		$resultat = $req->execute();
+	}
 }
