@@ -211,4 +211,21 @@ class UtilisateurManager {
 			$req->execute();
 		}
 	}
+
+	/* Obtenir la liste de tous les utilisateurs
+	 * Renvoie un array de Utilisateurs
+	 */
+	function obtenir_liste_tous_utilisateurs() {
+		$req = 'SELECT id, pseudo, mail FROM utilisateurs ORDER BY id';
+		$req = $this->bdd->prepare($req);
+		$req->execute();
+
+		$utilisateurs = [];
+		foreach ($req->fetchAll(PDO::FETCH_ASSOC) as $ligne) {
+			$u = new Utilisateur($ligne['id'], $ligne['pseudo'], $ligne['mail']);
+			$utilisateurs[] = $u;
+		}
+
+		return $utilisateurs;	
+	}
 }

@@ -109,4 +109,18 @@ class PhotoManager {
 		$req->bindValue('date_ajout', time(), PDO::PARAM_INT);
 		return $req->execute();
 	}
+
+	/* Modifier une photo
+	 * Renvoie un booléen
+	 */
+	function modifier_photo($id, $titre, $id_categorie, $id_utilisateur, $description) {
+		$req = 'UPDATE photos SET titre = :titre, id_categorie = :id_categorie, id_utilisateur = :id_utilisateur, description = :description WHERE id = :id';
+		$req = $this->bdd->prepare($req);
+		$req->bindValue('titre', $titre);
+		$req->bindValue('id_categorie', $id_categorie, PDO::PARAM_INT);
+		$req->bindValue('id_utilisateur', $id_utilisateur, PDO::PARAM_INT);
+		$req->bindValue('description', $description);
+		$req->bindValue('id', $id, PDO::PARAM_INT);
+		return $req->execute();
+	}
 }

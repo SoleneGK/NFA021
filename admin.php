@@ -74,13 +74,13 @@ else {
 
 			// Forme de l'URL : index.php?section=photos&ajouter
 			if (isset($_GET['ajouter'])) {
-				if ($droits_utilisateur[Section::TOUT] == Utilisateur::ADMIN || $droits_utilisateur[Section::PHOTOS] < 30)
+				if ($droits_utilisateur[Section::TOUT] == Utilisateur::ADMIN || $droits_utilisateur[Section::PHOTOS] <= Utilisateur::CONTRIBUTEUR)
 					$controleur->ajouter_photo_page();
 				else
 					$controleur->afficher_liste_categories_photos();
 			}
 			elseif (isset($_POST['supprimer'])) {
-				if ($droits_utilisateur[Section::TOUT] == Utilisateur::ADMIN || $droits_utilisateur[Section::PHOTOS] < 20) {
+				if ($droits_utilisateur[Section::TOUT] == Utilisateur::ADMIN || $droits_utilisateur[Section::PHOTOS] <= Utilisateur::MODERATEUR) {
 					if(isset($_GET['categorie']))
 						$controleur->afficher_photos_categorie($_GET['categorie']);
 					else
@@ -93,7 +93,7 @@ else {
 			}
 			// Forme de l'URL : index.php?section=photos&id=[id]
 			elseif (isset($_GET['id']))
-				$controleur->afficher_photo($_GET['id']);
+				$controleur->afficher_photo($_GET['id'], true, $droits_utilisateur);
 			// Forme de l'URL : index.php?section=photos&categorie=[categorie]
 			elseif (isset($_GET['categorie']))
 				$controleur->afficher_photos_categorie($_GET['categorie']);
