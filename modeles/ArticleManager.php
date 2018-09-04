@@ -276,4 +276,27 @@ class ArticleManager {
 
 		return $reponse;
 	}
+
+	/* Modifier un article
+	 * Renvoie un booléen
+	 */
+	function modifier_article($id_article, $titre, $contenu, $id_pays) {
+		$req = 'UPDATE articles SET titre = :titre, contenu = :contenu, id_pays = :id_pays WHERE id = :id_article';
+		$req = $this->bdd->prepare($req);
+		$req->bindValue('titre', $titre);
+		$req->bindValue('contenu', $contenu);
+		$req->bindValue('id_pays', $id_pays, PDO::PARAM_INT);
+		$req->bindValue('id_article', $id_article, PDO::PARAM_INT);
+		return $req->execute();
+	}
+
+	/* Supprimer un article
+	 * Renvoie un booléen
+	 */
+	function supprimer_article($id_article) {
+		$req = 'DELETE FROM articles WHERE id = :id';
+		$req = $this->bdd->prepare($req);
+		$req->bindValue('id', $id, PDO::PARAM_INT);
+		return $req->execute();
+	}
 }

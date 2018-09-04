@@ -63,7 +63,7 @@ else {
 			elseif (isset($_GET['id'])) {
 				// Forme de l'URL : index.php?section=politique&modifier&id=[id]
 				if (isset($_GET['modifier']))
-					$controleur->modifier_article();
+					$controleur->modifier_article($_GET['id'], Section::POLITIQUE, $droits_utilisateur);
 				else
 					$controleur->afficher_article($_GET['id'], Section::POLITIQUE, true, $droits_utilisateur);
 			}
@@ -89,7 +89,7 @@ else {
 			elseif (isset($_GET['id'])) {
 				// Forme de l'URL : index.php?section=voyage&modifier&id=[id]
 				if (isset($_GET['modifier']))
-					$controleur->modifier_article();
+					$controleur->modifier_article($_GET['id'], Section::VOYAGE, $droits_utilisateur);
 				else
 					$controleur->afficher_article($_GET['id'], Section::VOYAGE, true, $droits_utilisateur);
 			}
