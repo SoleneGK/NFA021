@@ -72,4 +72,11 @@ class CommentaireManager {
 		$req->bindValue('id', $id, PDO::PARAM_INT);
 		return $req->execute();
 	}
+
+	function supprimer_commentaires_article($id_article) {
+		$req = 'DELETE FROM commentaires WHERE id_article = :id_article';
+		$req = $this->bdd->prepare($req);
+		$req->bindValue('id_article', $id_article, PDO::PARAM_INT);
+		return $req->execute();
+	}
 }

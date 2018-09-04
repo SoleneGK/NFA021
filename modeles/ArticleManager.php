@@ -201,7 +201,6 @@ class ArticleManager {
 	 * Renvoie un array de Article
 	 */
 	function obtenir_articles_pays(Pays $pays, $position) {
-		var_dump($pays->id);
 		$req = 'SELECT a.id AS id,
 					a.titre AS titre,
 					a.contenu AS contenu,
@@ -296,7 +295,7 @@ class ArticleManager {
 	function supprimer_article($id_article) {
 		$req = 'DELETE FROM articles WHERE id = :id';
 		$req = $this->bdd->prepare($req);
-		$req->bindValue('id', $id, PDO::PARAM_INT);
+		$req->bindValue('id', $id_article, PDO::PARAM_INT);
 		return $req->execute();
 	}
 }

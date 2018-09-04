@@ -59,6 +59,8 @@ else {
 				else
 					$controleur->afficher_liste_articles_section(Section::POLITIQUE);
 			}
+			elseif(isset($_POST['supprimer_article']))
+				$controleur->afficher_liste_articles_section(Section::POLITIQUE, $droits_utilisateur);
 			// Forme de l'URL : index.php?section=politique&id=[id]
 			elseif (isset($_GET['id'])) {
 				// Forme de l'URL : index.php?section=politique&modifier&id=[id]
@@ -85,6 +87,8 @@ else {
 				else
 					$controleur->afficher_liste_articles_section(Section::VOYAGE);
 			}
+			elseif(isset($_POST['supprimer_article']))
+				$controleur->afficher_liste_articles_section(Section::VOYAGE);
 			// Forme de l'URL : index.php?section=voyage&id=[id]
 			elseif (isset($_GET['id'])) {
 				// Forme de l'URL : index.php?section=voyage&modifier&id=[id]

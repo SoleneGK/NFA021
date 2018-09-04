@@ -94,7 +94,7 @@ class ArticleControleur {
 
 	}
 
-	function afficher_article($id_article, $id_section, $admin = false, $droits_utilisateur = false) {
+	function afficher_article($id_article, $id_section, $admin = false, $droits_utilisateur = null) {
 		$id_article = (int)$id_article;
 		$id_section = (int)$id_section;
 		$article_manager = new ArticleManager($this->bdd);
@@ -175,15 +175,26 @@ class ArticleControleur {
 		include 'vues/pieddepage.php';
 	}
 
-	function afficher_liste_articles_section($id_section, $page = 1) {
+	function afficher_liste_articles_section($id_section, $page = 1, $droits_utilisateur = null) {
 		include 'vues/entete.php';
 
 		$page = (int)$page;
 		if ($page <= 0)
 			$articles = [];
 		else {
-			// Obtenir la liste des articles
 			$article_manager = new ArticleManager($this->bdd);
+
+			// Suppression d'un article
+			if (isset($_POST['supprimer_article']) && isset($_POST['id_article'])) {
+				if ($droits_utilisateur[Section::TOUT] == Utilisateur::ADMIN || ($id_section == Section::POLITIQUE && $droits_utilisateur[Section::POLITIQUE] <= Utilisateur::MODERATEUR) || ($id_section == Section::VOYAGE && $droits_utilisateur[Section::VOYAGE] <= Utilisateur::MODERATEUR)) {
+					$commentaire_manager = new CommentaireManager($this->bdd);
+					$commentaire_manager->supprimer_commentaires_article((int)$_POST['id_article']);
+
+					$article_manager->supprimer_article((int)$_POST['id_article']);
+				}
+			}
+
+
 			// Position du 1er article = (n° page - 1) × nombre d'articles par page
 			$articles = $article_manager->obtenir_articles_section($id_section, ($page - 1) * NOMBRE_ARTICLES_PAR_PAGE);
 
@@ -269,7 +280,6 @@ class ArticleControleur {
 
 		// Vérifier qu'un article a été trouvé
 		if ($article) {
-			var_dump($article);
 			// Vérifier que l'utilisateur a le droit de modifier l'article
 			if ($droits_utilisateur[Section::TOUT] == Utilisateur::ADMIN || $droits_utilisateur[Section::POLITIQUE] <= Utilisateur::MODERATEUR || ($droits_utilisateur[Section::POLITIQUE] <= Utilisateur::CONTRIBUTEUR && $article->utilisateur->id == $_SESSION['utilisateur']->id)) {
 				
