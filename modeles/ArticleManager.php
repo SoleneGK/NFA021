@@ -112,7 +112,7 @@ class ArticleManager {
 					JOIN sections_site AS s ON a.id_section = s.id
 					LEFT JOIN pays AS p ON a.id_pays = p.id
 					WHERE u.id = :id_utilisateur
-					ORDER BY a.id
+					ORDER BY a.id DESC
 					LIMIT :position, :nombre';
 		$req = $this->bdd->prepare($req);
 		$req->bindValue('id_utilisateur', $utilisateur->id, PDO::PARAM_INT);
@@ -163,7 +163,7 @@ class ArticleManager {
 				JOIN sections_site AS s ON a.id_section = s.id
 				LEFT JOIN pays AS p ON a.id_pays = p.id
 				WHERE s.id = :id_section
-				ORDER BY a.id
+				ORDER BY a.id DESC
 				LIMIT :position, :nombre';
 		$req = $this->bdd->prepare($req);
 		$req->bindValue('id_section', $id_section, PDO::PARAM_INT);
@@ -212,7 +212,7 @@ class ArticleManager {
 				JOIN utilisateurs AS u ON a.id_utilisateur = u.id
 				JOIN pays AS p ON a.id_pays = p.id
 				WHERE p.id = :id_pays
-				ORDER BY a.id
+				ORDER BY a.id DESC
 				LIMIT :position, :nombre';
 		$req = $this->bdd->prepare($req);
 		$req->bindValue('id_pays', $pays->id, PDO::PARAM_INT);

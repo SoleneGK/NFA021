@@ -42,9 +42,9 @@ class ArticleControleur {
 
 		if (!$article) {
 			if ($id_section == Article::POLITIQUE)
-				include 'vues/article/aucun_article_politique.php';
+				include 'vues/article/politique/aucun_article_politique.php';
 			else
-				include 'vues/article/aucun_article_voyage.php';
+				include 'vues/article/voyage/aucun_article_voyage.php';
 		}
 		else {
 			// Obtenir les infos sur les articles suivants et précédents
@@ -52,9 +52,25 @@ class ArticleControleur {
 			$article_precedent = $article_manager->obtenir_article_precedent($id_article, $id_section);
 
 			if ($id_section == Article::POLITIQUE)
-				include 'vues/article/afficher_article_politique.php';
+				include 'vues/article/politique/afficher_article_politique.php';
 			else
-				include 'vues/article/afficher_article_voyage.php';
+				include 'vues/article/voyage/afficher_article_voyage.php';
+
+			$commentaire_manager = new CommentaireManager($this->bdd);
+
+			// Ajout d'un commentaire
+			if (isset($_POST['ajouter_commentaire']) && isset($_POST['pseudo']) && isset($_POST['mail']) && isset($_POST['contenu'])) {
+				$commentaire_manager->ajouter_commentaire(null, $_POST['pseudo'], $_POST['mail'], $article->id, $_POST['contenu']);
+			}
+
+			$commentaires = $commentaire_manager->obtenir_commentaires_article($article->id);
+
+			if (!$commentaires)
+				include 'vues/commentaires/aucun_commentaire.php';
+			else
+				include 'vues/commentaires/afficher_commentaires.php';
+
+			include 'vues/commentaires/formulaire_ajouter_commentaire.php';
 		}
 
 		include 'vues/pieddepage.php';
@@ -77,9 +93,9 @@ class ArticleControleur {
 		}
 
 		if ($id_section == Article::POLITIQUE)
-			include 'vues/article/afficher_liste_articles_politique.php';
+			include 'vues/article/politique/afficher_liste_articles_politique.php';
 		else
-			include 'vues/article/afficher_liste_articles_voyage.php';
+			include 'vues/article/voyage/afficher_liste_articles_voyage.php';
 
 		include 'vues/pieddepage.php';
 	}
@@ -105,7 +121,7 @@ class ArticleControleur {
 				$numeros_pages = self::obtenir_numeros_pages($page, $article_manager->nombre_articles_pays($id_pays));
 			}
 
-			include 'vues/article/afficher_liste_articles_pays.php';
+			include 'vues/article/voyage/afficher_liste_articles_pays.php';
 		}
 		else
 			include 'vues/pays/aucun_pays.php';
