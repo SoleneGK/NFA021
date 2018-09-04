@@ -291,7 +291,7 @@ class ArticleControleur {
 					$resultat = $article_manager->modifier_article($id_article, $_POST['titre_article'], $_POST['contenu_article'], (int)$_POST['id_pays']);
 
 					// Affichage de l'article si réussite de modification en bdd, affichage du formulaire sinon
-					if(false) {
+					if($resultat) {
 						$destination = 'admin.php?section=';
 						if ($id_section == Section::POLITIQUE)
 							$destination .= 'politique';
