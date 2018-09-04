@@ -296,7 +296,7 @@ class ArticleControleur {
 						}
 					}
 					else
-						$_POST['pays'] = null;
+						$_POST['id_pays'] = null;
 
 					$resultat = $article_manager->modifier_article($id_article, $_POST['titre_article'], $_POST['contenu_article'], (int)$_POST['id_pays']);
 
