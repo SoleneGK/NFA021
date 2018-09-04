@@ -11,14 +11,28 @@ class CommentaireManager {
 	 * Renvoie un array d'objets Commentaire
 	 */
 	function obtenir_commentaires_article($id_article) {
-		$req = 'SELECT id, id_utilisateur, pseudo, mail, contenu, date_ajout FROM commentaires WHERE id_article = :id_article ORDER BY id';
+		$req = 'SELECT c.id AS id,
+					c.id_utilisateur AS id_utilisateur,
+					u.pseudo AS pseudo_utilisateur_enregistre,
+					c.pseudo AS pseudo_utilisateur,
+					c.mail AS mail,
+					c.contenu AS contenu,
+					c.date_ajout AS date_ajout
+				FROM commentaires AS c
+				LEFT JOIN utilisateurs AS u ON c.id_utilisateur = u.id
+				WHERE c.id_article = :id_article
+				ORDER BY c.id';
 		$req = $this->bdd->prepare($req);
 		$req->bindValue('id_article', $id_article, PDO::PARAM_INT);
 		$req->execute();
 
 		$commentaires = [];
 		foreach($req->fetchAll(PDO::FETCH_ASSOC) as $c) {
-			$u = new Utilisateur($c['id_utilisateur'], $c['pseudo'], $c['mail']);
+			if ($c['pseudo_utilisateur_enregistre'])
+				$u = new Utilisateur($c['id_utilisateur'], $c['pseudo_utilisateur_enregistre'], null);
+			else
+				$u = new Utilisateur($c['id_utilisateur'], $c['pseudo_utilisateur'], $c['mail']);
+
 			$commentaire = new Commentaire($c['id'], $u, $c['contenu'], $c['date_ajout']);
 
 			$commentaires[] = $commentaire;

@@ -113,26 +113,63 @@ class ArticleControleur {
 			$article_suivant = $article_manager->obtenir_article_suivant($id_article, $id_section);
 			$article_precedent = $article_manager->obtenir_article_precedent($id_article, $id_section);
 
-			if ($id_section == Article::POLITIQUE)
+			// Affichage de l'article
+			if ($id_section == Article::POLITIQUE) {
 				include 'vues/article/politique/afficher_article_politique.php';
-			else
+				if ($admin && ($droits_utilisateur[Section::TOUT] == Utilisateur::ADMIN || $droits_utilisateur[Section::POLITIQUE] <= Utilisateur::MODERATEUR))
+					include 'vues/article/politique/afficher_article_politique_actions_admin.php';
+			}
+			else {
 				include 'vues/article/voyage/afficher_article_voyage.php';
+				if ($admin && ($droits_utilisateur[Section::TOUT] == Utilisateur::ADMIN || $droits_utilisateur[Section::VOYAGE] <= Utilisateur::MODERATEUR))
+					include 'vues/article/voyage/afficher_article_voyage_actions_admin.php';
+			}
 
 			$commentaire_manager = new CommentaireManager($this->bdd);
 
 			// Ajout d'un commentaire
-			if (isset($_POST['ajouter_commentaire']) && isset($_POST['pseudo']) && isset($_POST['mail']) && isset($_POST['contenu'])) {
-				$commentaire_manager->ajouter_commentaire(null, $_POST['pseudo'], $_POST['mail'], $article->id, $_POST['contenu']);
+			if ($admin) {
+				if (isset($_POST['ajouter_commentaire']) && isset($_POST['contenu']))
+					$commentaire_manager->ajouter_commentaire($_SESSION['utilisateur']->id, null, null, $article->id, $_POST['contenu']);
+			}
+			else {
+				if (isset($_POST['ajouter_commentaire']) && isset($_POST['pseudo']) && isset($_POST['mail']) && isset($_POST['contenu']))
+					$commentaire_manager->ajouter_commentaire(null, $_POST['pseudo'], $_POST['mail'], $article->id, $_POST['contenu']);
+			}
+
+			// Modification d'un commentaire
+			if ($droits_utilisateur[Section::TOUT] == Utilisateur::ADMIN || ($id_section == Section::POLITIQUE && $droits_utilisateur[Section::POLITIQUE] <= Utilisateur::MODERATEUR) || ($id_section == Section::VOYAGE && $droits_utilisateur[Section::VOYAGE] <= Utilisateur::MODERATEUR)) {
+				if (isset($_POST['modifier_commentaire']) && isset($_POST['contenu_commentaire']) && isset($_POST['id_commentaire'])) {
+					if (!empty($_POST['id_utilisateur']))
+						$commentaire_manager->modifier_commentaire($_POST['id_commentaire'], null, null, $_POST['contenu_commentaire']);
+					elseif (isset($_POST['pseudo_commentaire']) && isset($_POST['mail_commentaire']))
+						$commentaire_manager->modifier_commentaire($_POST['id_commentaire'], $_POST['pseudo_commentaire'], $_POST['mail_commentaire'], $_POST['contenu_commentaire']);
+				}
+			}
+
+			// Suppression d'un commentaire
+			if (isset($_POST['supprimer_commentaire']) && isset($_POST['id_commentaire'])) {
+				if ($droits_utilisateur[Section::TOUT] == Utilisateur::ADMIN || ($id_section == Section::POLITIQUE && $droits_utilisateur[Section::POLITIQUE] <= Utilisateur::MODERATEUR) || ($id_section == Section::VOYAGE && $droits_utilisateur[Section::VOYAGE] <= Utilisateur::MODERATEUR))
+					$commentaire_manager->supprimer_commentaire((int)$_POST['id_commentaire']);
 			}
 
 			$commentaires = $commentaire_manager->obtenir_commentaires_article($article->id);
 
+			// Affichage des commentaires
 			if (!$commentaires)
 				include 'vues/commentaires/aucun_commentaire.php';
-			else
-				include 'vues/commentaires/afficher_commentaires.php';
+			else {
+				if ($admin && ($droits_utilisateur[Section::TOUT] == Utilisateur::ADMIN || ($id_section == Section::POLITIQUE && $droits_utilisateur[Section::POLITIQUE] <= Utilisateur::MODERATEUR) || ($id_section == Section::VOYAGE && $droits_utilisateur[Section::VOYAGE] <= Utilisateur::MODERATEUR)))
+					include 'vues/commentaires/afficher_commentaires_admin.php';
+				else
+					include 'vues/commentaires/afficher_commentaires.php';
+			}
 
-			include 'vues/commentaires/formulaire_ajouter_commentaire.php';
+			// Formulaire d'ajout de commentaire
+			if ($admin)
+				include 'vues/commentaires/formulaire_ajouter_commentaire_admin.php';
+			else
+				include 'vues/commentaires/formulaire_ajouter_commentaire.php';
 		}
 
 		include 'vues/pieddepage.php';
