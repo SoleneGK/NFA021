@@ -32,7 +32,69 @@ class ArticleControleur {
 		return $numeros;
 	}
 
-	function afficher_article($id_article, $id_section) {
+	function ajouter_article($id_section) {
+		// Si un formulaire a été envoyé
+		if (isset($_POST['titre_article']) && isset($_POST['contenu_article'])) {
+			// Article voyage : si un pays est sélectionné, vérifier qu'il existe
+			if ($id_section == Section::VOYAGE && isset($_POST['id_pays']) && $_POST['id_pays'] != -1) {
+				$pays_manager = new PaysManager($this->bdd);
+				$pays = $pays_manager->obtenir_pays((int)$_POST['id_pays']);
+
+				if (empty($pays)) {
+					header('Location: admin.php');
+					exit();
+				}
+			}
+			else
+				$_POST['pays'] = null;
+
+			$article_manager = new ArticleManager($this->bdd);
+			$resultat = $article_manager->ajouter_article($_POST['titre_article'], $id_section, $_POST['contenu_article'], $_SESSION['utilisateur']->id, (int)$_POST['id_pays']);
+
+			if($resultat) {
+				$destination = 'admin.php?section=';
+				if ($id_section == Section::POLITIQUE)
+					$destination .= 'politique';
+				else
+					$destination .= 'voyage';
+				$destination .= '&id='.$resultat;
+
+				header('Location: '.$destination);
+				exit();
+			}
+
+			else {
+				include 'vues/entete.php';
+
+				if ($id_section == Article::POLITIQUE)
+					include 'vues/article/politique/ajouter_article_politique.php';
+				else {
+					$pays_manager = new PaysManager($this->bdd);
+					$liste_pays = $pays_manager->obtenir_liste_pays();
+					include 'vues/article/voyage/ajouter_article_voyage.php';
+				}
+
+				include 'vues/pieddepage.php';
+			}
+		}
+
+		else {
+			include 'vues/entete.php';
+
+			if ($id_section == Article::POLITIQUE)
+				include 'vues/article/politique/ajouter_article_politique.php';
+			else {
+				$pays_manager = new PaysManager($this->bdd);
+				$liste_pays = $pays_manager->obtenir_liste_pays();
+				include 'vues/article/voyage/ajouter_article_voyage.php';
+			}
+
+			include 'vues/pieddepage.php';
+		}
+
+	}
+
+	function afficher_article($id_article, $id_section, $admin = false, $droits_utilisateur = false) {
 		$id_article = (int)$id_article;
 		$id_section = (int)$id_section;
 		$article_manager = new ArticleManager($this->bdd);

@@ -41,4 +41,21 @@ class CommentaireManager {
 		$req->bindValue('date_ajout', time(), PDO::PARAM_INT);
 		return $req->execute();
 	}
+
+	function modifier_commentaire($id, $pseudo, $mail, $contenu) {
+		$req = 'UPDATE commentaires SET pseudo = :pseudo, mail = :mail, contenu = :contenu WHERE id = :id';
+		$req = $this->bdd->prepare($req);
+		$req->bindValue('pseudo', $pseudo);
+		$req->bindValue('mail', $mail);
+		$req->bindValue('contenu', $contenu);
+		$req->bindValue('id', $id, PDO::PARAM_INT);
+		return $req->execute();
+	}
+
+	function supprimer_commentaire($id) {
+		$req = 'DELETE FROM commentaires WHERE id = :id';
+		$req = $this->bdd->prepare($req);
+		$req->bindValue('id', $id, PDO::PARAM_INT);
+		return $req->execute();
+	}
 }

@@ -48,12 +48,64 @@ else {
 		$utilisateur_manager = new UtilisateurManager($bdd->bdd);
 		$droits_utilisateur = $utilisateur_manager->obtenir_droits($_SESSION['utilisateur']->id);
 
+		// Forme de l'URL : index.php?section=politique
 		if ($section == 'politique') {
 			$controleur = new ArticleControleur($bdd->bdd);
+
+			// Forme de l'URL : index.php?section=politique&ajouter
+			if (isset($_GET['ajouter'])) {
+				if ($droits_utilisateur[Section::TOUT] == Utilisateur::ADMIN || $droits_utilisateur[Section::POLITIQUE] <= Utilisateur::CONTRIBUTEUR)
+					$controleur->ajouter_article(Section::POLITIQUE);
+				else
+					$controleur->afficher_liste_articles_section(Section::POLITIQUE);
+			}
+			// Forme de l'URL : index.php?section=politique&id=[id]
+			elseif (isset($_GET['id'])) {
+				// Forme de l'URL : index.php?section=politique&modifier&id=[id]
+				if (isset($_GET['modifier']))
+					$controleur->modifier_article();
+				else
+					$controleur->afficher_article($_GET['id'], Section::POLITIQUE, true, $droits_utilisateur);
+			}
+			// Forme de l'URL : index.php?section=politique&page=[id]
+			elseif (isset($_GET['page']))
+				$controleur->afficher_liste_articles_section(Section::POLITIQUE, $_GET['page']);
+			else
+				$controleur->afficher_liste_articles_section(Section::POLITIQUE);
 		}
 
+		// Forme de l'URL : index.php?section=voyage
 		elseif ($section == 'voyage') {
 			$controleur = new ArticleControleur($bdd->bdd);
+
+			// Forme de l'URL : index.php?section=voyage&ajouter
+			if (isset($_GET['ajouter'])) {
+				if ($droits_utilisateur[Section::TOUT] == Utilisateur::ADMIN || $droits_utilisateur[Section::VOYAGE] <= Utilisateur::CONTRIBUTEUR)
+					$controleur->ajouter_article(Section::VOYAGE);
+				else
+					$controleur->afficher_liste_articles_section(Section::VOYAGE);
+			}
+			// Forme de l'URL : index.php?section=voyage&id=[id]
+			elseif (isset($_GET['id'])) {
+				// Forme de l'URL : index.php?section=voyage&modifier&id=[id]
+				if (isset($_GET['modifier']))
+					$controleur->modifier_article();
+				else
+					$controleur->afficher_article($_GET['id'], Section::VOYAGE, true, $droits_utilisateur);
+			}
+			// Forme de l'URL : index.php?section=voyage&pays=[id]
+			elseif (isset($_GET['pays'])) {
+				// Forme de l'URL : index.php?section=voyage&pays=[id]&page=[numero]
+				if (isset($_GET['page']))
+					$controleur->afficher_liste_articles_section(Section::VOYAGE, $_GET['page']);
+				else
+					$controleur->afficher_liste_articles_section(Section::VOYAGE);
+			}
+			// Forme de l'URL : index.php?section=voyage&page=[numero]
+			elseif (isset($_GET['page']))
+				$controleur->afficher_liste_articles_section(Section::VOYAGE, $_GET['page']);
+			else
+				$controleur->afficher_liste_articles_section(Section::VOYAGE);
 		}
 
 		// Forme de l'URL : index.php?section=pays
@@ -71,7 +123,7 @@ else {
 		// Forme de l'URL : index.php?section=photos
 		elseif ($section == 'photos') {
 			// Forme de l'URL : index.php?section=photos&ajouter
-			if (isset($_GET['ajouter']) && !isset($_POST['supprimer'])) {
+			if (isset($_GET['ajouter']) && !isset($_POST['supprimer_photo'])) {
 				if ($droits_utilisateur[Section::TOUT] == Utilisateur::ADMIN || $droits_utilisateur[Section::PHOTOS] <= Utilisateur::CONTRIBUTEUR) {
 					$controleur = new PhotoControleur($bdd->bdd);
 					$controleur->ajouter_photo_page();

@@ -94,14 +94,14 @@ else {
 				$controleur->afficher_liste_articles_utilisateur($_GET['id']);
 		}
 		else {
-			$controleur = new AccueilControleur();
+			$controleur = new AccueilControleur($bdd->bdd);
 			$controleur->index();
 		}
 
 	}
 
 	else {
-		$accueil = new AccueilControleur();
+		$accueil = new AccueilControleur($bdd->bdd);
 		$accueil->index();
 	}
 }

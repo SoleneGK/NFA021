@@ -253,4 +253,27 @@ class ArticleManager {
 		$req->bindValue('id_pays', $id_pays, PDO::PARAM_INT);
 		$req->execute();
 	}
+
+	/* Ajouter un article
+	 * Renvoie l'id de l'article créé
+	 * Renvoie null en cas d'erreur
+	 */
+	function ajouter_article($titre, $id_section, $contenu, $id_utilisateur, $id_pays) {
+		$req = 'INSERT INTO articles(titre, id_section, contenu, date_publication, id_utilisateur, id_pays) VALUES (:titre, :id_section, :contenu, :date_publication, :id_utilisateur, :id_pays)';
+		$req = $this->bdd->prepare($req);
+		$req->bindValue('titre', $titre);
+		$req->bindValue('id_section', $id_section, PDO::PARAM_INT);
+		$req->bindValue('contenu', $contenu);
+		$req->bindValue('date_publication', time(), PDO::PARAM_INT);
+		$req->bindValue('id_utilisateur', $id_utilisateur, PDO::PARAM_INT);
+		$req->bindValue('id_pays', $id_pays, PDO::PARAM_INT);
+		$req = $req->execute();
+
+		if ($req)
+			$reponse = $this->bdd->lastInsertId();
+		else
+			$reponse = null;
+
+		return $reponse;
+	}
 }

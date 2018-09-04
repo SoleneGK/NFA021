@@ -149,8 +149,14 @@ class UtilisateurManager {
 		$req->bindValue('pseudo', $pseudo);
 		$req->bindValue('mot_de_passe', $mot_de_passe);
 		$req->bindValue('mail', $mail);
-		$req->execute();
-		return $this->bdd->lastInsertId();
+		$req = $req->execute();
+
+		if ($req)
+			$reponse = $this->bdd->lastInsertId();
+		else
+			$reponse = null;
+
+		return $reponse;
 	}
 
 	/* Initialise les droits d'un utilisateur à 0 pour toutes les sections
