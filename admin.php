@@ -1,4 +1,5 @@
 <?php
+require_once 'outils/afficher.php';
 require_once 'outils/Autoloader.php';
 Autoloader::enregistrer();
 

@@ -1,0 +1,24 @@
+#banniere {
+	text-align: center;
+	margin: 10px;
+	display: none;
+}
+
+#nav_ordinateur {
+	display: none;
+}
+
+@media screen and (min-width: 576px) {
+	#banniere {
+		display: block;
+	}
+
+	#nav_ordinateur {
+		display: -ms-flexbox;
+		display: flex;
+	}
+
+	#nav_smartphone {
+		display: none;
+	}
+}
