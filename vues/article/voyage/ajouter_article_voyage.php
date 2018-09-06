@@ -5,10 +5,10 @@
 		<option value="-1">Aucun</option>
 
 <?php
-		foreach($liste_pays as $pays):
+		foreach($pays as $p):
 ?>
 
-		<option value="<?= $pays->id ?>"><?= $pays->nom ?></option>
+		<option value="<?= $p->id ?>"><?= $p->nom ?></option>
 
 <?php
 		endforeach;

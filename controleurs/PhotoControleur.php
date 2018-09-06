@@ -25,19 +25,27 @@ class PhotoControleur {
 	}
 
 	// Afficher les informations d'une photo
-	function afficher_photo($id, $admin = false, $droits_utilisateur = null) {
+	function afficher_photo($id, $admin = false) {
 		$photo_manager = new PhotoManager($this->bdd);
 		$photo = $photo_manager->obtenir_photo((int)$id);
 
+		$categorie_manager = new CategoriePhotoManager($this->bdd);
+		$categories = $categorie_manager->obtenir_liste();
+
+		$pays_manager = new PaysManager($this->bdd);
+		$pays = $pays_manager->obtenir_liste_pays();
+
 		include 'vues/entete.php';
+		if ($admin)
+			include 'vues/menu_admin.php';
+		else
+			include 'vues/menu.php';
 
 		if (!$photo)
 			include 'vues/photo/aucune_photo.php';
 		else {
 			if ($admin) {
-				if ($droits_utilisateur[Section::TOUT] == Utilisateur::ADMIN || $droits_utilisateur[Section::PHOTOS] == Utilisateur::MODERATEUR || ($droits_utilisateur[Section::PHOTOS] == Utilisateur::CONTRIBUTEUR && $photo->utilisateur->id == $_SESSION['utilisateur']->id)) {
-					$categorie_manager = new CategoriePhotoManager($this->bdd);
-					$categories = $categorie_manager->obtenir_liste();
+				if ($_SESSION['utilisateur']->droits[Section::TOUT] == Utilisateur::ADMIN || $_SESSION['utilisateur']->droits[Section::PHOTOS] == Utilisateur::MODERATEUR || ($_SESSION['utilisateur']->droits[Section::PHOTOS] == Utilisateur::CONTRIBUTEUR && $photo->utilisateur->id == $_SESSION['utilisateur']->id)) {
 
 					$utilisateur_manager = new UtilisateurManager($this->bdd);
 					$utilisateurs = $utilisateur_manager->obtenir_liste_tous_utilisateurs();
@@ -69,12 +77,21 @@ class PhotoControleur {
 	}
 
 	// Afficher les informations des photos d'une catégorie
-	function afficher_categorie($id) {
+	function afficher_categorie($id, $admin = false) {
 		// Vérifier que la catégorie existe
 		$categorie_manager = new CategoriePhotoManager($this->bdd);
 		$categorie = $categorie_manager->obtenir_categorie((int)$id);
+		$categories = $categorie_manager->obtenir_liste();
+
+		$pays_manager = new PaysManager($this->bdd);
+		$pays = $pays_manager->obtenir_liste_pays();
 
 		include 'vues/entete.php';
+
+		if ($admin)
+			include 'vues/menu_admin.php';
+		else
+			include 'vues/menu.php';
 
 		if (!$categorie)
 			include 'vues/categorie_photo/aucune_categorie.php';
@@ -127,11 +144,14 @@ class PhotoControleur {
 		if (isset($_POST['titre_photo']) && isset($_FILES['image']) && isset($_POST['id_categorie']) && isset($_POST['description_photo']))
 			$message = self::ajouter_photo($this->bdd, $_POST['titre_photo'], $_SESSION['utilisateur']->id, 'image', (int)$_POST['id_categorie'], $_POST['description_photo'], true);
 
-		// Obtenir les catégories
 		$categorie_manager = new CategoriePhotoManager($this->bdd);
 		$categories = $categorie_manager->obtenir_liste();
 
+		$pays_manager = new PaysManager($this->bdd);
+		$pays = $pays_manager->obtenir_liste_pays();
+
 		include 'vues/entete.php';
+		include 'vues/menu_admin.php';
 		include 'vues/photo/ajouter_photo_titre.php';
 		include 'vues/photo/ajouter_photo_formulaire.php';
 		include 'vues/pieddepage.php';

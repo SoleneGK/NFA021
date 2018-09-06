@@ -5,10 +5,10 @@
 		<option value="-1"<?= is_null($article->pays) ? ' selected ' : '' ?>>Aucun</option>
 
 <?php
-		foreach($liste_pays as $pays):
+		foreach($_pays as $p):
 ?>
 
-		<option value="<?= $pays->id ?>"<?= (!is_null($article->pays) && $pays->id == $article->pays->id) ? ' selected ' : '' ?>><?= $pays->nom ?></option>
+		<option value="<?= $p->id ?>"<?= (!is_null($article->pays) && $p->id == $article->pays->id) ? ' selected ' : '' ?>><?= $p->nom ?></option>
 
 <?php
 		endforeach;

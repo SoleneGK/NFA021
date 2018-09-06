@@ -10,6 +10,7 @@ class Utilisateur {
 	public $pseudo;
 	public $mail;
 	public $mot_de_passe;
+	public $droits;
 
 	function __construct($id, $pseudo, $mail, $droits = null, $mot_de_passe = null) {
 		$this->id = $id;

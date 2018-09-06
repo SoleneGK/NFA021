@@ -8,7 +8,14 @@ class AccueilControleur {
 	}
 
 	function index() {
+		$categories_manager = new CategoriePhotoManager($this->bdd);
+		$categories = $categories_manager->obtenir_liste();
+
+		$pays_manager = new PaysManager($this->bdd);
+		$pays = $pays_manager->obtenir_liste_pays();
+
 		include 'vues/entete.php';
+		include 'vues/menu.php';
 		include 'vues/accueil/index.php';
 		include 'vues/pieddepage.php';
 	}
@@ -82,7 +89,14 @@ class AccueilControleur {
 	}
 
 	function afficher_accueil_admin() {
+		$categorie_manager = new CategoriePhotoManager($this->bdd);
+		$categories = $categorie_manager->obtenir_liste();
+
+		$pays_manager = new PaysManager($this->bdd);
+		$pays = $pays_manager->obtenir_liste_pays();
+
 		include 'vues/entete.php';
+		include 'vues/menu_admin.php';
 		include 'vues/accueil/index_admin.php';
 		include 'vues/pieddepage.php';
 	}

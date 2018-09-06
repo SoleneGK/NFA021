@@ -8,6 +8,11 @@
 	display: none;
 }
 
+main {
+	position:absolute;
+	top:56px;
+}
+
 @media screen and (min-width: 576px) {
 	#banniere {
 		display: block;
@@ -20,5 +25,9 @@
 
 	#nav_smartphone {
 		display: none;
+	}
+
+	main {
+		position:initial;
 	}
 }

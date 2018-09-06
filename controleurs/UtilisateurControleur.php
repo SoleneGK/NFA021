@@ -30,13 +30,27 @@ class UtilisateurControleur {
 	}
 	
 	function afficher_profil() {
+		$categorie_manager = new CategoriePhotoManager($this->bdd);
+		$categories = $categorie_manager->obtenir_liste();
+
+		$pays_manager = new PaysManager($this->bdd);
+		$pays = $pays_manager->obtenir_liste_pays();
+
 		include 'vues/entete.php';
+		include 'vues/menu_admin.php';
 		include 'vues/utilisateur/afficher_profil.php';
 		include 'vues/pieddepage.php';
 	}
 
 	function modifier_profil() {
+		$categorie_manager = new CategoriePhotoManager($this->bdd);
+		$categories = $categorie_manager->obtenir_liste();
+
+		$pays_manager = new PaysManager($this->bdd);
+		$pays = $pays_manager->obtenir_liste_pays();
+
 		include 'vues/entete.php';
+		include 'vues/menu_admin.php';
 
 		if (isset($_POST['pseudo']) && isset($_POST['mail'])) {
 			$message = '';
@@ -100,7 +114,14 @@ class UtilisateurControleur {
 	}
 
 	function ajouter_utilisateur() {
+		$categorie_manager = new CategoriePhotoManager($this->bdd);
+		$categories = $categorie_manager->obtenir_liste();
+
+		$pays_manager = new PaysManager($this->bdd);
+		$pays = $pays_manager->obtenir_liste_pays();
+
 		include 'vues/entete.php';
+		include 'vues/menu_admin.php';
 
 		if (isset($_POST['pseudo']) && isset($_POST['mail_1']) && isset($_POST['mail_2'])) {
 
@@ -141,7 +162,14 @@ class UtilisateurControleur {
 	}
 
 	function afficher_liste_utilisateurs($page = 1) {
+		$categorie_manager = new CategoriePhotoManager($this->bdd);
+		$categories = $categorie_manager->obtenir_liste();
+
+		$pays_manager = new PaysManager($this->bdd);
+		$pays = $pays_manager->obtenir_liste_pays();
+
 		include 'vues/entete.php';
+		include 'vues/menu_admin.php';
 
 		$page = (int)$page;
 		if ($page <= 0)
@@ -160,11 +188,18 @@ class UtilisateurControleur {
 	}
 
 	function afficher_utilisateur($id) {
+		$categorie_manager = new CategoriePhotoManager($this->bdd);
+		$categories = $categorie_manager->obtenir_liste();
+
+		$pays_manager = new PaysManager($this->bdd);
+		$pays = $pays_manager->obtenir_liste_pays();
+
+		include 'vues/entete.php';
+		include 'vues/menu_admin.php';
+		
 		// Récupérer les informations de l'utilisateur
 		$utilisateur_manager = new UtilisateurManager($this->bdd);
 		$utilisateur = $utilisateur_manager->obtenir_utilisateur($id);
-
-		include 'vues/entete.php';
 
 		if (!$utilisateur)
 			include 'vues/utilisateur/aucun_utilisateur_admin.php';

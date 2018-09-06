@@ -33,14 +33,19 @@ class ArticleControleur {
 	}
 
 	function ajouter_article($id_section) {
+		$categorie_manager = new CategoriePhotoManager($this->bdd);
+		$categories = $categorie_manager->obtenir_liste();
+
+		$pays_manager = new PaysManager($this->bdd);
+		$pays = $pays_manager->obtenir_liste_pays();
+
 		// Si un formulaire a été envoyé
 		if (isset($_POST['titre_article']) && isset($_POST['contenu_article'])) {
 			// Article voyage : si un pays est sélectionné, vérifier qu'il existe
 			if ($id_section == Section::VOYAGE && isset($_POST['id_pays']) && $_POST['id_pays'] != -1) {
-				$pays_manager = new PaysManager($this->bdd);
-				$pays = $pays_manager->obtenir_pays((int)$_POST['id_pays']);
+				$pays_bdd = $pays_manager->obtenir_pays((int)$_POST['id_pays']);
 
-				if (empty($pays)) {
+				if (empty($pays_bdd)) {
 					header('Location: admin.php');
 					exit();
 				}
@@ -65,14 +70,12 @@ class ArticleControleur {
 
 			else {
 				include 'vues/entete.php';
+				include 'vues/menu_admin.php';
 
 				if ($id_section == Article::POLITIQUE)
 					include 'vues/article/politique/ajouter_article_politique.php';
-				else {
-					$pays_manager = new PaysManager($this->bdd);
-					$liste_pays = $pays_manager->obtenir_liste_pays();
+				else
 					include 'vues/article/voyage/ajouter_article_voyage.php';
-				}
 
 				include 'vues/pieddepage.php';
 			}
@@ -80,27 +83,37 @@ class ArticleControleur {
 
 		else {
 			include 'vues/entete.php';
+			include 'vues/menu_admin.php';
 
 			if ($id_section == Article::POLITIQUE)
 				include 'vues/article/politique/ajouter_article_politique.php';
-			else {
-				$pays_manager = new PaysManager($this->bdd);
-				$liste_pays = $pays_manager->obtenir_liste_pays();
+			else
 				include 'vues/article/voyage/ajouter_article_voyage.php';
-			}
 
 			include 'vues/pieddepage.php';
 		}
 
 	}
 
-	function afficher_article($id_article, $id_section, $admin = false, $droits_utilisateur = null) {
+	function afficher_article($id_article, $id_section, $admin = false) {
 		$id_article = (int)$id_article;
 		$id_section = (int)$id_section;
 		$article_manager = new ArticleManager($this->bdd);
 		$article = $article_manager->obtenir_article($id_article, $id_section);
 
 		include 'vues/entete.php';
+
+		$categorie_manager = new CategoriePhotoManager($this->bdd);
+		$categories = $categorie_manager->obtenir_liste();
+
+		$pays_manager = new PaysManager($this->bdd);
+		$pays = $pays_manager->obtenir_liste_pays();
+
+		if ($admin)
+			include 'vues/menu_admin.php';
+		else
+			include 'vues/menu.php';
+
 
 		if (!$article) {
 			if ($id_section == Article::POLITIQUE)
@@ -116,12 +129,12 @@ class ArticleControleur {
 			// Affichage de l'article
 			if ($id_section == Article::POLITIQUE) {
 				include 'vues/article/politique/afficher_article_politique.php';
-				if ($admin && ($droits_utilisateur[Section::TOUT] == Utilisateur::ADMIN || $droits_utilisateur[Section::POLITIQUE] <= Utilisateur::MODERATEUR))
+				if ($admin && ($_SESSION['utilisateur']->droits[Section::TOUT] == Utilisateur::ADMIN || $_SESSION['utilisateur']->droits[Section::POLITIQUE] <= Utilisateur::MODERATEUR))
 					include 'vues/article/politique/afficher_article_politique_actions_admin.php';
 			}
 			else {
 				include 'vues/article/voyage/afficher_article_voyage.php';
-				if ($admin && ($droits_utilisateur[Section::TOUT] == Utilisateur::ADMIN || $droits_utilisateur[Section::VOYAGE] <= Utilisateur::MODERATEUR))
+				if ($admin && ($_SESSION['utilisateur']->droits[Section::TOUT] == Utilisateur::ADMIN || $_SESSION['utilisateur']->droits[Section::VOYAGE] <= Utilisateur::MODERATEUR))
 					include 'vues/article/voyage/afficher_article_voyage_actions_admin.php';
 			}
 
@@ -138,7 +151,7 @@ class ArticleControleur {
 			}
 
 			// Modification d'un commentaire
-			if ($droits_utilisateur[Section::TOUT] == Utilisateur::ADMIN || ($id_section == Section::POLITIQUE && $droits_utilisateur[Section::POLITIQUE] <= Utilisateur::MODERATEUR) || ($id_section == Section::VOYAGE && $droits_utilisateur[Section::VOYAGE] <= Utilisateur::MODERATEUR)) {
+			if ($_SESSION['utilisateur']->droits[Section::TOUT] == Utilisateur::ADMIN || ($id_section == Section::POLITIQUE && $_SESSION['utilisateur']->droits[Section::POLITIQUE] <= Utilisateur::MODERATEUR) || ($id_section == Section::VOYAGE && $_SESSION['utilisateur']->droits[Section::VOYAGE] <= Utilisateur::MODERATEUR)) {
 				if (isset($_POST['modifier_commentaire']) && isset($_POST['contenu_commentaire']) && isset($_POST['id_commentaire'])) {
 					if (!empty($_POST['id_utilisateur']))
 						$commentaire_manager->modifier_commentaire($_POST['id_commentaire'], null, null, $_POST['contenu_commentaire']);
@@ -149,7 +162,7 @@ class ArticleControleur {
 
 			// Suppression d'un commentaire
 			if (isset($_POST['supprimer_commentaire']) && isset($_POST['id_commentaire'])) {
-				if ($droits_utilisateur[Section::TOUT] == Utilisateur::ADMIN || ($id_section == Section::POLITIQUE && $droits_utilisateur[Section::POLITIQUE] <= Utilisateur::MODERATEUR) || ($id_section == Section::VOYAGE && $droits_utilisateur[Section::VOYAGE] <= Utilisateur::MODERATEUR))
+				if ($_SESSION['utilisateur']->droits[Section::TOUT] == Utilisateur::ADMIN || ($id_section == Section::POLITIQUE && $_SESSION['utilisateur']->droits[Section::POLITIQUE] <= Utilisateur::MODERATEUR) || ($id_section == Section::VOYAGE && $_SESSION['utilisateur']->droits[Section::VOYAGE] <= Utilisateur::MODERATEUR))
 					$commentaire_manager->supprimer_commentaire((int)$_POST['id_commentaire']);
 			}
 
@@ -159,7 +172,7 @@ class ArticleControleur {
 			if (!$commentaires)
 				include 'vues/commentaires/aucun_commentaire.php';
 			else {
-				if ($admin && ($droits_utilisateur[Section::TOUT] == Utilisateur::ADMIN || ($id_section == Section::POLITIQUE && $droits_utilisateur[Section::POLITIQUE] <= Utilisateur::MODERATEUR) || ($id_section == Section::VOYAGE && $droits_utilisateur[Section::VOYAGE] <= Utilisateur::MODERATEUR)))
+				if ($admin && ($_SESSION['utilisateur']->droits[Section::TOUT] == Utilisateur::ADMIN || ($id_section == Section::POLITIQUE && $_SESSION['utilisateur']->droits[Section::POLITIQUE] <= Utilisateur::MODERATEUR) || ($id_section == Section::VOYAGE && $_SESSION['utilisateur']->droits[Section::VOYAGE] <= Utilisateur::MODERATEUR)))
 					include 'vues/commentaires/afficher_commentaires_admin.php';
 				else
 					include 'vues/commentaires/afficher_commentaires.php';
@@ -175,8 +188,20 @@ class ArticleControleur {
 		include 'vues/pieddepage.php';
 	}
 
-	function afficher_liste_articles_section($id_section, $page = 1, $droits_utilisateur = null) {
+	function afficher_liste_articles_section($id_section, $page = 1, $admin = false) {
 		include 'vues/entete.php';
+
+		$categorie_manager = new CategoriePhotoManager($this->bdd);
+		$categories = $categorie_manager->obtenir_liste();
+
+		$pays_manager = new PaysManager($this->bdd);
+		$pays = $pays_manager->obtenir_liste_pays();
+
+		if ($admin)
+			include 'vues/menu_admin.php';
+		else
+			include 'vues/menu.php';
+
 
 		$page = (int)$page;
 		if ($page <= 0)
@@ -186,7 +211,7 @@ class ArticleControleur {
 
 			// Suppression d'un article
 			if (isset($_POST['supprimer_article']) && isset($_POST['id_article'])) {
-				if ($droits_utilisateur[Section::TOUT] == Utilisateur::ADMIN || ($id_section == Section::POLITIQUE && $droits_utilisateur[Section::POLITIQUE] <= Utilisateur::MODERATEUR) || ($id_section == Section::VOYAGE && $droits_utilisateur[Section::VOYAGE] <= Utilisateur::MODERATEUR)) {
+				if ($_SESSION['utilisateur']->droits[Section::TOUT] == Utilisateur::ADMIN || ($id_section == Section::POLITIQUE && $_SESSION['utilisateur']->droits[Section::POLITIQUE] <= Utilisateur::MODERATEUR) || ($id_section == Section::VOYAGE && $_SESSION['utilisateur']->droits[Section::VOYAGE] <= Utilisateur::MODERATEUR)) {
 					$commentaire_manager = new CommentaireManager($this->bdd);
 					$commentaire_manager->supprimer_commentaires_article((int)$_POST['id_article']);
 
@@ -210,11 +235,21 @@ class ArticleControleur {
 		include 'vues/pieddepage.php';
 	}
 
-	function afficher_liste_articles_pays($id_pays, $page = 1) {
+	function afficher_liste_articles_pays($id_pays, $page = 1, $admin = false) {
 		include 'vues/entete.php';
 
-		// Vérifier que le pays existe
+		$categorie_manager = new CategoriePhotoManager($this->bdd);
+		$categories = $categorie_manager->obtenir_liste();
+
 		$pays_manager = new PaysManager($this->bdd);
+		$pays = $pays_manager->obtenir_liste_pays();
+
+		if ($admin)
+			include 'vues/menu_admin.php';
+		else
+			include 'vues/menu.php';
+
+		// Vérifier que le pays existe
 		$pays = $pays_manager->obtenir_pays((int)$id_pays);
 
 		if ($pays) {
@@ -247,6 +282,14 @@ class ArticleControleur {
 
 		include 'vues/entete.php';
 
+		$categorie_manager = new CategoriePhotoManager($this->bdd);
+		$categories = $categorie_manager->obtenir_liste();
+
+		$pays_manager = new PaysManager($this->bdd);
+		$pays = $pays_manager->obtenir_liste_pays();
+
+		include 'vues/menu.php';
+
 		if(!$utilisateur)
 			include 'vues/utilisateur/aucun_utilisateur.php';
 		else {
@@ -271,7 +314,7 @@ class ArticleControleur {
 		include 'vues/pieddepage.php';
 	}
 
-	function modifier_article($id_article, $id_section, $droits_utilisateur) {
+	function modifier_article($id_article, $id_section) {
 		$id_article = (int)$id_article;
 		$id_section = (int)$id_section;
 
@@ -281,13 +324,18 @@ class ArticleControleur {
 		// Vérifier qu'un article a été trouvé
 		if ($article) {
 			// Vérifier que l'utilisateur a le droit de modifier l'article
-			if ($droits_utilisateur[Section::TOUT] == Utilisateur::ADMIN || $droits_utilisateur[Section::POLITIQUE] <= Utilisateur::MODERATEUR || ($droits_utilisateur[Section::POLITIQUE] <= Utilisateur::CONTRIBUTEUR && $article->utilisateur->id == $_SESSION['utilisateur']->id)) {
+			if ($_SESSION['utilisateur']->droits[Section::TOUT] == Utilisateur::ADMIN || $_SESSION['utilisateur']->droits[Section::POLITIQUE] <= Utilisateur::MODERATEUR || ($_SESSION['utilisateur']->droits[Section::POLITIQUE] <= Utilisateur::CONTRIBUTEUR && $article->utilisateur->id == $_SESSION['utilisateur']->id)) {
 				
+				$categorie_manager = new CategoriePhotoManager($this->bdd);
+				$categories = $categorie_manager->obtenir_liste();
+
+				$pays_manager = new PaysManager($this->bdd);
+				$pays = $pays_manager->obtenir_liste_pays();
+
 				// Si un formulaire a été envoyé
 				if (isset($_POST['titre_article']) && isset($_POST['contenu_article'])) {
 					// Article voyage : si un pays est sélectionné, vérifier qu'il existe
 					if ($id_section == Section::VOYAGE && isset($_POST['id_pays']) && $_POST['id_pays'] != -1) {
-						$pays_manager = new PaysManager($this->bdd);
 						$pays = $pays_manager->obtenir_pays((int)$_POST['id_pays']);
 
 						if (empty($pays)) {
@@ -320,14 +368,12 @@ class ArticleControleur {
 						$article->pays = new Pays($_POST['id_pays'], null);
 
 						include 'vues/entete.php';
+						include 'vues/menu_admin.php';
 
 						if ($id_section == Article::POLITIQUE)
 							include 'vues/article/politique/modifier_article_politique.php';
-						else {
-							$pays_manager = new PaysManager($this->bdd);
-							$liste_pays = $pays_manager->obtenir_liste_pays();
+						else
 							include 'vues/article/voyage/modifier_article_voyage.php';
-						}
 
 						include 'vues/pieddepage.php';
 					}
@@ -335,14 +381,12 @@ class ArticleControleur {
 
 				else {
 					include 'vues/entete.php';
+					include 'vues/menu_admin.php';
 
 					if ($id_section == Article::POLITIQUE)
 						include 'vues/article/politique/modifier_article_politique.php';
-					else {
-						$pays_manager = new PaysManager($this->bdd);
-						$liste_pays = $pays_manager->obtenir_liste_pays();
+					else
 						include 'vues/article/voyage/modifier_article_voyage.php';
-					}
 
 					include 'vues/pieddepage.php';
 				}
