@@ -1,11 +1,9 @@
-<div id="banniere">
-	<img src="public/images/titre.png" />
-</div>
+<div id="banniere">Empreinte</div>
 
 <ul id="nav_ordinateur" class="nav">
 	<li class="nav-item btn-group">
 		<a class="nav-link" href="index.php?section=photos">Photos</a>
-		<button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown"></button>
+		<button type="button" class="btn btn-light dropdown-toggle dropdown-toggle-split" data-toggle="dropdown"></button>
 		<div class="dropdown-menu">
 
 <?php
@@ -23,7 +21,7 @@
 	</li>
 	<li class="nav-item btn-group">
 		<a class="nav-link" href="index.php?section=voyage">Articles voyage</a>
-		<button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown"></button>
+		<button type="button" class="btn btn-light dropdown-toggle dropdown-toggle-split" data-toggle="dropdown"></button>
 		<div class="dropdown-menu">
 
 <?php
@@ -41,7 +39,7 @@
 
 
 
-<nav id="nav_smartphone" class="navbar navbar-light bg-light fixed-top">
+<nav id="nav_smartphone" class="navbar navbar-light fixed-top">
 	<a class="navbar-brand" href="index.php">Empreinte</a>
 	<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent">
 		<span class="navbar-toggler-icon"></span>

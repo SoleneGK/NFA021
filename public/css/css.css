@@ -1,12 +1,73 @@
+@font-face {
+	font-family: 'Kaushan';
+	src: url('../font/KaushanScript-Regular.ttf');
+}
+
+body {
+	max-width: 1000px;
+	margin: 0 auto;
+}
+
 #banniere {
 	text-align: center;
-	margin: 10px;
+	font-family: Kaushan, serif;
+	font-size: 7.5em;
+	color: #237d05;
+	text-shadow: #185603 0.01em 0.05em 0.1em;
+	line-height: 1;
+	margin-bottom: .5em;
 	display: none;
 }
 
+/* Barre de navigation pour ordinateurs */
 #nav_ordinateur {
 	display: none;
+	background: #c7e6bd;
+	border-radius: 10px;
 }
+
+#nav_ordinateur a {
+	color: black;
+}
+
+#nav_ordinateur button {
+	background-color: #c7e6bd;
+  	border-color: #c7e6bd;
+}
+
+#nav_ordinateur button:focus, #nav_ordinateur button:active {
+	box-shadow: none;
+}
+
+#nav_ordinateur .dropdown-menu {
+	background-color: #c7e6bd;
+	margin-top: 0;
+	border-radius: 0 0 .25rem .25rem;
+}
+
+#nav_ordinateur .dropdown-divider {
+	border-top: 1px solid #a9c4a1;
+}
+
+/* Barre de navigation pour smartphones */
+nav .navbar-brand {
+	color: #237d05 !important;
+}
+
+nav {
+	background-color: #c7e6bd !important;
+}
+
+nav .dropdown-menu {
+	background-color: #c7e6bd;
+}
+
+nav .dropdown-divider {
+	border-top: 1px solid #a9c4a1;
+}
+
+
+
 
 main {
 	position:absolute;

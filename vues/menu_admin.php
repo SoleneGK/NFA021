@@ -1,11 +1,9 @@
-<div id="banniere">
-	<img src="public/images/titre.png" />
-</div>
+<div id="banniere">Empreinte</div>
 
 <ul id="nav_ordinateur" class="nav">
 	<li class="nav-item btn-group">
 		<a class="nav-link" href="admin.php?section=photos">Photos</a>
-		<button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown"></button>
+		<button type="button" class="btn btn-light dropdown-toggle dropdown-toggle-split" data-toggle="dropdown"></button>
 		<div class="dropdown-menu">
 
 <?php
@@ -37,7 +35,7 @@
 <?php
 	if ($_SESSION['utilisateur']->droits[Section::TOUT] == Utilisateur::ADMIN || $_SESSION['utilisateur']->droits[Section::POLITIQUE] <= Utilisateur::CONTRIBUTEUR):
 ?>
-		<button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown"></button>
+		<button type="button" class="btn btn-light dropdown-toggle dropdown-toggle-split" data-toggle="dropdown"></button>
 		<div class="dropdown-menu">
 			<a class="nav-link" href="admin.php?section=politique&ajouter">Ajouter un article</a>
 		</div>
@@ -47,7 +45,7 @@
 	</li>
 	<li class="nav-item btn-group">
 		<a class="nav-link" href="admin.php?section=voyage">Articles voyage</a>
-		<button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown"></button>
+		<button type="button" class="btn btn-light dropdown-toggle dropdown-toggle-split" data-toggle="dropdown"></button>
 		<div class="dropdown-menu">
 
 <?php
@@ -74,7 +72,7 @@ if ($_SESSION['utilisateur']->droits[Section::TOUT] == Utilisateur::ADMIN):
 	</li>
 	<li class="nav-item btn-group">
 		<a class="nav-link" href="admin.php?section=utilisateur">Utilisateurs</a>
-		<button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown"></button>
+		<button type="button" class="btn btn-light dropdown-toggle dropdown-toggle-split" data-toggle="dropdown"></button>
 		<div class="dropdown-menu">
 			<a class="dropdown-item" href="admin.php?section=utilisateurs&ajouter">Ajouter un utilisateur</a>
 		</div>
@@ -90,7 +88,7 @@ endif;
 
 
 
-<nav id="nav_smartphone" class="navbar navbar-light bg-light fixed-top">
+<nav id="nav_smartphone" class="navbar navbar-light fixed-top">
 	<a class="navbar-brand" href="admin.php">Empreinte</a>
 	<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent">
 		<span class="navbar-toggler-icon"></span>
