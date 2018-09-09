@@ -1,1 +1,0 @@
-<p>Mail envoyé !</p>

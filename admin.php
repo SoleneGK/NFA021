@@ -7,8 +7,7 @@ session_start();
 
 $bdd = new Bdd();
 
-define('NOMBRE_ARTICLES_PAR_PAGE', 2);
-define('NOMBRE_UTILISATEURS_PAR_PAGE', 2);
+define('NOMBRE_ARTICLES_PAR_PAGE', 5);
 
 // Traitement des demandes de connexion
 if (!isset($_SESSION['utilisateur']) && isset($_POST['mail_connexion']) && isset($_POST['mot_de_passe_connexion'])) {
@@ -17,7 +16,7 @@ if (!isset($_SESSION['utilisateur']) && isset($_POST['mail_connexion']) && isset
 }
 
 // Traitement des demandes de déconnexion
-if (isset($_POST['deconnexion'])) {
+if (isset($_GET['deco'])) {
 	$connexion = new UtilisateurControleur($bdd->bdd);
 	$connexion->deconnecter();
 }
@@ -115,14 +114,8 @@ else {
 
 		// Forme de l'URL : admin.php?section=pays
 		elseif ($section == 'pays') {
-			if ($_SESSION['utilisateur']->droits[Section::TOUT] == Utilisateur::ADMIN) {
-				$controleur = new PaysControleur($bdd->bdd);
-				$controleur->afficher_pays();
-			}
-			else {
-				$controleur = new AccueilControleur($bdd->bdd);
-				$controleur->afficher_accueil_admin();
-			}
+			$controleur = new PaysControleur($bdd->bdd);
+			$controleur->afficher_pays();
 		}
 
 		// Forme de l'URL : admin.php?section=photos
@@ -205,10 +198,6 @@ else {
 				elseif (isset($_GET['id'])) {
 					$controleur->afficher_utilisateur($_GET['id']);
 				}
-				// Forme de l'URL : admin.php?section=utilisateur&page=[numero]
-				elseif (isset($_GET['page'])) {
-					$controleur->afficher_liste_utilisateurs($_GET['page']);
-				}
 				else {
 					$controleur->afficher_liste_utilisateurs();
 				}
@@ -222,15 +211,7 @@ else {
 		// Forme de l'URL : admin.php?section=profil
 		elseif ($section == 'profil') {
 			$controleur = new UtilisateurControleur($bdd->bdd);
-
-			// Forme de l'URL : admin.php?section=profil&modifier
-			if (isset($_GET['modifier']))
-				$controleur->modifier_profil();
-			// Forme de l'URL : admin.php?section=profil&modifier_mdp
-			elseif (isset($_GET['modifier_mdp']))
-				$controleur->modifier_mot_de_passe();
-			else
-				$controleur->afficher_profil();
+			$controleur->afficher_profil();
 		}
 
 		else {

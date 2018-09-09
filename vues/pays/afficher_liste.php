@@ -1,18 +1,25 @@
-<h1>Pays</h1>
-
+<p id="chemin_page">Pays > Liste</p>
 
 <?php
 
-echo isset($message) ? $message : '';
+if (isset($message_succes))
+	echo'<div class="alert alert-success" role="alert">'.$message_succes.'</div>';
 
 foreach ($pays as $item):
 ?>
 
-<form method="post">
+<form method="post" class="liste_pays">
 	<input type="hidden" name="id_pays" value="<?= $item->id ?>" />
-	<input type="text" name="nom_pays" value="<?= $item->nom ?>" required />
-	<input type="submit" name="modifier" value="Modifier" />
-	<input type="submit" name="supprimer" value="Supprimer" />
+
+	<div class="input-group mb-1">
+		<div class="input-group-prepend">
+			<span class="input-group-text" id="nom_pays-addon1" ?>Nom</span>
+		</div>
+		<input type="text" class="form-control" name="nom_pays" value="<?= afficher($item->nom) ?>" required />
+	</div>
+
+	<input type="submit" class="btn input" name="modifier" value="Modifier" />
+	<input type="submit" class="btn supprimer" name="supprimer" value="Supprimer" />
 </form>
 
 <?php
@@ -22,7 +29,12 @@ endforeach;
 ?>
 
 <form method="post">
-	<input type="text" name="nom_pays" required />
-	<input type="submit" name="ajouter" value="Ajouter" />
+		<div class="input-group mb-1">
+		<div class="input-group-prepend">
+			<span class="input-group-text" id="nom_pays-addon1" ?>Nom</span>
+		</div>
+		<input type="text" class="form-control" name="nom_pays" required />
+	</div>
+	<input type="submit" class="btn input" name="ajouter" value="Ajouter un pays" />
 </form>
 

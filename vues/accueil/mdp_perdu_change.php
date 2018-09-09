@@ -1,1 +1,0 @@
-<p>Votre mot de passe a été changé, vous pouvez maintenant l'utiliser pour vous connecter.</p>

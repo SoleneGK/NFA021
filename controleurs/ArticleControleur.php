@@ -9,14 +9,11 @@ class ArticleControleur {
 
 	/* Obtenir les numéros des pages pour la navigation dans la liste des articles
 	 * Renvoie un array associatif
-	 * premiere_page => 1
 	 * page_precedente => null si la page actuelle est la 1e, ou le numéro de la page
 	 * page_suivante => null si la page actuelle est la dernière, ou le numéro de la page
 	 * derniere_page => le numéro de la page
 	 */
-	static function obtenir_numeros_pages($numero_page_actuelle, $nombre_articles) {
-		$numeros['premiere_page'] = 1;
-		
+	function obtenir_numeros_pages($numero_page_actuelle, $nombre_articles) {
 		if ($numero_page_actuelle == 1)
 			$numeros['page_precedente'] = null;
 		else
@@ -53,9 +50,11 @@ class ArticleControleur {
 			else
 				$_POST['pays'] = null;
 
+			// Ajout de l'article en bdd
 			$article_manager = new ArticleManager($this->bdd);
-			$resultat = $article_manager->ajouter_article($_POST['titre_article'], $id_section, $_POST['contenu_article'], $_SESSION['utilisateur']->id, (int)$_POST['id_pays']);
+			$resultat = $article_manager->ajouter_article(trim($_POST['titre_article']), $id_section, trim($_POST['contenu_article']), $_SESSION['utilisateur']->id, (int)$_POST['id_pays']);
 
+			// Envoi sur la page de l'article
 			if ($resultat) {
 				$destination = 'admin.php?section=';
 				if ($id_section == Section::POLITIQUE)
@@ -68,6 +67,7 @@ class ArticleControleur {
 				exit();
 			}
 
+			// Affichage de la page de saisie en conservant ce qui a été entré
 			else {
 				include 'vues/entete.php';
 				include 'vues/menu_admin.php';
@@ -81,6 +81,7 @@ class ArticleControleur {
 			}
 		}
 
+		// Affichage du formulaire de saisie
 		else {
 			include 'vues/entete.php';
 			include 'vues/menu_admin.php';
@@ -98,8 +99,6 @@ class ArticleControleur {
 	function afficher_article($id_article, $id_section, $admin = false) {
 		$id_article = (int)$id_article;
 		$id_section = (int)$id_section;
-		$article_manager = new ArticleManager($this->bdd);
-		$article = $article_manager->obtenir_article($id_article, $id_section);
 
 		include 'vues/entete.php';
 
@@ -114,12 +113,14 @@ class ArticleControleur {
 		else
 			include 'vues/menu.php';
 
+		$article_manager = new ArticleManager($this->bdd);
+		$article = $article_manager->obtenir_article($id_article, $id_section);
 
 		if (!$article) {
 			if ($id_section == Article::POLITIQUE)
-				include 'vues/article/politique/aucun_article_politique.php';
+				include 'vues/article/politique/afficher_article_politique.php';
 			else
-				include 'vues/article/voyage/aucun_article_voyage.php';
+				include 'vues/article/voyage/afficher_article_voyage.php';
 		}
 		else {
 			// Obtenir les infos sur les articles suivants et précédents
@@ -127,36 +128,34 @@ class ArticleControleur {
 			$article_precedent = $article_manager->obtenir_article_precedent($id_article, $id_section);
 
 			// Affichage de l'article
-			if ($id_section == Article::POLITIQUE) {
+			if ($id_section == Article::POLITIQUE)
 				include 'vues/article/politique/afficher_article_politique.php';
-				if ($admin && ($_SESSION['utilisateur']->droits[Section::TOUT] == Utilisateur::ADMIN || $_SESSION['utilisateur']->droits[Section::POLITIQUE] <= Utilisateur::MODERATEUR))
-					include 'vues/article/politique/afficher_article_politique_actions_admin.php';
-			}
-			else {
+			else
 				include 'vues/article/voyage/afficher_article_voyage.php';
-				if ($admin && ($_SESSION['utilisateur']->droits[Section::TOUT] == Utilisateur::ADMIN || $_SESSION['utilisateur']->droits[Section::VOYAGE] <= Utilisateur::MODERATEUR))
-					include 'vues/article/voyage/afficher_article_voyage_actions_admin.php';
-			}
 
 			$commentaire_manager = new CommentaireManager($this->bdd);
 
 			// Ajout d'un commentaire
-			if ($admin) {
+			if (isset($_SESSION['utilisateur'])) {
 				if (isset($_POST['ajouter_commentaire']) && isset($_POST['contenu']))
-					$commentaire_manager->ajouter_commentaire($_SESSION['utilisateur']->id, null, null, $article->id, $_POST['contenu']);
+					$commentaire_manager->ajouter_commentaire($_SESSION['utilisateur']->id, null, null, $article->id, trim($_POST['contenu']));
 			}
 			else {
 				if (isset($_POST['ajouter_commentaire']) && isset($_POST['pseudo']) && isset($_POST['mail']) && isset($_POST['contenu']))
-					$commentaire_manager->ajouter_commentaire(null, $_POST['pseudo'], $_POST['mail'], $article->id, $_POST['contenu']);
+					$commentaire_manager->ajouter_commentaire(null, trim($_POST['pseudo']), $_POST['mail'], $article->id, trim($_POST['contenu']));
 			}
 
 			// Modification d'un commentaire
-			if ($_SESSION['utilisateur']->droits[Section::TOUT] == Utilisateur::ADMIN || ($id_section == Section::POLITIQUE && $_SESSION['utilisateur']->droits[Section::POLITIQUE] <= Utilisateur::MODERATEUR) || ($id_section == Section::VOYAGE && $_SESSION['utilisateur']->droits[Section::VOYAGE] <= Utilisateur::MODERATEUR)) {
+			if ($admin &&
+				($_SESSION['utilisateur']->droits[Section::TOUT] == Utilisateur::ADMIN || 
+				($id_section == Section::POLITIQUE && $_SESSION['utilisateur']->droits[Section::POLITIQUE] <= Utilisateur::MODERATEUR) || 
+				($id_section == Section::VOYAGE && $_SESSION['utilisateur']->droits[Section::VOYAGE] <= Utilisateur::MODERATEUR))) {
+
 				if (isset($_POST['modifier_commentaire']) && isset($_POST['contenu_commentaire']) && isset($_POST['id_commentaire'])) {
 					if (!empty($_POST['id_utilisateur']))
 						$commentaire_manager->modifier_commentaire($_POST['id_commentaire'], null, null, $_POST['contenu_commentaire']);
 					elseif (isset($_POST['pseudo_commentaire']) && isset($_POST['mail_commentaire']))
-						$commentaire_manager->modifier_commentaire($_POST['id_commentaire'], $_POST['pseudo_commentaire'], $_POST['mail_commentaire'], $_POST['contenu_commentaire']);
+						$commentaire_manager->modifier_commentaire($_POST['id_commentaire'], trim($_POST['pseudo_commentaire']), $_POST['mail_commentaire'], trim($_POST['contenu_commentaire']));
 				}
 			}
 
@@ -169,20 +168,13 @@ class ArticleControleur {
 			$commentaires = $commentaire_manager->obtenir_commentaires_article($article->id);
 
 			// Affichage des commentaires
-			if (!$commentaires)
-				include 'vues/commentaires/aucun_commentaire.php';
-			else {
-				if ($admin && ($_SESSION['utilisateur']->droits[Section::TOUT] == Utilisateur::ADMIN || ($id_section == Section::POLITIQUE && $_SESSION['utilisateur']->droits[Section::POLITIQUE] <= Utilisateur::MODERATEUR) || ($id_section == Section::VOYAGE && $_SESSION['utilisateur']->droits[Section::VOYAGE] <= Utilisateur::MODERATEUR)))
-					include 'vues/commentaires/afficher_commentaires_admin.php';
-				else
-					include 'vues/commentaires/afficher_commentaires.php';
-			}
+			if ($admin && ($_SESSION['utilisateur']->droits[Section::TOUT] == Utilisateur::ADMIN || ($id_section == Section::POLITIQUE && $_SESSION['utilisateur']->droits[Section::POLITIQUE] <= Utilisateur::MODERATEUR) || ($id_section == Section::VOYAGE && $_SESSION['utilisateur']->droits[Section::VOYAGE] <= Utilisateur::MODERATEUR)))
+				include 'vues/commentaires/afficher_commentaires_admin.php';
+			else
+				include 'vues/commentaires/afficher_commentaires.php';
 
 			// Formulaire d'ajout de commentaire
-			if ($admin)
-				include 'vues/commentaires/formulaire_ajouter_commentaire_admin.php';
-			else
-				include 'vues/commentaires/formulaire_ajouter_commentaire.php';
+			include 'vues/commentaires/formulaire_ajouter_commentaire.php';
 		}
 
 		include 'vues/pieddepage.php';
@@ -224,7 +216,7 @@ class ArticleControleur {
 			$articles = $article_manager->obtenir_articles_section($id_section, ($page - 1) * NOMBRE_ARTICLES_PAR_PAGE);
 
 			// Obtenir les numéros de page pour la navigation
-			$numeros_pages = self::obtenir_numeros_pages($page, $article_manager->nombre_articles_section($id_section));
+			$numeros_pages = $this->obtenir_numeros_pages($page, $article_manager->nombre_articles_section($id_section));
 		}
 
 		if ($id_section == Article::POLITIQUE)
@@ -250,9 +242,9 @@ class ArticleControleur {
 			include 'vues/menu.php';
 
 		// Vérifier que le pays existe
-		$pays = $pays_manager->obtenir_pays((int)$id_pays);
+		$pays_selectionne = $pays_manager->obtenir_pays((int)$id_pays);
 
-		if ($pays) {
+		if ($pays_selectionne) {
 			$page = (int)$page;
 			if ($page <= 0)
 				$articles = [];
@@ -260,10 +252,10 @@ class ArticleControleur {
 				// Obtenir la liste des articles
 				$article_manager = new ArticleManager($this->bdd);
 				// Position du 1er article = (n° page - 1) × nombre d'articles par page
-				$articles = $article_manager->obtenir_articles_pays($pays, ($page - 1) * NOMBRE_ARTICLES_PAR_PAGE);
+				$articles = $article_manager->obtenir_articles_pays($pays_selectionne, ($page - 1) * NOMBRE_ARTICLES_PAR_PAGE);
 
 				// Obtenir les numéros de page pour la navigation
-				$numeros_pages = self::obtenir_numeros_pages($page, $article_manager->nombre_articles_pays($id_pays));
+				$numeros_pages = $this->obtenir_numeros_pages($page, $article_manager->nombre_articles_pays($id_pays));
 			}
 
 			include 'vues/article/voyage/afficher_liste_articles_pays.php';
@@ -275,7 +267,7 @@ class ArticleControleur {
 	}
 
 	// Afficher la liste des articles publiés par un utilisateur
-	function afficher_liste_articles_utilisateur($id_utilisateur, $page = 1) {
+	function afficher_liste_articles_utilisateur($id_utilisateur, $page = 1, $admin = false) {
 		// Vérifier que l'utilisateur existe
 		$utilisateur_manager = new UtilisateurManager($this->bdd);
 		$utilisateur = $utilisateur_manager->obtenir_utilisateur($id_utilisateur);
@@ -290,9 +282,7 @@ class ArticleControleur {
 
 		include 'vues/menu.php';
 
-		if(!$utilisateur)
-			include 'vues/utilisateur/aucun_utilisateur.php';
-		else {
+		if ($utilisateur) {
 			// Obtenir la liste des articles
 			$page = (int)$page;
 			if ($page <= 0)
@@ -304,13 +294,11 @@ class ArticleControleur {
 				$articles = $article_manager->obtenir_articles_utilisateur($utilisateur, ($page - 1) * NOMBRE_ARTICLES_PAR_PAGE);
 
 				// Obtenir les numéros de page pour la navigation
-				$numeros_pages = self::obtenir_numeros_pages($page, $article_manager->nombre_articles_utilisateur($utilisateur));
+				$numeros_pages = $this->obtenir_numeros_pages($page, $article_manager->nombre_articles_utilisateur($utilisateur));
 			}
-
-			include 'vues/article/afficher_liste_articles_utilisateur.php';
-
 		}
 
+		include 'vues/article/afficher_liste_articles_utilisateur.php';
 		include 'vues/pieddepage.php';
 	}
 
@@ -346,7 +334,7 @@ class ArticleControleur {
 					else
 						$_POST['id_pays'] = null;
 
-					$resultat = $article_manager->modifier_article($id_article, $_POST['titre_article'], $_POST['contenu_article'], (int)$_POST['id_pays']);
+					$resultat = $article_manager->modifier_article($id_article, trim($_POST['titre_article']), trim($_POST['contenu_article']), (int)$_POST['id_pays']);
 
 					// Affichage de l'article si réussite de modification en bdd, affichage du formulaire sinon
 					if($resultat) {

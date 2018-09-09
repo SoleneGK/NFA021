@@ -50,6 +50,7 @@ class PhotoControleur {
 					$utilisateur_manager = new UtilisateurManager($this->bdd);
 					$utilisateurs = $utilisateur_manager->obtenir_liste_tous_utilisateurs();
 
+					// Modification d'une photo
 					if (isset($_POST['titre_photo']) && isset($_POST['id_categorie']) && isset($_POST['id_utilisateur']) && isset($_POST['description_photo'])) {
 						// Vérifier que la catégorie et l'utilisateur existent
 						if (!$this->existe_objet_id($_POST['id_categorie'], $categories))
@@ -57,7 +58,7 @@ class PhotoControleur {
 						elseif (!$this->existe_objet_id($_POST['id_utilisateur'], $utilisateurs))
 							$message = '<p>Cet utilisateur n\'existe pas.</p>';
 						else {
-							$photo_manager->modifier_photo($photo->id, $_POST['titre_photo'],$_POST['id_categorie'], $_POST['id_utilisateur'], $_POST['description_photo']);
+							$photo_manager->modifier_photo($photo->id, trim($_POST['titre_photo']), $_POST['id_categorie'], $_POST['id_utilisateur'], trim($_POST['description_photo']));
 							$message = '<p>Photo modifiée</p>';
 							$photo = $photo_manager->obtenir_photo((int)$id);
 						}
@@ -142,7 +143,7 @@ class PhotoControleur {
 	function ajouter_photo_page() {
 		// Ajouter la photo
 		if (isset($_POST['titre_photo']) && isset($_FILES['image']) && isset($_POST['id_categorie']) && isset($_POST['description_photo']))
-			$message = self::ajouter_photo($this->bdd, $_POST['titre_photo'], $_SESSION['utilisateur']->id, 'image', (int)$_POST['id_categorie'], $_POST['description_photo'], true);
+			$message = self::ajouter_photo($this->bdd, trim($_POST['titre_photo']), $_SESSION['utilisateur']->id, 'image', (int)$_POST['id_categorie'], trim($_POST['description_photo']), true);
 
 		$categorie_manager = new CategoriePhotoManager($this->bdd);
 		$categories = $categorie_manager->obtenir_liste();

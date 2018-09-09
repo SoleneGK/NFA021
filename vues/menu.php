@@ -1,4 +1,4 @@
-<div id="banniere">Empreinte</div>
+<div id="banniere"><a href='index.php'>Empreinte</a></div>
 
 <ul id="nav_ordinateur" class="nav">
 	<li class="nav-item btn-group">

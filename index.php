@@ -7,7 +7,7 @@ session_start();
 
 $bdd = new Bdd();
 
-define('NOMBRE_ARTICLES_PAR_PAGE', 2);
+define('NOMBRE_ARTICLES_PAR_PAGE', 5);
 
 if (!isset($_GET['section'])) {
 	$controleur = new AccueilControleur($bdd->bdd);

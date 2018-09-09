@@ -1,1 +1,0 @@
-<p>Aucun article voyage trouvé</p>

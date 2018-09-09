@@ -176,16 +176,14 @@ class UtilisateurManager {
 	 * Affiche NOMBRE_UTILISATEURS_PAR_PAGE à partir du n° $position
 	 * Renvoie un array de Utilisateurs
 	 */
-	function obtenir_liste_utilisateurs($position) {
-		$req = 'SELECT id, pseudo, mail FROM utilisateurs ORDER BY id LIMIT :position, :nombre';
+	function obtenir_liste_utilisateurs() {
+		$req = 'SELECT id, pseudo, mail FROM utilisateurs ORDER BY id ';
 		$req = $this->bdd->prepare($req);
-		$req->bindValue('position', $position, PDO::PARAM_INT);
-		$req->bindValue('nombre', NOMBRE_UTILISATEURS_PAR_PAGE, PDO::PARAM_INT);
 		$req->execute();
 
 		$utilisateurs = [];
 		foreach ($req->fetchAll(PDO::FETCH_ASSOC) as $ligne) {
-			$u = new Utilisateur($ligne['id'], $ligne['pseudo'], $ligne['mail'], $this->obtenir_droits($ligne['id']));
+			$u = new Utilisateur($ligne['id'], $ligne['pseudo'], $ligne['mail']);
 			$utilisateurs[] = $u;
 		}
 

@@ -1,1 +1,0 @@
-<p>Les mots de passe sont différents</p>

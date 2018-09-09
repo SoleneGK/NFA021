@@ -7,7 +7,3 @@
 	<a href="admin.php?section=utilisateur">Utilisateurs</a><br />
 	<a href="admin.php?section=profil">Profil</a><br />
 </p>
-
-<form method="post" action="admin.php">
-	<input type="submit" name="deconnexion" value="Déconnexion" />
-</form>

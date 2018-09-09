@@ -30,7 +30,7 @@ class CategoriePhotoControleur {
 		$pays = $pays_manager->obtenir_liste_pays();
 
 		if (isset($_POST['nom_categorie']) && isset($_POST['description_categorie'])) {
-			$categorie_manager->ajouter_categorie($_POST['nom_categorie'], $_POST['description_categorie']);
+			$categorie_manager->ajouter_categorie(trim($_POST['nom_categorie']), trim($_POST['description_categorie']));
 
 			$message = '<p>Catégorie ajoutée</p>';
 		}
@@ -51,7 +51,7 @@ class CategoriePhotoControleur {
 		
 		// Modification demandée
 		if (isset($_POST['nom_categorie']) && isset($_POST['description_categorie']) && $_SESSION['utilisateur']->droits[Section::TOUT] == Utilisateur::ADMIN) {
-			$categorie_manager->modifier_categorie($id, $_POST['nom_categorie'], $_POST['description_categorie']);
+			$categorie_manager->modifier_categorie($id, trim($_POST['nom_categorie']), trim($_POST['description_categorie']));
 		}
 
 		$categories = $categorie_manager->obtenir_liste();
@@ -77,7 +77,7 @@ class CategoriePhotoControleur {
 
 			// Ajout d'une photo
 			if (isset($_POST['ajouter_photo']) && isset($_FILES['image']) && isset($_POST['titre_photo']) && isset($_POST['description_photo']) && ($_SESSION['utilisateur']->droits[Section::TOUT] == Utilisateur::ADMIN || $_SESSION['utilisateur']->droits[Section::PHOTOS] <= Utilisateur::CONTRIBUTEUR))
-				$message = PhotoControleur::ajouter_photo($this->bdd, $_POST['titre_photo'], $_SESSION['utilisateur']->id, 'image', $categorie->id, $_POST['description_photo']);
+				$message = PhotoControleur::ajouter_photo($this->bdd, trim($_POST['titre_photo']), $_SESSION['utilisateur']->id, 'image', $categorie->id, trim($_POST['description_photo']));
 
 			// Obtenir les photos de la catégorie
 			$photos = $photos_manager->obtenir_photos_categorie($categorie);

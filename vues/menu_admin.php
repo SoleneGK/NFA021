@@ -1,4 +1,4 @@
-<div id="banniere">Empreinte</div>
+<div id="banniere"><a href='index.php'>Empreinte</a></div>
 
 <ul id="nav_ordinateur" class="nav">
 	<li class="nav-item btn-group">
@@ -37,7 +37,7 @@
 ?>
 		<button type="button" class="btn btn-light dropdown-toggle dropdown-toggle-split" data-toggle="dropdown"></button>
 		<div class="dropdown-menu">
-			<a class="nav-link" href="admin.php?section=politique&ajouter">Ajouter un article</a>
+			<a class="dropdown-item" href="admin.php?section=politique&ajouter">Ajouter un article</a>
 		</div>
 <?php
 	endif;
@@ -82,6 +82,9 @@ endif;
 ?>
 	<li class="nav-item btn-group">
 		<a class="nav-link" href="admin.php?section=profil">Profil</a>
+	</li>
+	<li class="nav-item btn-group">
+		<a class="nav-link" href="admin.php?deco">Se déconnecter</a>
 	</li>
 </ul>
 
@@ -168,17 +171,20 @@ endif;
 <?php
 		if ($_SESSION['utilisateur']->droits[Section::TOUT] == Utilisateur::ADMIN):
 		?>
-			<li class="nav-item btn-group">
+			<li class="nav-item">
 				<a class="nav-link" href="admin.php?section=pays">Pays</a>
 			</li>
-			<li class="nav-item btn-group">
+			<li class="nav-item">
 				<a class="nav-link" href="admin.php?section=utilisateur">Utilisateurs</a>
 			</li>
 		<?php
 		endif;
 		?>
-			<li class="nav-item btn-group">
+			<li class="nav-item">
 				<a class="nav-link" href="admin.php?section=profil">Profil</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link" href="admin.php?deco">Se déconnecter</a>
 			</li>
 		</ul>
 	</div>

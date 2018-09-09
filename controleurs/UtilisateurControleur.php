@@ -36,24 +36,9 @@ class UtilisateurControleur {
 		$pays_manager = new PaysManager($this->bdd);
 		$pays = $pays_manager->obtenir_liste_pays();
 
-		include 'vues/entete.php';
-		include 'vues/menu_admin.php';
-		include 'vues/utilisateur/afficher_profil.php';
-		include 'vues/pieddepage.php';
-	}
-
-	function modifier_profil() {
-		$categorie_manager = new CategoriePhotoManager($this->bdd);
-		$categories = $categorie_manager->obtenir_liste();
-
-		$pays_manager = new PaysManager($this->bdd);
-		$pays = $pays_manager->obtenir_liste_pays();
-
-		include 'vues/entete.php';
-		include 'vues/menu_admin.php';
-
-		if (isset($_POST['pseudo']) && isset($_POST['mail'])) {
-			$message = '';
+		// Modifier le pseudo et le mail
+		if (isset($_POST['modifier_pseudo_mail']) && isset($_POST['pseudo']) && isset($_POST['mail'])) {
+			$_POST['pseudo'] = trim($_POST['pseudo']);
 			$effectuer_requete = false;
 			$nouveau_pseudo = $_SESSION['utilisateur']->pseudo;
 			$nouveau_mail = $_SESSION['utilisateur']->mail;
@@ -63,22 +48,23 @@ class UtilisateurControleur {
 
 			if ($_POST['pseudo'] != $nouveau_pseudo) {
 				if ($dispo['pseudo_dispo']) {
-					$message .= '<p>Le pseudo a été modifié</p>';
 					$nouveau_pseudo = $_POST['pseudo'];
 					$effectuer_requete = true;
 				}
 				else
-					$message .= '<p>Pseudo non disponible</p>';
+					$message_erreur_1 = 'Pseudo non disponible';
 			}
 
 			if ($_POST['mail'] != $nouveau_mail) {
 				if ($dispo['mail_dispo']) {
-					$message .= '<p>Le mail a été modifié</p>';
 					$nouveau_mail = $_POST['mail'];
 					$effectuer_requete = true;
 				}
 				else
-					$message .= '<p>Mail non disponible</p>';
+					if (isset($message_erreur_1))
+						$message_erreur_1 .= '<br />Mail non disponible';
+					else
+						$message_erreur_1 = 'Mail non disponible';
 			}
 
 			if ($effectuer_requete) {
@@ -87,81 +73,80 @@ class UtilisateurControleur {
 			}
 		}
 
-		include 'vues/utilisateur/modifier_profil.php';
-		include 'vues/pieddepage.php';
-	}
-
-	function modifier_mot_de_passe() {
-		include 'vues/entete.php';
-
-		if (isset($_POST['ancien_mot_de_passe']) && isset($_POST['nouveau_mot_de_passe_1']) && isset($_POST['nouveau_mot_de_passe_2'])) {
-			// Vérifier que l'ancien mot de passe est le bon
+		// Modifier le mot de passe
+		if (isset($_POST['modifier_mdp']) && isset($_POST['ancien_mot_de_passe']) && isset($_POST['nouveau_mot_de_passe_1']) && isset($_POST['nouveau_mot_de_passe_2'])) {
 			$utilisateur_manager = new UtilisateurManager($this->bdd);
 			$mot_de_passe = $utilisateur_manager->obtenir_mot_de_passe($_SESSION['utilisateur']->id);
 
 			if (!password_verify($_POST['ancien_mot_de_passe'], $mot_de_passe))
-				$message = 'Ancien mot de passe incorrect';
+				$message_erreur_2 = 'Ancien mot de passe incorrect';
 			elseif ($_POST['nouveau_mot_de_passe_1'] != $_POST['nouveau_mot_de_passe_2'])
-				$message = 'Les mots de passe sont différents';
+				$message_erreur_2 = 'Les mots de passe sont différents';
 			else {
 				$utilisateur_manager->changer_mot_de_passe($_SESSION['utilisateur']->id, password_hash($_POST['nouveau_mot_de_passe_1'], PASSWORD_DEFAULT));
-				$message = 'Mot de passe modifié';
+				$message_succes = 'Mot de passe modifié';
 			}
 		}
 
-		include 'vues/utilisateur/modifier_mot_de_passe.php';
+		include 'vues/entete.php';
+		include 'vues/menu_admin.php';
+		include 'vues/utilisateur/afficher_profil.php';
 		include 'vues/pieddepage.php';
 	}
 
 	function ajouter_utilisateur() {
-		$categorie_manager = new CategoriePhotoManager($this->bdd);
-		$categories = $categorie_manager->obtenir_liste();
-
-		$pays_manager = new PaysManager($this->bdd);
-		$pays = $pays_manager->obtenir_liste_pays();
-
-		include 'vues/entete.php';
-		include 'vues/menu_admin.php';
-
 		if (isset($_POST['pseudo']) && isset($_POST['mail_1']) && isset($_POST['mail_2'])) {
+			$_POST['pseudo'] = trim($_POST['pseudo']);
 
 			if ($_POST['mail_1'] != $_POST['mail_2'])
-				$message = '<p>Les mails sont différents</p>';
+				$_POST['message_erreur'] = 'Les mails sont différents';
 			else {
 				$utilisateur_manager = new UtilisateurManager($this->bdd);
 				$dispo = $utilisateur_manager->verifier_dispo_pseudo_mail($_POST['pseudo'], $_POST['mail_1']);
 
 				if (!$dispo['pseudo_dispo'])
-					$message = '<p>Pseudo non disponible</p>';
+					$_POST['message_erreur'] = 'Pseudo non disponible';
 				elseif (!$dispo['mail_dispo'])
-					$message = '<p>Mail non disponible</p>';
+					$_POST['message_erreur'] = 'Mail non disponible';
 				else {
-					$message = '<p>Compte créé</p>';
-
 					$mot_de_passe = uniqid();
 					$mot_de_passe_crypte = password_hash($mot_de_passe, PASSWORD_DEFAULT);
 
 					$id_utilisateur_cree = $utilisateur_manager->ajouter_utilisateur($_POST['pseudo'], $_POST['mail_1'], $mot_de_passe_crypte);
 
 					if ($id_utilisateur_cree) {
-						$objet = 'Création de compte sur le site projet NFA021';
-						$contenu = '<p>Votre compte sur le site projet NFA021 vient d\'être créé.</p>
+						$utilisateur_manager->ajouter_droits($id_utilisateur_cree);
+
+						$objet = 'Création de compte sur Empreinte';
+						$contenu = '<p>Votre compte sur Empreinte vient d\'être créé.</p>
 							<p>Voici le mot de passe pour vous connecter : '.$mot_de_passe.'<br />
 							Il est fortement conseillé d\'en changer dès votre première connexion.</p>
 							<p><a href="http://localhost/nfa021/admin.php">Accès au site</a></p>';
 						Mail::envoyer_mail($_POST['mail_1'], $objet, $contenu);
 
-						$utilisateur_manager->ajouter_droits($id_utilisateur_cree);				
+						header('Location: admin.php?section=utilisateur&id='.$id_utilisateur_cree);
+						exit();
 					}
 				}
 			}
 		}
 
+		if (isset($_POST['message_erreur']))
+			$message_erreur = $_POST['message_erreur'];
+
+		$categorie_manager = new CategoriePhotoManager($this->bdd);
+		$categories = $categorie_manager->obtenir_liste();
+
+		$pays_manager = new PaysManager($this->bdd);
+		$pays = $pays_manager->obtenir_liste_pays();
+
+		include 'vues/entete.php';
+		include 'vues/menu_admin.php';
 		include 'vues/utilisateur/ajouter_utilisateur.php';
 		include 'vues/pieddepage.php';
 	}
 
-	function afficher_liste_utilisateurs($page = 1) {
+	function afficher_liste_utilisateurs() {
 		$categorie_manager = new CategoriePhotoManager($this->bdd);
 		$categories = $categorie_manager->obtenir_liste();
 
@@ -171,19 +156,11 @@ class UtilisateurControleur {
 		include 'vues/entete.php';
 		include 'vues/menu_admin.php';
 
-		$page = (int)$page;
-		if ($page <= 0)
-			$utilisateurs = [];
-		else {
-			$utilisateur_manager = new UtilisateurManager($this->bdd);
-			// Position du 1er utilisateur = (n° page - 1) × nombre d'articles par page
-			$utilisateurs = $utilisateur_manager->obtenir_liste_utilisateurs(($page - 1) * NOMBRE_UTILISATEURS_PAR_PAGE);
+		$utilisateur_manager = new UtilisateurManager($this->bdd);
+		// Position du 1er utilisateur = (n° page - 1) × nombre d'articles par page
+		$utilisateurs = $utilisateur_manager->obtenir_liste_utilisateurs();
 
-			// Obtenir les numéros de page pour la navigation
-			$numeros_pages = ArticleControleur::obtenir_numeros_pages($page, $utilisateur_manager->nombre_utilisateurs());
-		}
-
-		include 'vues/utilisateur/affcher_liste.php';
+		include 'vues/utilisateur/afficher_liste.php';
 		include 'vues/pieddepage.php';
 	}
 
@@ -205,34 +182,36 @@ class UtilisateurControleur {
 			include 'vues/utilisateur/aucun_utilisateur_admin.php';
 		else {
 			$droits = $utilisateur_manager->obtenir_droits($id);
-			$message = '';
 
-			// Modification du pseudo et du mot de passe si demandé
+			// Modification du pseudo et du mot de passe
 			if (isset($_POST['pseudo']) && isset($_POST['mail'])) {
 				$nouveau_pseudo = $utilisateur->pseudo;
 				$nouveau_mail = $utilisateur->mail;
 				$effectuer_requete = false;
 
+				$_POST['pseudo'] = trim($_POST['pseudo']);
+
 				$dispo = $utilisateur_manager->verifier_dispo_pseudo_mail($_POST['pseudo'], $_POST['mail']);
 
 				if ($_POST['pseudo'] != $nouveau_pseudo) {
 					if ($dispo['pseudo_dispo']) {
-						$message .= '<p>Le pseudo a été modifié</p>';
 						$nouveau_pseudo = $_POST['pseudo'];
 						$effectuer_requete = true;
 					}
 					else
-						$message .= '<p>Pseudo non disponible</p>';
+						$message_erreur_1 = 'Pseudo non disponible';
 				}
 
 				if ($_POST['mail'] != $nouveau_mail) {
 					if ($dispo['mail_dispo']) {
-						$message .= '<p>Le mail a été modifié</p>';
 						$nouveau_mail = $_POST['mail'];
 						$effectuer_requete = true;
 					}
 					else
-						$message .= '<p>Mail non disponible</p>';
+						if (isset($message_erreur_1))
+							$message_erreur_1 .= '<br />Mail non disponible';
+						else
+							$message_erreur_1 = 'Mail non disponible';
 				}
 
 				if ($effectuer_requete) {
@@ -242,7 +221,7 @@ class UtilisateurControleur {
 				}
 			}
 
-			// Modification des droits si demandé
+			// Modification des droits
 			elseif (isset($_POST[0]) && isset($_POST[1]) && isset($_POST[2]) && isset($_POST[3])) {
 				$types_droits = [Utilisateur::MODERATEUR, Utilisateur::CONTRIBUTEUR, Utilisateur::SANS_DROIT];
 				$effectuer_requete = false;
@@ -254,7 +233,7 @@ class UtilisateurControleur {
 						$effectuer_requete = true;
 					}
 					else {
-						$message .= '<p>Valeur non trouvée, arrêtez de faire joujou avec ce formulaire</p>';
+						$message_erreur_2 .= 'Valeur non trouvée, arrêtez de faire joujou avec ce formulaire';
 					}
 				}
 
@@ -267,14 +246,13 @@ class UtilisateurControleur {
 							$effectuer_requete = true;
 						}
 						else
-							$message .= '<p>Valeur non trouvée, arrêtez de faire joujou avec ce formulaire</p>';
+							$message_erreur_2 .= 'Valeur non trouvée, arrêtez de faire joujou avec ce formulaire';
 					}
 				}
 
 				if ($effectuer_requete) {
 					$utilisateur_manager->modifier_droits($utilisateur->id, $nouveaux_droits);
 					$droits = $nouveaux_droits;
-					$message .= '<p>Droits mis à jour</p>';
 				}
 			}
 
