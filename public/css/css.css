@@ -117,7 +117,7 @@ hr {
 	border-color: #367520;
 }
 
-h3 a:hover {
+h3 a:hover, h5 a:hover {
 	color: #367520;
 }
 
@@ -125,7 +125,21 @@ h3 a:hover {
 	margin-bottom: 2em;
 }
 
+.small-caps {
+	font-variant: small-caps;
+}
 
+.card {
+	border-color: #367520;
+}
+
+.photo {
+	text-align: center;
+}
+
+.photo img {
+	max-width: 100%;
+}
 
 
 
@@ -161,10 +175,7 @@ input[class~=supprimer] {
 	border-color: #c7e6bd !important
 }
 
-.custom-select, .custom-select:focus {
-	box-shadow: none;
-	border-color:  #c7e6bd;
-}
+
 
 
 
@@ -203,10 +214,6 @@ input[class~=supprimer] {
 
 #form_ajout_commentaire {
 	margin-top: 3em;
-}
-
-#form_ajout_commentaire p {
-	font-variant: small-caps;
 }
 
 

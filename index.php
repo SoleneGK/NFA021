@@ -24,7 +24,7 @@ else {
 		 */
 
 		if (isset($_GET['categorie'])) {
-			$controleur = new PhotoControleur($bdd->bdd);
+			$controleur = new CategoriePhotoControleur($bdd->bdd);
 			$controleur->afficher_categorie($_GET['categorie']);
 		}
 		elseif (isset($_GET['id'])) {
@@ -33,7 +33,7 @@ else {
 		}
 		else {
 			$controleur = new CategoriePhotoControleur($bdd->bdd);
-			$controleur->afficher_liste();
+			$controleur->afficher_liste_categories();
 		}
 	}
 

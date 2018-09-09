@@ -1,12 +1,6 @@
 <p id="chemin_page">Articles voyage > Afficher</p>
 
 <?php
-if (!$utilisateur):
-?>
-
-<p>Aucun utilisateur trouvé.</p>
-
-<?php
 if (!$article):
 ?>
 <p>
@@ -36,7 +30,7 @@ else:
 </form>
 
 <?php
-		if ($_SESSION['utilisateur']->droits[Section::TOUT] == Utilisateur::ADMIN || $_SESSION['utilisateur']->droits[Section::VOYAGE] <= Utilisateur::MODERATEUR):
+			if ($_SESSION['utilisateur']->droits[Section::TOUT] == Utilisateur::ADMIN || $_SESSION['utilisateur']->droits[Section::VOYAGE] <= Utilisateur::MODERATEUR):
 ?>
 
 	<form method="post" class="d-inline-block" action="admin.php?section=voyage">
@@ -74,3 +68,4 @@ else:
 
 <?php
 endif;
+

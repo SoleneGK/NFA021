@@ -1,4 +1,4 @@
-<div id="banniere">Empreinte</div>
+<div id="banniere"><a href='admin.php'>Empreinte</a></div>
 
 <main>
 
@@ -12,7 +12,7 @@
 	else:
 ?>
 
-<?= isset($message_erreur) ? '<div class="alert alert-danger" role="alert">'.$message_erreur.'</div>' : '' ?>
+<?= isset($message_erreur) ? '<div class="alert alert-danger">'.$message_erreur.'</div>' : '' ?>
 	<form method="post" action="admin.php?mot_de_passe_perdu">
 		<p>Entrez le mail associé à votre compte. Un mail vous sera envoyé avec un lien permettant de modifier votre mot de passe.</p>
 		<input type="text" name="mail_mdp_perdu" class="form-control" required /><br />

@@ -1,8 +1,7 @@
-<h1>Catégorie</h1>
+<p id="chemin_page">Catégories de photos > Afficher</p>
 
 <?= isset($message) ? $message : '' ?>
 
-<p>
-	Nom : <?= $categorie->nom ?><br />
-	Description : <?= $categorie->description ?>
+<h2><?= afficher($categorie->nom) ?></h2>
+<p><?= afficher($categorie->description) ?></p>
 

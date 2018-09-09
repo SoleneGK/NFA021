@@ -99,15 +99,15 @@ class UtilisateurControleur {
 			$_POST['pseudo'] = trim($_POST['pseudo']);
 
 			if ($_POST['mail_1'] != $_POST['mail_2'])
-				$_POST['message_erreur'] = 'Les mails sont différents';
+				$message_erreur = 'Les mails sont différents';
 			else {
 				$utilisateur_manager = new UtilisateurManager($this->bdd);
 				$dispo = $utilisateur_manager->verifier_dispo_pseudo_mail($_POST['pseudo'], $_POST['mail_1']);
 
 				if (!$dispo['pseudo_dispo'])
-					$_POST['message_erreur'] = 'Pseudo non disponible';
+					$message_erreur = 'Pseudo non disponible';
 				elseif (!$dispo['mail_dispo'])
-					$_POST['message_erreur'] = 'Mail non disponible';
+					$message_erreur = 'Mail non disponible';
 				else {
 					$mot_de_passe = uniqid();
 					$mot_de_passe_crypte = password_hash($mot_de_passe, PASSWORD_DEFAULT);
@@ -130,9 +130,6 @@ class UtilisateurControleur {
 				}
 			}
 		}
-
-		if (isset($_POST['message_erreur']))
-			$message_erreur = $_POST['message_erreur'];
 
 		$categorie_manager = new CategoriePhotoManager($this->bdd);
 		$categories = $categorie_manager->obtenir_liste();

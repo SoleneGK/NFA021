@@ -1,7 +1,7 @@
 <p id="chemin_page">Utilisateurs > Ajouter</p>
 
 <form method="post">
-	<?= isset($message_erreur) ? '<div class="alert alert-danger" role="alert">'.$message_erreur.'</div>' : '' ?>
+	<?= isset($message_erreur) ? '<div class="alert alert-danger">'.$message_erreur.'</div>' : '' ?>
 	<div class="form-group">
 		<label for="pseudo">Pseudo :</label>
 		<input type="text" id="pseudo" name="pseudo" class="form-control" value="<?= isset($_POST['pseudo']) ? afficher($_POST['pseudo']) : '' ?>" required />

@@ -8,7 +8,7 @@
 <hr />
 
 <form method="post">
-	<?= isset($message_erreur_1) ? '<div class="alert alert-danger" role="alert">'.$message_erreur_1.'</div>' : '' ?>
+	<?= isset($message_erreur_1) ? '<div class="alert alert-danger">'.$message_erreur_1.'</div>' : '' ?>
 	<div class="form-group">
 		<label for="pseudo">Changer le pseudo :</label>
 		<input type="text" id="pseudo" name="pseudo" class="form-control" value="<?= afficher($utilisateur->pseudo) ?>" required />

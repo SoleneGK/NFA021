@@ -8,7 +8,7 @@
 <hr />
 
 <form method="post">
-	<?= isset($message_erreur_1) ? '<div class="alert alert-danger" role="alert">'.$message_erreur_1.'</div>' : '' ?>
+	<?= isset($message_erreur_1) ? '<div class="alert alert-danger">'.$message_erreur_1.'</div>' : '' ?>
 	<div class="form-group">
 		<label for="pseudo">Changer le pseudo :</label>
 		<input type="text" id="pseudo" name="pseudo" class="form-control" value="<?= afficher($_SESSION['utilisateur']->pseudo) ?>" required />
@@ -23,8 +23,8 @@
 <hr />
 
 <form method="post">
-	<?= isset($message_erreur_2) ? '<div class="alert alert-danger" role="alert">'.$message_erreur_2.'</div>' : '' ?>
-	<?= isset($message_succes) ? '<div class="alert alert-success" role="alert">'.$message_succes.'</div>' : '' ?>
+	<?= isset($message_erreur_2) ? '<div class="alert alert-danger">'.$message_erreur_2.'</div>' : '' ?>
+	<?= isset($message_succes) ? '<div class="alert alert-success">'.$message_succes.'</div>' : '' ?>
 	<div class="form-group">
 		<label for="ancien_mot_de_passe">Ancien mot de passe : </label>
 		<input type="password" id="ancien_mot_de_passe" name="ancien_mot_de_passe" class="form-control"  required />

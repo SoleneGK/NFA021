@@ -128,7 +128,7 @@ else {
 				}
 				else {
 					$controleur = new CategoriePhotoControleur($bdd->bdd);
-					$controleur->afficher_liste_categories();
+					$controleur->afficher_liste_categories(true);
 				}
 			}
 			elseif (isset($_POST['supprimer_photo'])) {
@@ -139,13 +139,13 @@ else {
 					}
 					else {
 						$controleur = new CategoriePhotoControleur($bdd->bdd);
-						$controleur->afficher_liste_categories();
+						$controleur->afficher_liste_categories(true);
 					}
 				}
 				else {
 					unset($_POST['supprimer_photo']);
 					$controleur = new CategoriePhotoControleur($bdd->bdd);
-					$controleur->afficher_liste_categories();
+					$controleur->afficher_liste_categories(true);
 				}
 			}
 			// Forme de l'URL : admin.php?section=photos&id=[id]
@@ -160,7 +160,7 @@ else {
 			}
 			else {
 				$controleur = new CategoriePhotoControleur($bdd->bdd);
-				$controleur->afficher_liste_categories();
+				$controleur->afficher_liste_categories(true);
 			}
 		}
 
@@ -174,9 +174,9 @@ else {
 					$controleur->ajouter_categorie_photos();
 				// Forme de l'URL : admin.php?section=categories&id=[id]
 				elseif (isset($_GET['id']) && !isset($_POST['supprimer_categorie']))
-					$controleur->afficher_categorie($_GET['id']);
+					$controleur->afficher_categorie($_GET['id'], true);
 				else
-					$controleur->afficher_liste_categories();
+					$controleur->afficher_liste_categories(true);
 			}
 			else {
 				$controleur = new AccueilControleur($bdd->bdd);

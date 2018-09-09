@@ -1,1 +1,0 @@
-<p>Aucune photo trouvée</p>

@@ -1,12 +1,30 @@
-<hr />
+<p id="chemin_page">Photos > Ajouter</p>
 
 <form method="post" enctype="multipart/form-data">
-	<p class="small-caps">Ajouter une photo à cette catégorie</p>
 	<?= isset($message_erreur) ? '<div class="alert alert-danger">'.$message_erreur.'</div>' : '' ?>
 	<?= isset($message_succes) ? '<div class="alert alert-success">'.$message_succes.'</div>' : '' ?>
 
 	<div class="form-group">
 		<input type="file" class="btn" name="image" required />
+	</div>
+
+	<div class="input-group mb-3">
+		<div class="input-group-prepend">
+			<label class="input-group-text" for="id_categorie">Catégorie</label>
+		</div>
+		<select class="custom-select" id="id_categorie" name="id_categorie" required>
+
+<?php
+	foreach($categories as $categorie):
+?>
+
+			<option value="<?= $categorie->id ?>" <?= (isset($_POST['id_categorie']) && $categorie->id == $_POST['id_categorie']) ? ' selected ' : '' ?>><?= afficher($categorie->nom) ?></option>
+
+<?php
+	endforeach;
+?>
+
+		</select>
 	</div>
 
 	<div class="form-group">
@@ -21,3 +39,4 @@
 
 	<input type="submit" class="btn input" name="ajouter_photo" value="Ajouter" />
 </form>
+

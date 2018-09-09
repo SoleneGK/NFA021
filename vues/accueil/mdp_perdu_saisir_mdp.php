@@ -1,8 +1,7 @@
-<div id="banniere">Empreinte</div>
-
+<div id="banniere">Empreinte</div><div id="banniere"><a href='admin.php'>Empreinte</a></div>
 <main>
 
-	<?= isset($message_erreur) ? '<div class="alert alert-danger" role="alert">'.$message_erreur.'</div>' : '' ?>
+	<?= isset($message_erreur) ? '<div class="alert alert-danger">'.$message_erreur.'</div>' : '' ?>
 	<form method="post">
 		<div class="form-group">
 			<label for="mot_de_passe_1">Entrez le nouveau mot de passe :</label>

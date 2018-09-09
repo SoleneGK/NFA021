@@ -1,4 +1,4 @@
-<div id="banniere"><a href='index.php'>Empreinte</a></div>
+<div id="banniere"><a href='admin.php'>Empreinte</a></div>
 
 <ul id="nav_ordinateur" class="nav">
 	<li class="nav-item btn-group">
@@ -74,7 +74,7 @@ if ($_SESSION['utilisateur']->droits[Section::TOUT] == Utilisateur::ADMIN):
 		<a class="nav-link" href="admin.php?section=utilisateur">Utilisateurs</a>
 		<button type="button" class="btn btn-light dropdown-toggle dropdown-toggle-split" data-toggle="dropdown"></button>
 		<div class="dropdown-menu">
-			<a class="dropdown-item" href="admin.php?section=utilisateurs&ajouter">Ajouter un utilisateur</a>
+			<a class="dropdown-item" href="admin.php?section=utilisateur&ajouter">Ajouter un utilisateur</a>
 		</div>
 	</li>
 <?php

@@ -48,6 +48,37 @@ else:
 		<?= substr(afficher($article->contenu), 0, 500) ?>…<br />
 		<a href="<?= $admin ? 'admin' : 'index' ?>.php?section=politique&id=<?= $article->id ?>">Lire la suite</a>
 	</p>
+
+<?php
+			if ($admin):
+				if ($_SESSION['utilisateur']->droits[Section::TOUT] == Utilisateur::ADMIN || $_SESSION['utilisateur']->droits[Section::VOYAGE] <= Utilisateur::CONTRIBUTEUR):
+?>
+
+	<div class="mb-3">
+		<form method="post" class="d-inline-block" action="admin.php?section=politique&id=<?= $article->id ?>&modifier">
+			<input type="submit" class="btn input" value="Modifier" />
+		</form>
+
+<?php
+					if ($_SESSION['utilisateur']->droits[Section::TOUT] == Utilisateur::ADMIN || $_SESSION['utilisateur']->droits[Section::VOYAGE] <= Utilisateur::MODERATEUR):
+?>
+
+		<form method="post" class="d-inline-block" action="admin.php?section=politique">
+			<input type="hidden" name="id_article" value="<?= $article->id ?>" />
+			<input type="submit" class="btn supprimer" name="supprimer_article" value="Supprimer" />
+		</form>
+
+<?php
+					endif;
+?>
+
+	</div>
+
+<?php
+				endif;
+			endif;
+?>
+
 </article>
 
 <?php

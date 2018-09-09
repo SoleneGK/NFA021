@@ -1,4 +1,6 @@
-<p id="chemin_page">Catégories de photos > Modifier</p>
+<hr />
+
+<p class="small-caps">Modifier la catégorie</p>
 
 <form method="post">
 	<div class="form-group">
@@ -7,7 +9,7 @@
 	</div>
 	<div class="form-group">
 		<label for="description_categorie">Description :</label>
-		<textarea id="description_categorie" name="description_categorie" class="form-control" rows="10" required><?= htmlentities($categorie->description) ?></textarea>
+		<textarea id="description_categorie" name="description_categorie" class="form-control" rows="3" required><?= htmlentities($categorie->description) ?></textarea>
 	</div>
 	<input type="submit" class="btn input" value="Modifier" />
 </form>

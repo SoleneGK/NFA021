@@ -1,9 +1,9 @@
-<div id="banniere">Empreinte</div>
+<div id="banniere"><a href='admin.php'>Empreinte</a></div>
 
 <main>
 
-	<?= isset($message_erreur) ? '<div class="alert alert-danger" role="alert">'.$message_erreur.'</div>' : '' ?>
-	<?= isset($message_succes) ? '<div class="alert alert-success" role="alert">'.$message_succes.'</div>' : '' ?>
+	<?= isset($message_erreur) ? '<div class="alert alert-danger">'.$message_erreur.'</div>' : '' ?>
+	<?= isset($message_succes) ? '<div class="alert alert-success">'.$message_succes.'</div>' : '' ?>
 
 	<form method="post" action="admin.php">
 		<div class="form-group">

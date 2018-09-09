@@ -2,7 +2,7 @@
 if (isset($_SESSION['utilisateur'])):
 ?>
 
-	<form method="post" id="form_ajout_commentaire">
+	<form method="post" id="form_ajout_commentaire small-caps">
 		<div class="form-group">
 			<label for="pseudo_commentaire">Pseudo :</label>
 			<input type="text" id="pseudo_commentaire" name="pseudo" class="form-control" value="<?= afficher($_SESSION['utilisateur']->pseudo) ?>" required disabled />
@@ -20,7 +20,7 @@ else:
 ?>
 
 	<form method="post" id="form_ajout_commentaire">
-		<p>Ajouter un commentaire</p>
+		<p class="small-caps">Ajouter un commentaire</p>
 		<div class="form-group">
 			<label for="pseudo_commentaire">Pseudo :</label>
 			<input type="text" id="pseudo_commentaire" name="pseudo" class="form-control" required />
