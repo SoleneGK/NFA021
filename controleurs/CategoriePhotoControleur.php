@@ -107,8 +107,34 @@ class CategoriePhotoControleur {
 
 				// Ajout d'une photo
 				if (isset($_POST['ajouter_photo']) && isset($_FILES['image']) && isset($_POST['titre_photo']) && isset($_POST['description_photo']) && ($_SESSION['utilisateur']->droits[Section::TOUT] == Utilisateur::ADMIN || $_SESSION['utilisateur']->droits[Section::PHOTOS] <= Utilisateur::CONTRIBUTEUR)) {
-					$message = PhotoControleur::ajouter_photo($this->bdd, trim($_POST['titre_photo']), $_SESSION['utilisateur']->id, 'image', $categorie->id, trim($_POST['description_photo']));
+					$retour = PhotoControleur::ajouter_photo($this->bdd, trim($_POST['titre_photo']), $_SESSION['utilisateur']->id, 'image', $categorie->id, trim($_POST['description_photo']));
 					unset($_POST);
+
+					switch ($retour) {
+						case 'OK':
+							$message_succes = 'Photo ajoutée';
+							break;
+
+						case 'CATEGORIE_INEXISTANTE':
+							$message_erreur = 'La catégorie n\'existe pas';
+							break;
+
+						case 'PAS_UNE_PHOTO':
+							$message_erreur = 'Le fichier envoyé n\'est pas une photo';
+							break;
+
+						case 'FICHIER_TROP_GRAND':
+							$message_erreur = 'Le fichier envoyé est trop grand';
+							break;
+
+						case 'ERREUR_COPIE':
+							$message_erreur = 'Une erreur est survenue pendant la copie du fichier';
+							break;
+							
+						case 'ERREUR_AJOUT_BDD':
+							$message_erreur = 'Une erreur est survenue pendant l\'ajout des informations en base de données';
+							break;
+					}
 				}
 
 				//Affichage de la page

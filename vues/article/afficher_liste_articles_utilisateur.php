@@ -48,17 +48,17 @@ else:
 			if ($premier_element)
 				$premier_element = false;
 			else
-				echo '<hr />';
+				echo '<hr>';
 ?>
 
 <article>
 	<h3><a href="<?= $admin ? 'admin' : 'index' ?>.php?section=<?= ($article->section->id == Section::POLITIQUE) ? 'politique' : 'voyage' ?>&id=<?= $article->id ?>"><?= afficher($article->titre) ?></a></h3>
 	<p class="font-italic">
 		Ajouté le <?= date('d-m-Y', $article->date_publication) ?>
-		<?= !empty($article->pays->id) ? '<br />Pays : <a href="'.($admin ? 'admin' : 'index').'.php?section='.($article->section->id == Section::POLITIQUE ? 'politique' : 'voyage').'&pays='.$article->pays->id.'">'.afficher($article->pays->nom).'</a>' : '' ?>
+		<?= !empty($article->pays->id) ? '<br>Pays : <a href="'.($admin ? 'admin' : 'index').'.php?section='.($article->section->id == Section::POLITIQUE ? 'politique' : 'voyage').'&pays='.$article->pays->id.'">'.afficher($article->pays->nom).'</a>' : '' ?>
 	</p>
 	<p>
-		<?= substr(afficher($article->contenu), 0, 500) ?>…<br />
+		<?= substr(afficher($article->contenu), 0, 500) ?>…<br>
 		<a href="<?= $admin ? 'admin' : 'index' ?>.php?section=<?= ($article->section->id == Section::POLITIQUE) ? 'politique' : 'voyage' ?>&id=<?= $article->id ?>">Lire la suite</a>
 	</p>
 </article>

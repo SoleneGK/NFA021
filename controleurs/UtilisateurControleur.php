@@ -62,7 +62,7 @@ class UtilisateurControleur {
 				}
 				else
 					if (isset($message_erreur_1))
-						$message_erreur_1 .= '<br />Mail non disponible';
+						$message_erreur_1 .= '<br>Mail non disponible';
 					else
 						$message_erreur_1 = 'Mail non disponible';
 			}
@@ -119,7 +119,7 @@ class UtilisateurControleur {
 
 						$objet = 'Création de compte sur Empreinte';
 						$contenu = '<p>Votre compte sur Empreinte vient d\'être créé.</p>
-							<p>Voici le mot de passe pour vous connecter : '.$mot_de_passe.'<br />
+							<p>Voici le mot de passe pour vous connecter : '.$mot_de_passe.'<br>
 							Il est fortement conseillé d\'en changer dès votre première connexion.</p>
 							<p><a href="http://localhost/nfa021/admin.php">Accès au site</a></p>';
 						Mail::envoyer_mail($_POST['mail_1'], $objet, $contenu);
@@ -206,7 +206,7 @@ class UtilisateurControleur {
 					}
 					else
 						if (isset($message_erreur_1))
-							$message_erreur_1 .= '<br />Mail non disponible';
+							$message_erreur_1 .= '<br>Mail non disponible';
 						else
 							$message_erreur_1 = 'Mail non disponible';
 				}

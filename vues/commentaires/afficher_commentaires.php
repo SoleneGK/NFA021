@@ -1,4 +1,4 @@
-<hr />
+<hr>
 
 <div class="commentaires">
 
@@ -30,7 +30,7 @@ else:
 ?>
 
 			<p class="p_commentaire">
-				Le <?= date('d-m-y', $commentaire->date_ajout) ?> à <?= date('H:i', $commentaire->date_ajout) ?> par <span class="font-weight-bold pseudo_commentaire"><?= afficher($commentaire->utilisateur->pseudo) ?></span><br />
+				Le <?= date('d-m-y', $commentaire->date_ajout) ?> à <?= date('H:i', $commentaire->date_ajout) ?> par <span class="font-weight-bold pseudo_commentaire"><?= afficher($commentaire->utilisateur->pseudo) ?></span><br>
 				<span class="contenu_commentaire"><?= afficher($commentaire->contenu) ?></span>
 			</p>
 
@@ -43,7 +43,7 @@ else:
 			<div class="modifier_commentaire_elements">
 				<div class="form-group">
 					<label>Pseudo :</label>
-					<input type="text" name="pseudo_commentaire" class="form-control pseudo_commentaire" value="<?= afficher($commentaire->utilisateur->pseudo) ?>" required <?= !empty($commentaire->utilisateur->id) ? 'disabled' : '' ?> />
+					<input type="text" name="pseudo_commentaire" class="form-control pseudo_commentaire" value="<?= afficher($commentaire->utilisateur->pseudo) ?>" required <?= !empty($commentaire->utilisateur->id) ? 'disabled' : '' ?>>
 				</div>
 
 				<div class="form-group">
@@ -51,17 +51,17 @@ else:
 					<textarea name="contenu_commentaire" class="form-control contenu_commentaire" required><?= htmlentities($commentaire->contenu) ?></textarea>
 				</div>
 
-				<input type="hidden" name="id_utilisateur" value="<?= $commentaire->utilisateur->id ?>" />
-				<input type="hidden" name="id_section" value="<?= ($_GET['section'] == 'politique' ? Section::POLITIQUE : Section::VOYAGE) ?>" />
-				<input type="hidden" name="id_commentaire" value="<?= $commentaire->id ?>" />
-				<input type="submit" class="btn input" name="modifier_commentaire" value="Enregistrer" />
+				<input type="hidden" name="id_utilisateur" value="<?= $commentaire->utilisateur->id ?>">
+				<input type="hidden" name="id_section" value="<?= ($_GET['section'] == 'politique' ? Section::POLITIQUE : Section::VOYAGE) ?>">
+				<input type="hidden" name="id_commentaire" value="<?= $commentaire->id ?>">
+				<input type="submit" class="btn input" name="modifier_commentaire" value="Enregistrer">
 			</div>
 		</form>
 
 		<form method="post" class="supprimer_commentaire_form mt-1">
-			<input type="hidden" name="id_commentaire" value="<?= $commentaire->id ?>" />
-			<input type="hidden" name="id_section" value="<?= ($_GET['section'] == 'politique' ? Section::POLITIQUE : Section::VOYAGE) ?>" />
-			<input type="submit" class="btn supprimer" name="supprimer_commentaire" value="Supprimer" />
+			<input type="hidden" name="id_commentaire" value="<?= $commentaire->id ?>">
+			<input type="hidden" name="id_section" value="<?= ($_GET['section'] == 'politique' ? Section::POLITIQUE : Section::VOYAGE) ?>">
+			<input type="submit" class="btn supprimer" name="supprimer_commentaire" value="Supprimer">
 		</form>
 
 <?php

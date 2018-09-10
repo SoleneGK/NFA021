@@ -14,7 +14,7 @@ else:
 		if ($premier_element)
 			$premier_element = false;
 		else
-			echo '<hr />';
+			echo '<hr>';
 ?>
 
 <article>
@@ -27,11 +27,11 @@ else:
 
 	<div class="mb-3">
 		<form method="post" class="d-inline-block" action="admin.php?section=categories&id=<?= $categorie->id ?>">
-			<input type="submit" class="btn input" value="Modifier" />
+			<input type="submit" class="btn input" value="Modifier">
 		</form>
 		<form method="post" class="d-inline-block" action="admin.php?section=categories">
-			<input type="hidden" name="id_categorie" value="<?= $categorie->id ?>" />
-			<input type="submit" class="btn supprimer" name="supprimer_categorie" value="Supprimer" />
+			<input type="hidden" name="id_categorie" value="<?= $categorie->id ?>">
+			<input type="submit" class="btn supprimer" name="supprimer_categorie" value="Supprimer">
 		</form>
 	</div>
 
@@ -47,9 +47,9 @@ else:
 	if ($admin && $_SESSION['utilisateur']->droits[Section::TOUT] == Utilisateur::ADMIN):
 ?>
 
-<hr />
+<hr>
 <form method="post" action="admin.php?section=categories&ajouter">
-	<input type="submit" class="btn input" value="Ajouter une catégorie" />
+	<input type="submit" class="btn input" value="Ajouter une catégorie">
 </form>
 
 <?php

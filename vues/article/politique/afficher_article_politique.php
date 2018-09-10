@@ -4,7 +4,7 @@
 if (!$article):
 ?>
 <p>
-	Aucun article trouvé.<br />
+	Aucun article trouvé.<br>
 	<a href="<?= $admin ? 'admin' : 'index' ?>.php?section=politique">Retourner à la liste des articles</a>
 </p>
 
@@ -25,7 +25,7 @@ else:
 
 <div class="mb-3">
 	<form method="post" class="d-inline-block" action="admin.php?section=politique&id=<?= $article->id ?>&modifier">
-		<input type="submit" class="btn input" value="Modifier" />
+		<input type="submit" class="btn input" value="Modifier">
 </form>
 
 <?php
@@ -33,8 +33,8 @@ else:
 ?>
 
 	<form method="post" class="d-inline-block" action="admin.php?section=politique">
-		<input type="hidden" name="id_article" value="<?= $article->id ?>" />
-		<input type="submit" class="btn supprimer" name="supprimer_article" value="Supprimer" />
+		<input type="hidden" name="id_article" value="<?= $article->id ?>">
+		<input type="submit" class="btn supprimer" name="supprimer_article" value="Supprimer">
 	</form>
 
 <?php

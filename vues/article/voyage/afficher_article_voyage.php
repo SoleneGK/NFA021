@@ -4,7 +4,7 @@
 if (!$article):
 ?>
 <p>
-	Aucun article trouvé.<br />
+	Aucun article trouvé.<br>
 	<a href="<?= $admin ? 'admin' : 'index' ?>.php?section=voyage">Retourner à la liste des articles</a>
 </p>
 
@@ -16,7 +16,7 @@ else:
 <h2><?= afficher($article->titre) ?></h2>
 <p class="font-italic">
 	Ajouté par <a href="<?= $admin ? 'admin' : 'index' ?>.php?section=utilisateur&id=<?= $article->utilisateur->id ?>"><?= afficher($article->utilisateur->pseudo) ?></a> le <?= date('d-m-Y', $article->date_publication) ?>
-	<?= !empty($article->pays) ? '<br />Pays : <a href="'.($admin ? 'admin' : 'index').'.php?section=voyage&pays='.$article->pays->id.'">'.afficher($article->pays->nom).'</a>' : '' ?>
+	<?= !empty($article->pays) ? '<br>Pays : <a href="'.($admin ? 'admin' : 'index').'.php?section=voyage&pays='.$article->pays->id.'">'.afficher($article->pays->nom).'</a>' : '' ?>
 </p>
 
 <?php
@@ -26,7 +26,7 @@ else:
 
 <div class="mb-3">
 	<form method="post" class="d-inline-block" action="admin.php?section=voyage&id=<?= $article->id ?>&modifier">
-		<input type="submit" class="btn input" value="Modifier" />
+		<input type="submit" class="btn input" value="Modifier">
 </form>
 
 <?php
@@ -34,8 +34,8 @@ else:
 ?>
 
 	<form method="post" class="d-inline-block" action="admin.php?section=voyage">
-		<input type="hidden" name="id_article" value="<?= $article->id ?>" />
-		<input type="submit" class="btn supprimer" name="supprimer_article" value="Supprimer" />
+		<input type="hidden" name="id_article" value="<?= $article->id ?>">
+		<input type="submit" class="btn supprimer" name="supprimer_article" value="Supprimer">
 	</form>
 
 <?php
@@ -64,7 +64,7 @@ else:
 	</ul>
 </nav>
 
-<hr />
+<hr>
 
 <?php
 endif;

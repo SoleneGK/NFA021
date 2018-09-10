@@ -1,7 +1,7 @@
 <p id="chemin_page">Accueil</p>
 
 <p>
-	Bienvenue sur les pages d'administration du site.<br />
+	Bienvenue sur les pages d'administration du site.<br>
 	Avec vos droits actuels, vous pouvez :
 	<ul>
 		<li>Parcourir tout le contenu du site</li>

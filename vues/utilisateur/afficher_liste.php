@@ -11,5 +11,5 @@ endforeach;
 ?>
 
 <form method="post" action="admin.php?section=utilisateur&ajouter">
-	<input type="submit" class="btn input" value="Ajouter un utilisateur" />
+	<input type="submit" class="btn input" value="Ajouter un utilisateur">
 </form>

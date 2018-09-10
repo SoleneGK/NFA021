@@ -1,26 +1,26 @@
 <p id="chemin_page">Utilisateurs > Afficher</p>
 
 <p>
-	Pseudo : <?= $utilisateur->pseudo ?><br />
+	Pseudo : <?= $utilisateur->pseudo ?><br>
 	Mail : <?= $utilisateur->mail ?>
 </p>
 
-<hr />
+<hr>
 
 <form method="post">
 	<?= isset($message_erreur_1) ? '<div class="alert alert-danger">'.$message_erreur_1.'</div>' : '' ?>
 	<div class="form-group">
 		<label for="pseudo">Changer le pseudo :</label>
-		<input type="text" id="pseudo" name="pseudo" class="form-control" value="<?= afficher($utilisateur->pseudo) ?>" required />
+		<input type="text" id="pseudo" name="pseudo" class="form-control" value="<?= afficher($utilisateur->pseudo) ?>" required>
 	</div>
 	<div class="form-group">
 		<label for="mail">Changer le mail :</label>
-		<input type="text" id="mail" name="mail" class="form-control" value="<?= afficher($utilisateur->mail) ?>" required />
+		<input type="text" id="mail" name="mail" class="form-control" value="<?= afficher($utilisateur->mail) ?>" required>
 	</div>
-	<input type="submit" class="btn input" value="Modifier" />
+	<input type="submit" class="btn input" value="Modifier">
 </form>
 
-<hr />
+<hr>
 
 <form method="post">
 	<div class="input-group mb-3">
@@ -66,6 +66,6 @@
 		</select>
 	</div>
 
-	<input type="submit" class="btn input" value="Modifier les droits" />
+	<input type="submit" class="btn input" value="Modifier les droits">
 </form>
 

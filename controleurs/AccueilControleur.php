@@ -44,7 +44,7 @@ class AccueilControleur {
 			$mail_existe = $utilisateurManager->modifier_code_recuperation($_POST['mail_mdp_perdu'], $code, $date_expiration);
 			if ($mail_existe) {
 				$objet = 'Mot de passe perdu';
-				$contenu = '<p>Code à fournir pour modifier le mot de passe : '.$code.'<br />Il est valable 24h.</p><p><a href="http://localhost/nfa021/admin.php?mot_de_passe_perdu&mail='.$_POST['mail_mdp_perdu'].'&code='.$code.'">Il suffit de cliquer sur ce lien</a></p>';
+				$contenu = '<p>Code à fournir pour modifier le mot de passe : '.$code.'<br>Il est valable 24h.</p><p><a href="http://localhost/nfa021/admin.php?mot_de_passe_perdu&mail='.$_POST['mail_mdp_perdu'].'&code='.$code.'">Il suffit de cliquer sur ce lien</a></p>';
 				if (Mail::envoyer_mail($_POST['mail_mdp_perdu'], $objet, $contenu))
 					$envoi_mail_reussi = true;
 				else
