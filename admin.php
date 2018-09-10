@@ -8,6 +8,7 @@ session_start();
 $bdd = new Bdd();
 
 define('NOMBRE_ARTICLES_PAR_PAGE', 5);
+define('NOMBRE_PHOTOS_PAR_PAGE', 6);
 
 // Traitement des demandes de connexion
 if (!isset($_SESSION['utilisateur']) && isset($_POST['mail_connexion']) && isset($_POST['mot_de_passe_connexion'])) {
@@ -135,7 +136,7 @@ else {
 				if ($_SESSION['utilisateur']->droits[Section::TOUT] == Utilisateur::ADMIN || $_SESSION['utilisateur']->droits[Section::PHOTOS] <= Utilisateur::MODERATEUR) {
 					if(isset($_GET['categorie'])) {
 						$controleur = new CategoriePhotoControleur($bdd->bdd);
-						$controleur->afficher_categorie($_GET['categorie'], true);
+						$controleur->afficher_categorie($_GET['categorie'], 1, true);
 					}
 					else {
 						$controleur = new CategoriePhotoControleur($bdd->bdd);
@@ -156,7 +157,11 @@ else {
 			// Forme de l'URL : admin.php?section=photos&categorie=[categorie]
 			elseif (isset($_GET['categorie'])) {
 				$controleur = new CategoriePhotoControleur($bdd->bdd);
-				$controleur->afficher_categorie($_GET['categorie'], true);
+
+				if (isset($_GET['page']))
+					$controleur->afficher_categorie($_GET['categorie'], $_GET['page'], true);
+				else
+					$controleur->afficher_categorie($_GET['categorie'], 1, true);
 			}
 			else {
 				$controleur = new CategoriePhotoControleur($bdd->bdd);

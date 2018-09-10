@@ -1,5 +1,6 @@
-<div id="banniere">Empreinte</div><div id="banniere"><a href='admin.php'>Empreinte</a></div>
-<main>
+<div id="banniere_accueil"><a href='admin.php'>Empreinte</a></div>
+
+<main class="mt-3">
 
 	<?= isset($message_erreur) ? '<div class="alert alert-danger">'.$message_erreur.'</div>' : '' ?>
 	<form method="post">

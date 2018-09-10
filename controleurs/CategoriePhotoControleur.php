@@ -76,8 +76,9 @@ class CategoriePhotoControleur {
 	/* Afficher les informations d'une catégorie, et ses photos
 	 * Afficher et gère la modification d'une catégorie et l'ajout d'une photo si les droits de l'utilisateur le permettent
 	 */
-	function afficher_categorie($id, $admin = false) {
+	function afficher_categorie($id, $page = 1, $admin = false) {
 		$id = (int)$id;
+		$page = (int)$page;
 
 		$categorie_manager = new CategoriePhotoManager($this->bdd);
 
@@ -105,11 +106,20 @@ class CategoriePhotoControleur {
 				}
 
 				// Ajout d'une photo
-				if (isset($_POST['ajouter_photo']) && isset($_FILES['image']) && isset($_POST['titre_photo']) && isset($_POST['description_photo']) && ($_SESSION['utilisateur']->droits[Section::TOUT] == Utilisateur::ADMIN || $_SESSION['utilisateur']->droits[Section::PHOTOS] <= Utilisateur::CONTRIBUTEUR))
+				if (isset($_POST['ajouter_photo']) && isset($_FILES['image']) && isset($_POST['titre_photo']) && isset($_POST['description_photo']) && ($_SESSION['utilisateur']->droits[Section::TOUT] == Utilisateur::ADMIN || $_SESSION['utilisateur']->droits[Section::PHOTOS] <= Utilisateur::CONTRIBUTEUR)) {
 					$message = PhotoControleur::ajouter_photo($this->bdd, trim($_POST['titre_photo']), $_SESSION['utilisateur']->id, 'image', $categorie->id, trim($_POST['description_photo']));
+					unset($_POST);
+				}
 
 				//Affichage de la page
-				$photos = $photos_manager->obtenir_photos_categorie($categorie);
+				if ($page <= 0)
+					$photos = [];
+				else
+					$photos = $photos_manager->obtenir_photos_categorie($categorie, ($page - 1) * NOMBRE_PHOTOS_PAR_PAGE);
+
+				// Obtenir les numéros de page pour la navigation
+				require_once 'outils/numeros_pages.php';
+				$numeros_pages = obtenir_numeros_pages($page, $photos_manager->nombre_photos_categorie($categorie->id), NOMBRE_PHOTOS_PAR_PAGE);
 
 				$categories = $categorie_manager->obtenir_liste();
 
@@ -158,7 +168,7 @@ class CategoriePhotoControleur {
 
 			else {
 				$photos_manager = new PhotoManager($this->bdd);
-				$photos = $photos_manager->obtenir_photos_categorie($categorie);
+				$photos = $photos_manager->obtenir_photos_categorie($categorie, ($page - 1) * NOMBRE_PHOTOS_PAR_PAGE);
 
 				include 'vues/entete.php';
 				include 'vues/menu.php';

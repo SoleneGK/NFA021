@@ -15,7 +15,6 @@ class AccueilControleur {
 		$pays = $pays_manager->obtenir_liste_pays();
 
 		include 'vues/entete.php';
-		include 'vues/menu.php';
 		include 'vues/accueil/index.php';
 		include 'vues/pieddepage.php';
 	}

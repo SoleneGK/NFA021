@@ -7,28 +7,6 @@ class ArticleControleur {
 		$this->bdd = $bdd;
 	}
 
-	/* Obtenir les numéros des pages pour la navigation dans la liste des articles
-	 * Renvoie un array associatif
-	 * page_precedente => null si la page actuelle est la 1e, ou le numéro de la page
-	 * page_suivante => null si la page actuelle est la dernière, ou le numéro de la page
-	 * derniere_page => le numéro de la page
-	 */
-	function obtenir_numeros_pages($numero_page_actuelle, $nombre_articles) {
-		if ($numero_page_actuelle == 1)
-			$numeros['page_precedente'] = null;
-		else
-			$numeros['page_precedente'] = $numero_page_actuelle - 1;
-
-		$numeros['derniere_page'] = ceil($nombre_articles / NOMBRE_ARTICLES_PAR_PAGE);
-
-		if ($numero_page_actuelle < $numeros['derniere_page'])
-			$numeros['page_suivante'] = $numero_page_actuelle + 1;
-		else
-			$numeros['page_suivante'] = null;
-
-		return $numeros;
-	}
-
 	function ajouter_article($id_section) {
 		$categorie_manager = new CategoriePhotoManager($this->bdd);
 		$categories = $categorie_manager->obtenir_liste();
@@ -145,32 +123,9 @@ class ArticleControleur {
 					$commentaire_manager->ajouter_commentaire(null, trim($_POST['pseudo']), $_POST['mail'], $article->id, trim($_POST['contenu']));
 			}
 
-			// Modification d'un commentaire
-			if ($admin &&
-				($_SESSION['utilisateur']->droits[Section::TOUT] == Utilisateur::ADMIN || 
-				($id_section == Section::POLITIQUE && $_SESSION['utilisateur']->droits[Section::POLITIQUE] <= Utilisateur::MODERATEUR) || 
-				($id_section == Section::VOYAGE && $_SESSION['utilisateur']->droits[Section::VOYAGE] <= Utilisateur::MODERATEUR))) {
-
-				if (isset($_POST['modifier_commentaire']) && isset($_POST['contenu_commentaire']) && isset($_POST['id_commentaire'])) {
-					if (!empty($_POST['id_utilisateur']))
-						$commentaire_manager->modifier_commentaire($_POST['id_commentaire'], null, null, $_POST['contenu_commentaire']);
-					elseif (isset($_POST['pseudo_commentaire']) && isset($_POST['mail_commentaire']))
-						$commentaire_manager->modifier_commentaire($_POST['id_commentaire'], trim($_POST['pseudo_commentaire']), $_POST['mail_commentaire'], trim($_POST['contenu_commentaire']));
-				}
-			}
-
-			// Suppression d'un commentaire
-			if (isset($_POST['supprimer_commentaire']) && isset($_POST['id_commentaire'])) {
-				if ($_SESSION['utilisateur']->droits[Section::TOUT] == Utilisateur::ADMIN || ($id_section == Section::POLITIQUE && $_SESSION['utilisateur']->droits[Section::POLITIQUE] <= Utilisateur::MODERATEUR) || ($id_section == Section::VOYAGE && $_SESSION['utilisateur']->droits[Section::VOYAGE] <= Utilisateur::MODERATEUR))
-					$commentaire_manager->supprimer_commentaire((int)$_POST['id_commentaire']);
-			}
-
 			$commentaires = $commentaire_manager->obtenir_commentaires_article($article->id);
 
 			// Affichage des commentaires
-			if ($admin && ($_SESSION['utilisateur']->droits[Section::TOUT] == Utilisateur::ADMIN || ($id_section == Section::POLITIQUE && $_SESSION['utilisateur']->droits[Section::POLITIQUE] <= Utilisateur::MODERATEUR) || ($id_section == Section::VOYAGE && $_SESSION['utilisateur']->droits[Section::VOYAGE] <= Utilisateur::MODERATEUR)))
-				include 'vues/commentaires/afficher_commentaires_admin.php';
-			else
 				include 'vues/commentaires/afficher_commentaires.php';
 
 			// Formulaire d'ajout de commentaire
@@ -216,7 +171,8 @@ class ArticleControleur {
 			$articles = $article_manager->obtenir_articles_section($id_section, ($page - 1) * NOMBRE_ARTICLES_PAR_PAGE);
 
 			// Obtenir les numéros de page pour la navigation
-			$numeros_pages = $this->obtenir_numeros_pages($page, $article_manager->nombre_articles_section($id_section));
+			require_once 'outils/numeros_pages.php';
+			$numeros_pages = obtenir_numeros_pages($page, $article_manager->nombre_articles_section($id_section), NOMBRE_ARTICLES_PAR_PAGE);
 		}
 
 		if ($id_section == Article::POLITIQUE)
@@ -255,7 +211,8 @@ class ArticleControleur {
 				$articles = $article_manager->obtenir_articles_pays($pays_selectionne, ($page - 1) * NOMBRE_ARTICLES_PAR_PAGE);
 
 				// Obtenir les numéros de page pour la navigation
-				$numeros_pages = $this->obtenir_numeros_pages($page, $article_manager->nombre_articles_pays($id_pays));
+				require_once 'outils/numeros_pages.php';
+				$numeros_pages = obtenir_numeros_pages($page, $article_manager->nombre_articles_section($id_section), NOMBRE_ARTICLES_PAR_PAGE);
 			}
 
 			include 'vues/article/voyage/afficher_liste_articles_pays.php';
@@ -294,7 +251,8 @@ class ArticleControleur {
 				$articles = $article_manager->obtenir_articles_utilisateur($utilisateur, ($page - 1) * NOMBRE_ARTICLES_PAR_PAGE);
 
 				// Obtenir les numéros de page pour la navigation
-				$numeros_pages = $this->obtenir_numeros_pages($page, $article_manager->nombre_articles_utilisateur($utilisateur));
+				require_once 'outils/numeros_pages.php';
+				$numeros_pages = obtenir_numeros_pages($page, $article_manager->nombre_articles_section($id_section), NOMBRE_ARTICLES_PAR_PAGE);
 			}
 		}
 

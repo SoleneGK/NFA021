@@ -45,7 +45,7 @@ class PhotoManager {
 	/* Obtenir les informations des photos appartenant à une catégorie
 	 * Renvoie un array d'objets Photos
 	 */
-	function obtenir_photos_categorie(CategoriePhoto $categorie) {
+	function obtenir_photos_categorie(CategoriePhoto $categorie, $position) {
 		$req = 'SELECT p.id AS id,
 					p.titre AS titre,
 					p.nom_fichier AS nom_fichier,
@@ -58,9 +58,12 @@ class PhotoManager {
 				JOIN utilisateurs AS u ON p.id_utilisateur = u.id
 				JOIN categories_photos AS c ON p.id_categorie = c.id
 				WHERE c.id = :id
-				ORDER BY p.id';
+				ORDER BY p.id
+				LIMIT :position, :nombre';
 		$req = $this->bdd->prepare($req);
 		$req->bindValue('id', $categorie->id, PDO::PARAM_INT);
+		$req->bindValue('position', $position, PDO::PARAM_INT);
+		$req->bindValue('nombre', NOMBRE_PHOTOS_PAR_PAGE, PDO::PARAM_INT);
 		$req->execute();
 
 		$photos = [];
@@ -133,4 +136,17 @@ class PhotoManager {
 		$req->bindValue('id', $id, PDO::PARAM_INT);
 		$resultat = $req->execute();
 	}
+
+	/* Obtenir le nonbre de photos d'une catégorie
+	 * Renvoie un entier
+	 */
+	function nombre_photos_categorie($id_categorie) {
+		$req = 'SELECT COUNT(id) FROM photos WHERE id_categorie = :id_categorie';
+		$req = $this->bdd->prepare($req);
+		$req->bindValue('id_categorie', $id_categorie, PDO::PARAM_INT);
+		$req->execute();
+		$req = $req->fetch(PDO::FETCH_NUM);
+		return $req[0];
+	}
 }
+

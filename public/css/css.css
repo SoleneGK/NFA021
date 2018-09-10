@@ -8,6 +8,11 @@ body {
 	margin: 0 auto;
 }
 
+
+
+
+
+/* Haut de la page et accueil */
 #banniere {
 	text-align: center;
 	font-family: Kaushan, serif;
@@ -19,17 +24,54 @@ body {
 	display: none;
 }
 
-#banniere a {
+#banniere a, #banniere_accueil a {
 	text-decoration: none;
 }
 
-#banniere a:hover {
+#banniere a:hover, #banniere_accueil a:hover {
 	color: #237d05;
 }
 
-#banniere a:visited {
+#banniere a:visited, #banniere_accueil a:visited {
 	color: #237d05;
 }
+
+#banniere_accueil {
+	text-align: center;
+	font-family: Kaushan, serif;
+	font-size: 3.5em;
+	color: #237d05;
+	text-shadow: #185603 0.01em 0.05em 0.1em;
+	line-height: 1;
+	margin-bottom: .5em;
+}
+
+.accueil {
+	background-color: #c7e6bd;
+	color: #237d05;
+	margin: .2em 1em;
+	height: 2.5em;
+	border-radius: 10px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	font-size: 2em;
+	font-variant: small-caps;
+}
+
+.accueil a {
+	text-decoration: none;
+}
+
+.accueil a:hover {
+	color: #237d05;
+}
+
+.accueil_categories {
+	text-decoration: underline;
+}
+
+
 
 
 
@@ -90,6 +132,8 @@ body {
 
 
 
+
+
 /* Corps de la page */
 main {
 	position:absolute;
@@ -143,25 +187,27 @@ h3 a:hover, h5 a:hover {
 
 
 
+
+
 /* Formulaires et boutons */
 .form-control:focus {
 	border-color: #91ca7f;
 	box-shadow: 0 0 0 0.2rem #c7e6bd;
 }
 
-input[class~=input] {
-	background-color: #c7e6bd;
-	border-color: #367520;
-}
-
 main button {
 	background-color: #c7e6bd;
-	border-color: #c7e6bd !important;
+	border-color: #c7e6bd;
 }
 
 main button:focus, main button:active {
 	box-shadow: none !important;
 	outline: none;
+}
+
+input[class~=input], button[class~=input] {
+	background-color: #c7e6bd;
+	border-color: #367520;
 }
 
 input[class~=supprimer] {
@@ -175,6 +221,9 @@ input[class~=supprimer] {
 	border-color: #c7e6bd !important
 }
 
+.btn:focus {
+	box-shadow: none;
+}
 
 
 
@@ -195,12 +244,16 @@ input[class~=supprimer] {
 	border-top-left-radius: 0;
 }
 
+.page-item a:hover {
+	color: #237d05;
+}
+
 
 
 
 
 /* Affichage des commentaires */
-#commentaires {
+.commentaires {
 	padding: 0 1.5em;
 }
 
@@ -216,6 +269,10 @@ input[class~=supprimer] {
 	margin-top: 3em;
 }
 
+.modifier_commentaire_elements {
+	display: none;
+}
+
 
 
 
@@ -229,6 +286,14 @@ input[class~=supprimer] {
 @media screen and (min-width: 576px) {
 	#banniere {
 		display: block;
+	}
+
+	#banniere_accueil {
+		font-size: 7.5em;
+	}
+
+	.accueil {
+		height: 350px;
 	}
 
 	#nav_ordinateur {

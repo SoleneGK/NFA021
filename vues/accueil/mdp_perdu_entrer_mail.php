@@ -1,6 +1,6 @@
-<div id="banniere"><a href='admin.php'>Empreinte</a></div>
+<div id="banniere_accueil"><a href='admin.php'>Empreinte</a></div>
 
-<main>
+<main class="mt-3">
 
 <?php
 	if (isset($envoi_mail_reussi)):

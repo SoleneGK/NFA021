@@ -3,10 +3,40 @@
 <p class="small-caps">Photos</p>
 
 <?php
+if (!$photos):
+?>
 
-$compteur = 0;
-foreach ($photos as $photo):
-	if ($compteur % 2 == 0)
+<p>Aucune photo trouvée dans cette catégorie.</p>
+
+<?php
+else:
+?>
+
+<!-- Menu de navigation entre les pages -->
+<nav>
+	<ul class="pagination justify-content-center">
+		<li class="page-item">
+			<button class="btn pagination-bouton-gauche"><a <?= ($page > 1) ? 'href="'.($admin ? 'admin' : 'index').'.php?section=photos&categorie='.$categorie->id.'&page=1"' : 'disabled' ?>><<</a></button>
+		</li>
+		<li class="page-item">
+			<button class="btn pagination-bouton-milieu"><a <?= is_null($numeros_pages['page_precedente']) ? 'disabled' : 'href="'.($admin ? 'admin' : 'index').'.php?section=photos&categorie='.$categorie->id.'&page='.$numeros_pages['page_precedente'].'"' ?>><</a></button>
+		</li>
+		<li class="page-item">
+			<button class="btn pagination-bouton-milieu">Page <?= $page ?></button>
+		</li>
+		<li class="page-item">
+			<button class="btn pagination-bouton-milieu"><a <?= is_null($numeros_pages['page_suivante']) ? 'disabled' : 'href="'.($admin ? 'admin' : 'index').'.php?section=photos&categorie='.$categorie->id.'&page='.$numeros_pages['page_suivante'].'"' ?>>></a></button>
+		</li>
+		<li class="page-item">
+			<button class="btn pagination-bouton-droite"><a <?= ($numeros_pages['derniere_page'] > $page) ? 'href="'.($admin ? 'admin' : 'index').'.php?section=photos&categorie='.$categorie->id.'&page='.$numeros_pages['derniere_page'].'"' : 'disabled' ?>>>></a></button>
+		</li>
+	</ul>
+</nav>
+
+<?php
+	$compteur = 0;
+	foreach ($photos as $photo):
+		if ($compteur % 2 == 0)
 		echo '<div class="row">';
 ?>
 
@@ -18,8 +48,8 @@ foreach ($photos as $photo):
 			<p class="font-italic card-text">Ajoutée le <?= date('d-m-Y', $photo->date_ajout) ?> par <?= afficher($photo->utilisateur->pseudo) ?></p>
 
 <?php
-	if ($admin):
-		if ($_SESSION['utilisateur']->droits[Section::TOUT] == Utilisateur::ADMIN || $_SESSION['utilisateur']->droits[Section::POLITIQUE] <= Utilisateur::MODERATEUR):
+		if ($admin):
+			if ($_SESSION['utilisateur']->droits[Section::TOUT] == Utilisateur::ADMIN || $_SESSION['utilisateur']->droits[Section::POLITIQUE] <= Utilisateur::MODERATEUR):
 ?>
 
 			<form method="post">
@@ -29,8 +59,8 @@ foreach ($photos as $photo):
 			</form>
 
 <?php
+			endif;
 		endif;
-	endif;
 ?>
 
 		</div>
@@ -39,13 +69,37 @@ foreach ($photos as $photo):
 
 <?php
 
+		if ($compteur % 2 == 1)
+			echo '</div>';
+
+		$compteur++;
+
+	endforeach;
+
 	if ($compteur % 2 == 1)
 		echo '</div>';
+?>
 
-	$compteur++;
+<!-- Menu de navigation entre les pages -->
+<nav>
+	<ul class="pagination justify-content-center">
+		<li class="page-item">
+			<button class="btn pagination-bouton-gauche"><a <?= ($page > 1) ? 'href="'.($admin ? 'admin' : 'index').'.php?section=photos&categorie='.$categorie->id.'&page=1"' : 'disabled' ?>><<</a></button>
+		</li>
+		<li class="page-item">
+			<button class="btn pagination-bouton-milieu"><a <?= is_null($numeros_pages['page_precedente']) ? 'disabled' : 'href="'.($admin ? 'admin' : 'index').'.php?section=photos&categorie='.$categorie->id.'&page='.$numeros_pages['page_precedente'].'"' ?>><</a></button>
+		</li>
+		<li class="page-item">
+			<button class="btn pagination-bouton-milieu">Page <?= $page ?></button>
+		</li>
+		<li class="page-item">
+			<button class="btn pagination-bouton-milieu"><a <?= is_null($numeros_pages['page_suivante']) ? 'disabled' : 'href="'.($admin ? 'admin' : 'index').'.php?section=photos&categorie='.$categorie->id.'&page='.$numeros_pages['page_suivante'].'"' ?>>></a></button>
+		</li>
+		<li class="page-item">
+			<button class="btn pagination-bouton-droite"><a <?= ($numeros_pages['derniere_page'] > $page) ? 'href="'.($admin ? 'admin' : 'index').'.php?section=photos&categorie='.$categorie->id.'&page='.$numeros_pages['derniere_page'].'"' : 'disabled' ?>>>></a></button>
+		</li>
+	</ul>
+</nav>
 
-endforeach;
-
-if ($compteur % 2 == 1)
-	echo '</div>';
-
+<?php
+endif;

@@ -8,6 +8,7 @@ session_start();
 $bdd = new Bdd();
 
 define('NOMBRE_ARTICLES_PAR_PAGE', 5);
+define('NOMBRE_PHOTOS_PAR_PAGE', 6);
 
 if (!isset($_GET['section'])) {
 	$controleur = new AccueilControleur($bdd->bdd);
@@ -25,7 +26,11 @@ else {
 
 		if (isset($_GET['categorie'])) {
 			$controleur = new CategoriePhotoControleur($bdd->bdd);
-			$controleur->afficher_categorie($_GET['categorie']);
+
+			if (isset($_GET['page']))
+				$controleur->afficher_categorie($_GET['categorie'], $_GET['page']);
+			else
+				$controleur->afficher_categorie($_GET['categorie']);
 		}
 		elseif (isset($_GET['id'])) {
 			$controleur = new PhotoControleur($bdd->bdd);

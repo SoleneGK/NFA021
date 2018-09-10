@@ -1,7 +1,9 @@
+<hr />
+
 <?php
 if (isset($_SESSION['utilisateur'])):
 ?>
-
+<div class="commentaires">
 	<form method="post" id="form_ajout_commentaire small-caps">
 		<div class="form-group">
 			<label for="pseudo_commentaire">Pseudo :</label>

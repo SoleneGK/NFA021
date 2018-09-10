@@ -63,7 +63,5 @@ else:
 	</ul>
 </nav>
 
-<hr />
-
 <?php
 endif;
