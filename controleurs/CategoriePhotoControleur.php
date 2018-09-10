@@ -130,7 +130,7 @@ class CategoriePhotoControleur {
 						case 'ERREUR_COPIE':
 							$message_erreur = 'Une erreur est survenue pendant la copie du fichier';
 							break;
-							
+
 						case 'ERREUR_AJOUT_BDD':
 							$message_erreur = 'Une erreur est survenue pendant l\'ajout des informations en base de données';
 							break;

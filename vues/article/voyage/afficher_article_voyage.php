@@ -27,7 +27,7 @@ else:
 <div class="mb-3">
 	<form method="post" class="d-inline-block" action="admin.php?section=voyage&id=<?= $article->id ?>&modifier">
 		<input type="submit" class="btn input" value="Modifier">
-</form>
+	</form>
 
 <?php
 			if ($_SESSION['utilisateur']->droits[Section::TOUT] == Utilisateur::ADMIN || $_SESSION['utilisateur']->droits[Section::VOYAGE] <= Utilisateur::MODERATEUR):

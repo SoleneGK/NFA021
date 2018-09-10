@@ -13,7 +13,7 @@ foreach ($pays as $item):
 
 	<div class="input-group mb-1">
 		<div class="input-group-prepend">
-			<span class="input-group-text" id="nom_pays-addon1" ?>Nom</span>
+			<span class="input-group-text">Nom</span>
 		</div>
 		<input type="text" class="form-control" name="nom_pays" value="<?= afficher($item->nom) ?>" required>
 	</div>

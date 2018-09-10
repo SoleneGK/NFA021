@@ -215,6 +215,9 @@ class UtilisateurControleur {
 					$utilisateur_manager->changer_pseudo_mail($utilisateur->id, $nouveau_pseudo, $nouveau_mail);
 					$utilisateur->pseudo = $nouveau_pseudo;
 					$utilisateur->mail = $nouveau_mail;
+
+					if ($_SESSION['utilisateur']->id == $utilisateur->id)
+						$_SESSION['utilisateur'] = $utilisateur_manager->obtenir_utilisateur($_SESSION['utilisateur']->id);
 				}
 			}
 
