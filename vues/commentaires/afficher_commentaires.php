@@ -20,7 +20,7 @@ else:
 		<div class="div_commentaire mb-3">
 
 <?php
-		if ($admin && $_SESSION['utilisateur']->droits[Section::TOUT] == Utilisateur::ADMIN || $_SESSION['utilisateur']->droits[Section::PHOTOS] <= Utilisateur::MODERATEUR):
+		if ($admin && $_SESSION['utilisateur']->droits[Section::TOUT] == Utilisateur::ADMIN || $_SESSION['utilisateur']->droits[$id_section] <= Utilisateur::MODERATEUR):
 ?>
 
 		<form method="post" class="modifier_commentaire_form">
@@ -35,7 +35,7 @@ else:
 			</p>
 
 <?php
-		if ($admin && $_SESSION['utilisateur']->droits[Section::TOUT] == Utilisateur::ADMIN || $_SESSION['utilisateur']->droits[Section::PHOTOS] <= Utilisateur::MODERATEUR):
+		if ($admin && $_SESSION['utilisateur']->droits[Section::TOUT] == Utilisateur::ADMIN || $_SESSION['utilisateur']->droits[$id_section] <= Utilisateur::MODERATEUR):
 ?>
 
 			<button class="afficher_modification btn input">Modifier</button>
@@ -52,7 +52,7 @@ else:
 				</div>
 
 				<input type="hidden" name="id_utilisateur" value="<?= $commentaire->utilisateur->id ?>">
-				<input type="hidden" name="id_section" value="<?= ($_GET['section'] == 'politique' ? Section::POLITIQUE : Section::VOYAGE) ?>">
+				<input type="hidden" name="id_section" value="<?= $id_section ?>">
 				<input type="hidden" name="id_commentaire" value="<?= $commentaire->id ?>">
 				<input type="submit" class="btn input" name="modifier_commentaire" value="Enregistrer">
 			</div>
@@ -60,7 +60,7 @@ else:
 
 		<form method="post" class="supprimer_commentaire_form mt-1">
 			<input type="hidden" name="id_commentaire" value="<?= $commentaire->id ?>">
-			<input type="hidden" name="id_section" value="<?= ($_GET['section'] == 'politique' ? Section::POLITIQUE : Section::VOYAGE) ?>">
+			<input type="hidden" name="id_section" value="<?= $id_section ?>">
 			<input type="submit" class="btn supprimer" name="supprimer_commentaire" value="Supprimer">
 		</form>
 

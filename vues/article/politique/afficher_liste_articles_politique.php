@@ -43,7 +43,7 @@ else:
 
 <article>
 	<h3><a href="<?= $admin ? 'admin' : 'index' ?>.php?section=politique&id=<?= $article->id ?>"><?= afficher($article->titre) ?></a></h3>
-	<p class="font-italic">Ajouté par <a href="<?= $admin ? 'admin' : 'index' ?>.php?section=utilisateur&id=<?= $article->utilisateur->id ?>"><?= afficher($article->utilisateur->pseudo) ?></a> le <?= date('d-m-Y', $article->date_publication) ?></p>
+	<p class="font-italic">Ajouté par <a href="index.php?section=utilisateur&id=<?= $article->utilisateur->id ?>"><?= afficher($article->utilisateur->pseudo) ?></a> le <?= date('d-m-Y', $article->date_publication) ?></p>
 	<p>
 		<?= substr(afficher($article->contenu), 0, 500) ?>…<br>
 		<a href="<?= $admin ? 'admin' : 'index' ?>.php?section=politique&id=<?= $article->id ?>">Lire la suite</a>
@@ -51,7 +51,7 @@ else:
 
 <?php
 			if ($admin):
-				if ($_SESSION['utilisateur']->droits[Section::TOUT] == Utilisateur::ADMIN || $_SESSION['utilisateur']->droits[Section::VOYAGE] <= Utilisateur::CONTRIBUTEUR):
+				if ($_SESSION['utilisateur']->droits[Section::TOUT] == Utilisateur::ADMIN || $_SESSION['utilisateur']->droits[Section::POLITIQUE] <= Utilisateur::MODERATEUR || ($_SESSION['utilisateur']->droits[Section::POLITIQUE] <= Utilisateur::CONTRIBUTEUR && $_SESSION['utilisateur']->id == $article->utilisateur->id)):
 ?>
 
 	<div class="mb-3">
@@ -60,7 +60,7 @@ else:
 		</form>
 
 <?php
-					if ($_SESSION['utilisateur']->droits[Section::TOUT] == Utilisateur::ADMIN || $_SESSION['utilisateur']->droits[Section::VOYAGE] <= Utilisateur::MODERATEUR):
+					if ($_SESSION['utilisateur']->droits[Section::TOUT] == Utilisateur::ADMIN || $_SESSION['utilisateur']->droits[Section::POLITIQUE] <= Utilisateur::MODERATEUR):
 ?>
 
 		<form method="post" class="d-inline-block" action="admin.php?section=politique">
@@ -105,6 +105,17 @@ else:
 		</li>
 	</ul>
 </nav>
+
+<?php
+endif;
+
+if ($admin & $_SESSION['utilisateur']->droits[Section::TOUT] == Utilisateur::ADMIN || $_SESSION['utilisateur']->droits[Section::POLITIQUE] <= Utilisateur::CONTRIBUTEUR):
+?>
+
+<hr>
+<form method="post" action="admin.php?section=politique&ajouter">
+	<input type="submit" class="btn input" value="Ajouter un article">
+</form>
 
 <?php
 endif;

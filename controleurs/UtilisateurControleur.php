@@ -123,7 +123,6 @@ class UtilisateurControleur {
 							Il est fortement conseillé d\'en changer dès votre première connexion.</p>
 							<p><a href="http://localhost/nfa021/admin.php">Accès au site</a></p>';
 						Mail::envoyer_mail($_POST['mail_1'], $objet, $contenu);
-
 						header('Location: admin.php?section=utilisateur&id='.$id_utilisateur_cree);
 						exit();
 					}
@@ -168,15 +167,15 @@ class UtilisateurControleur {
 		$pays_manager = new PaysManager($this->bdd);
 		$pays = $pays_manager->obtenir_liste_pays();
 
-		include 'vues/entete.php';
-		include 'vues/menu_admin.php';
-		
 		// Récupérer les informations de l'utilisateur
 		$utilisateur_manager = new UtilisateurManager($this->bdd);
 		$utilisateur = $utilisateur_manager->obtenir_utilisateur($id);
 
-		if (!$utilisateur)
+		if (!$utilisateur) {
+			include 'vues/entete.php';
+			include 'vues/menu_admin.php';
 			include 'vues/utilisateur/aucun_utilisateur_admin.php';
+		}
 		else {
 			$droits = $utilisateur_manager->obtenir_droits($id);
 
@@ -254,8 +253,19 @@ class UtilisateurControleur {
 					$utilisateur_manager->modifier_droits($utilisateur->id, $nouveaux_droits);
 					$droits = $nouveaux_droits;
 				}
+
+				if ($_SESSION['utilisateur']->id == $utilisateur->id) {
+					$_SESSION['utilisateur']->droits = $utilisateur_manager->obtenir_droits($_SESSION['utilisateur']->id);
+
+					if ($_SESSION['utilisateur']->droits[Section::TOUT] != 0) {
+						header('Location: admin.php?section=profil');
+						exit();
+					}
+				}
 			}
 
+			include 'vues/entete.php';
+			include 'vues/menu_admin.php';
 			include 'vues/utilisateur/afficher_utilisateur.php';
 		}
 

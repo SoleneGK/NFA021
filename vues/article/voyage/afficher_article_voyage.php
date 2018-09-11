@@ -15,13 +15,13 @@ else:
 <!-- Afficher le contenu de l'article -->
 <h2><?= afficher($article->titre) ?></h2>
 <p class="font-italic">
-	Ajouté par <a href="<?= $admin ? 'admin' : 'index' ?>.php?section=utilisateur&id=<?= $article->utilisateur->id ?>"><?= afficher($article->utilisateur->pseudo) ?></a> le <?= date('d-m-Y', $article->date_publication) ?>
+	Ajouté par <a href="index.php?section=utilisateur&id=<?= $article->utilisateur->id ?>"><?= afficher($article->utilisateur->pseudo) ?></a> le <?= date('d-m-Y', $article->date_publication) ?>
 	<?= !empty($article->pays) ? '<br>Pays : <a href="'.($admin ? 'admin' : 'index').'.php?section=voyage&pays='.$article->pays->id.'">'.afficher($article->pays->nom).'</a>' : '' ?>
 </p>
 
 <?php
 	if ($admin):
-		if ($_SESSION['utilisateur']->droits[Section::TOUT] == Utilisateur::ADMIN || $_SESSION['utilisateur']->droits[Section::VOYAGE] <= Utilisateur::CONTRIBUTEUR):
+		if ($_SESSION['utilisateur']->droits[Section::TOUT] == Utilisateur::ADMIN || $_SESSION['utilisateur']->droits[Section::VOYAGE] <= Utilisateur::MODERATEUR || ($_SESSION['utilisateur']->droits[Section::VOYAGE] <= Utilisateur::CONTRIBUTEUR && $_SESSION['utilisateur']->id == $article->utilisateur->id)):
 ?>
 
 <div class="mb-3">
@@ -63,8 +63,6 @@ else:
 		</li>
 	</ul>
 </nav>
-
-<hr>
 
 <?php
 endif;

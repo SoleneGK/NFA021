@@ -15,14 +15,14 @@ class Mail {
 			$mail = new PHPMailer(true); 
 
 			// Paramètres du serveur
-			//$mail->SMTPDebug = 2;
+			//$mail->SMTPDebug = 4;
 			$mail->isSMTP();
 			$mail->Host = 'ssl0.ovh.net';
 			$mail->SMTPAuth = true;
 			$mail->Username = MAIL_USERNAME;
 			$mail->Password = MAIL_PASSWORD;
-			$mail->SMTPSecure = 'tls';
-			$mail->Port = 587;
+			$mail->SMTPSecure = 'ssl';
+			$mail->Port = 465;
 
 			// En-tête
 			$mail->setFrom(MAIL_USERNAME, 'Empreinte');
@@ -39,7 +39,7 @@ class Mail {
 			$reponse = true;
 		}
 		catch (Exception $e) {
-			$reponse = false;
+			$reponse = $mail->ErrorInfo;
 		}
 
 		return $reponse;

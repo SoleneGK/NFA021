@@ -102,9 +102,9 @@ else {
 			elseif (isset($_GET['pays'])) {
 				// Forme de l'URL : admin.php?section=voyage&pays=[id]&page=[numero]
 				if (isset($_GET['page']))
-					$controleur->afficher_liste_articles_pays(Section::VOYAGE, $_GET['page'], true);
+					$controleur->afficher_liste_articles_pays($_GET['pays'], $_GET['page'], true);
 				else
-					$controleur->afficher_liste_articles_pays(Section::VOYAGE, 1, true);
+					$controleur->afficher_liste_articles_pays($_GET['pays'], 1, true);
 			}
 			// Forme de l'URL : admin.php?section=voyage&page=[numero]
 			elseif (isset($_GET['page']))
@@ -179,7 +179,7 @@ else {
 					$controleur->ajouter_categorie_photos();
 				// Forme de l'URL : admin.php?section=categories&id=[id]
 				elseif (isset($_GET['id']) && !isset($_POST['supprimer_categorie']))
-					$controleur->afficher_categorie($_GET['id'], true);
+					$controleur->afficher_categorie($_GET['id'], 1, true);
 				else
 					$controleur->afficher_liste_categories(true);
 			}

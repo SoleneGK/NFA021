@@ -14,13 +14,13 @@ else:
 
 <!-- Afficher le contenu de l'article -->
 <h2><?= afficher($article->titre) ?></h2>
-<p class="font-italic">Ajouté par <a href="<?= $admin ? 'admin' : 'index' ?>.php?section=utilisateur&id=<?= $article->utilisateur->id ?>"><?= afficher($article->utilisateur->pseudo) ?></a> le <?= date('d-m-Y', $article->date_publication) ?></p>
+<p class="font-italic">Ajouté par <a href="index.php?section=utilisateur&id=<?= $article->utilisateur->id ?>"><?= afficher($article->utilisateur->pseudo) ?></a> le <?= date('d-m-Y', $article->date_publication) ?></p>
 
 <?php
 	
 	// Boutons de modification et de suppression
 	if ($admin):
-		if ($_SESSION['utilisateur']->droits[Section::TOUT] == Utilisateur::ADMIN || $_SESSION['utilisateur']->droits[Section::POLITIQUE] <= Utilisateur::CONTRIBUTEUR):
+		if ($_SESSION['utilisateur']->droits[Section::TOUT] == Utilisateur::ADMIN || $_SESSION['utilisateur']->droits[Section::POLITIQUE] <= Utilisateur::MODERATEUR || ($_SESSION['utilisateur']->droits[Section::POLITIQUE] <= Utilisateur::CONTRIBUTEUR && $_SESSION['utilisateur']->id == $article->utilisateur->id)):
 ?>
 
 <div class="mb-3">

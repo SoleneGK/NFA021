@@ -44,7 +44,7 @@ else:
 <article>
 	<h3><a href="<?= $admin ? 'admin' : 'index' ?>.php?section=voyage&id=<?= $article->id ?>"><?= afficher($article->titre) ?></a></h3>
 	<p class="font-italic">
-		Ajouté par <a href="<?= $admin ? 'admin' : 'index' ?>.php?section=utilisateur&id=<?= $article->utilisateur->id ?>"><?= afficher($article->utilisateur->pseudo) ?></a> le <?= date('d-m-Y', $article->date_publication) ?>
+		Ajouté par <a href="index.php?section=utilisateur&id=<?= $article->utilisateur->id ?>"><?= afficher($article->utilisateur->pseudo) ?></a> le <?= date('d-m-Y', $article->date_publication) ?>
 		<?= !empty($article->pays->id) ? '<br>Pays : <a href="'.($admin ? 'admin' : 'index').'.php?section=voyage&pays='.$article->pays->id.'">'.afficher($article->pays->nom).'</a>' : '' ?>
 	</p>
 	<p>
@@ -54,7 +54,7 @@ else:
 
 <?php
 			if ($admin):
-				if ($_SESSION['utilisateur']->droits[Section::TOUT] == Utilisateur::ADMIN || $_SESSION['utilisateur']->droits[Section::VOYAGE] <= Utilisateur::CONTRIBUTEUR):
+				if ($_SESSION['utilisateur']->droits[Section::TOUT] == Utilisateur::ADMIN || $_SESSION['utilisateur']->droits[Section::VOYAGE] <= Utilisateur::MODERATEUR || ($_SESSION['utilisateur']->droits[Section::VOYAGE] <= Utilisateur::CONTRIBUTEUR && $_SESSION['utilisateur']->id == $article->utilisateur->id)):
 ?>
 
 	<div class="mb-3">
@@ -108,6 +108,17 @@ else:
 		</li>
 	</ul>
 </nav>
+
+<?php
+endif;
+
+if ($admin & $_SESSION['utilisateur']->droits[Section::TOUT] == Utilisateur::ADMIN || $_SESSION['utilisateur']->droits[Section::VOYAGE] <= Utilisateur::CONTRIBUTEUR):
+?>
+
+<hr>
+<form method="post" action="admin.php?section=voyage&ajouter">
+	<input type="submit" class="btn input" value="Ajouter un article">
+</form>
 
 <?php
 endif;

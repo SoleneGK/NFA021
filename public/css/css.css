@@ -157,6 +157,10 @@ a {
 	text-decoration: underline;
 }
 
+a:hover {
+	color: #367520;
+}
+
 hr {
 	border-color: #367520;
 }
@@ -183,6 +187,12 @@ h3 a:hover, h5 a:hover {
 
 .photo img {
 	max-width: 100%;
+}
+
+.card img {
+	max-width: 526px;
+	max-height: 526px;
+	object-fit: contain;
 }
 
 
@@ -222,6 +232,11 @@ input[class~=supprimer] {
 }
 
 .btn:focus {
+	box-shadow: none;
+}
+
+.custom-select:focus {
+	border-color:#c7e6bd;
 	box-shadow: none;
 }
 

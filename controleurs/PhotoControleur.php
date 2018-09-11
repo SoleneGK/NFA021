@@ -29,6 +29,9 @@ class PhotoControleur {
 		$photo_manager = new PhotoManager($this->bdd);
 		$photo = $photo_manager->obtenir_photo((int)$id);
 
+		$categorie_manager = new CategoriePhotoManager($this->bdd);
+		$categories = $categorie_manager->obtenir_liste();
+
 		// Modification d'une photo
 		if ($admin && ($_SESSION['utilisateur']->droits[Section::TOUT] == Utilisateur::ADMIN || $_SESSION['utilisateur']->droits[Section::PHOTOS] == Utilisateur::MODERATEUR || ($_SESSION['utilisateur']->droits[Section::PHOTOS] == Utilisateur::CONTRIBUTEUR && $photo->utilisateur->id == $_SESSION['utilisateur']->id))) {
 			$utilisateur_manager = new UtilisateurManager($this->bdd);
@@ -48,9 +51,6 @@ class PhotoControleur {
 		}
 
 		// Afichage de la page
-		$categorie_manager = new CategoriePhotoManager($this->bdd);
-		$categories = $categorie_manager->obtenir_liste();
-
 		$pays_manager = new PaysManager($this->bdd);
 		$pays = $pays_manager->obtenir_liste_pays();
 

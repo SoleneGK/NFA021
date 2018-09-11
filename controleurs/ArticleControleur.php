@@ -17,6 +17,7 @@ class ArticleControleur {
 		// Si un formulaire a été envoyé
 		if (isset($_POST['titre_article']) && isset($_POST['contenu_article'])) {
 			// Article voyage : si un pays est sélectionné, vérifier qu'il existe
+			var_dump($_POST['id_pays'] != -1);
 			if ($id_section == Section::VOYAGE && isset($_POST['id_pays']) && $_POST['id_pays'] != -1) {
 				$pays_bdd = $pays_manager->obtenir_pays((int)$_POST['id_pays']);
 
@@ -26,7 +27,7 @@ class ArticleControleur {
 				}
 			}
 			else
-				$_POST['pays'] = null;
+				$_POST['id_pays'] = null;
 
 			// Ajout de l'article en bdd
 			$article_manager = new ArticleManager($this->bdd);
@@ -192,6 +193,8 @@ class ArticleControleur {
 		$pays_manager = new PaysManager($this->bdd);
 		$pays = $pays_manager->obtenir_liste_pays();
 
+		$id_section = Section::VOYAGE;
+
 		if ($admin)
 			include 'vues/menu_admin.php';
 		else
@@ -270,7 +273,7 @@ class ArticleControleur {
 		// Vérifier qu'un article a été trouvé
 		if ($article) {
 			// Vérifier que l'utilisateur a le droit de modifier l'article
-			if ($_SESSION['utilisateur']->droits[Section::TOUT] == Utilisateur::ADMIN || $_SESSION['utilisateur']->droits[Section::POLITIQUE] <= Utilisateur::MODERATEUR || ($_SESSION['utilisateur']->droits[Section::POLITIQUE] <= Utilisateur::CONTRIBUTEUR && $article->utilisateur->id == $_SESSION['utilisateur']->id)) {
+			if ($_SESSION['utilisateur']->droits[Section::TOUT] == Utilisateur::ADMIN || $_SESSION['utilisateur']->droits[$id_section] <= Utilisateur::MODERATEUR || ($_SESSION['utilisateur']->droits[$id_section] <= Utilisateur::CONTRIBUTEUR && $article->utilisateur->id == $_SESSION['utilisateur']->id)) {
 				
 				$categorie_manager = new CategoriePhotoManager($this->bdd);
 				$categories = $categorie_manager->obtenir_liste();

@@ -1,7 +1,7 @@
 $(function() {
 	// Demander une confirmation avant d'envoyer une demande de suppression d'un élément
-	$('form').has('input[class~=supprimer]').each(function() {
-		$(this).submit(function() {
+	$('form:not(.supprimer_commentaire_form)').has('input[class~=supprimer]').each(function() {
+		$(this).on('submit', function() {
 			if (!confirm('Supprimer ?'))
 				event.preventDefault();
 		})
@@ -61,17 +61,19 @@ $(function() {
 		$(this).submit(function(event) {
 			event.preventDefault();
 
-			var data = {
-				id_commentaire: $(this).children('[name=id_commentaire]').val(),
-				id_section: $(this).children('[name=id_section]').val()
-			};
-			
-			$.post('ajax/supprimer_commentaire.php', data, function(retour) {
-				if (retour.status === true) {
+			if (confirm('Supprimer ?')) {
+				var data = {
+					id_commentaire: $(this).children('[name=id_commentaire]').val(),
+					id_section: $(this).children('[name=id_section]').val()
+				};
+				
+				$.post('ajax/supprimer_commentaire.php', data, function(retour) {
+					if (retour.status === true) {
 
-					parent.remove();
-				}
-			});
+						parent.remove();
+					}
+				});
+			}
 		})
 	});
 });

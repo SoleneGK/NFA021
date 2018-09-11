@@ -12,7 +12,7 @@ function obtenir_numeros_pages($numero_page_actuelle, $nombre_items, $nombre_ite
 	else
 		$numeros['page_precedente'] = $numero_page_actuelle - 1;
 
-	$numeros['derniere_page'] = ceil($nombre_items / NOMBRE_ARTICLES_PAR_PAGE);
+	$numeros['derniere_page'] = (int)ceil($nombre_items / $nombre_items_par_page);
 
 	if ($numero_page_actuelle < $numeros['derniere_page'])
 		$numeros['page_suivante'] = $numero_page_actuelle + 1;

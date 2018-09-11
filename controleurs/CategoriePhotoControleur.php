@@ -95,6 +95,7 @@ class CategoriePhotoControleur {
 				// Modification d'une catégorie
 				if (isset($_POST['nom_categorie']) && isset($_POST['description_categorie']) && $_SESSION['utilisateur']->droits[Section::TOUT] == Utilisateur::ADMIN) {
 					$categorie_manager->modifier_categorie($id, trim($_POST['nom_categorie']), trim($_POST['description_categorie']));
+					$categorie = $categorie_manager->obtenir_categorie($id);
 				}
 
 				$photos_manager = new PhotoManager($this->bdd);
